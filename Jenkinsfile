@@ -13,7 +13,9 @@ pipeline {
         }
         stage('test') {
             steps {
-                sh 'ls & cd front-end'
+                dir ('front-end') {
+                    ls
+                }
             }
         }
         stage('deliver') {
