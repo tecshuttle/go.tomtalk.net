@@ -11,10 +11,8 @@ pipeline {
         stage('test') {
             steps {
                 dir('front-end') {
-                    sh 'pwd'
-                    sh 'ls'
+                    sh('ls')
                 }
-                sh 'rm front-end@tmp -rf'
             }
         }
         stage('deliver') {
