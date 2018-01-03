@@ -3,11 +3,12 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                dir 'front-end'
                 sh 'npm --version'
                 sh 'node -v'
                 sh 'ls'
-                sh 'npm install'
+                sh 'cd front-end'
+                sh 'ls'
+                sh 'cd front-end & ls'
             }
         }
         stage('test') {
