@@ -4,8 +4,10 @@ import {
     Route,
     Link
 } from 'react-router-dom'
-
-import Memo from './memo'
+import {Provider} from 'react-redux'
+import {createStore} from 'redux'
+import Reducer from './Reducer'
+import Memo from './Memo'
 
 const Home = () => (
     <div>
@@ -52,14 +54,21 @@ const Category = ({match}) => (
     </div>
 );
 
+let store = createStore(
+    Reducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
 const App = () => (
-    <Router>
-        <div>
-            <Route exact path="/" component={Home}/>
-            <Route path="/memo" component={Memo}/>
-            <Route path="/category" component={Category}/>
-        </div>
-    </Router>
+    <Provider store={store}>
+        <Router>
+            <div>
+                <Route exact path="/" component={Home}/>
+                <Route path="/memo" component={Memo}/>
+                <Route path="/category" component={Category}/>
+            </div>
+        </Router>
+    </Provider>
 );
 
 export default App
