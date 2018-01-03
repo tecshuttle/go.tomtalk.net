@@ -1,5 +1,8 @@
 pipeline {
     agent { docker 'node:9-alpine' }
+    environment {
+        CI = 'true' 
+    }
     stages {
         stage('build') {
             steps {
@@ -11,7 +14,7 @@ pipeline {
         stage('test') {
             steps {
                 dir('front-end') {
-                    sh('cd front-end && npm install')
+                    sh('cd front-end && sudo npm install')
                 }
             }
         }
