@@ -13,12 +13,13 @@ pipeline {
                 dir('front-end') {
                     sh 'pwd'
                     sh 'ls'
+                    sh 'rm front-end@tmp -rf'
                 }
             }
         }
         stage('deliver') {
             steps {
-                sh 'echo "deliver"'
+                sh 'ls'
             }
         }
     }
