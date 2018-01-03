@@ -7,6 +7,7 @@ pipeline {
                 sh 'node -v'
                 sh 'ls'
                 sh 'cd front-end'
+                sh 'ls'
                 sh 'npm install'
             }
         }
