@@ -13,7 +13,7 @@ pipeline {
         }
         stage('test') {
             steps {
-                sh 'echo "test"'
+                sh 'ls & cd front-end'
             }
         }
         stage('deliver') {
