@@ -11,12 +11,13 @@ pipeline {
         stage('test') {
             steps {
                 dir('front-end') {
-                    sh('cd front-end && ls')
+                    sh('cd front-end && npm install')
                 }
             }
         }
         stage('deliver') {
             steps {
+                sh 'rm front-end@tmp -rf'
                 sh 'ls'
             }
         }
