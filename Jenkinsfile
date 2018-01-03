@@ -5,6 +5,7 @@ pipeline {
             steps {
                 sh 'npm --version'
                 sh 'node -v'
+                sh 'ls'
             }
         }
     }
