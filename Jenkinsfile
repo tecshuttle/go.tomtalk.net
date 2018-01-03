@@ -11,6 +11,7 @@ pipeline {
         stage('test') {
             steps {
                 dir ('front-end') {
+                    sh 'pwd'
                     sh 'ls'
                 }
             }
