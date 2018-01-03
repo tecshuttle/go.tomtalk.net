@@ -6,7 +6,7 @@ pipeline {
                 sh 'npm --version'
                 sh 'node -v'
                 sh 'ls'
-                sh 'cd front-end'
+                sh 'dir front-end'
                 sh 'ls'
                 sh 'npm install'
             }
