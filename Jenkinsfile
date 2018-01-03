@@ -6,6 +6,22 @@ pipeline {
                 sh 'npm --version'
                 sh 'node -v'
                 sh 'ls'
+                sh 'cd front-end'
+                sh 'npm install'
+            }
+        }
+    }
+    stages {
+        stage('test') {
+            steps {
+                sh 'echo "test"'
+            }
+        }
+    }
+    stages {
+        stage('deliver') {
+            steps {
+                sh 'echo "deliver"'
             }
         }
     }
