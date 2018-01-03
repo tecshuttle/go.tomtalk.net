@@ -5,10 +5,7 @@ pipeline {
             steps {
                 sh 'npm --version'
                 sh 'node -v'
-                sh 'ls'
-                sh 'cd front-end'
-                sh 'ls'
-                sh 'cd front-end & ls'
+                sh 'ls'                
             }
         }
         stage('test') {
