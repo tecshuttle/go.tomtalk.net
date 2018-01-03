@@ -5,15 +5,15 @@ import {
     Link
 } from 'react-router-dom'
 
+import Memo from './memo'
+
 const Home = () => (
     <div>
-        <h2>Home</h2>
-    </div>
-);
-
-const About = () => (
-    <div>
-        <h2>About</h2>
+        <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/memo">Memo</Link></li>
+            <li><Link to="/category">分类</Link></li>
+        </ul>
     </div>
 );
 
@@ -23,8 +23,9 @@ const Topic = ({match}) => (
     </div>
 );
 
-const Topics = ({match}) => (
+const Category = ({match}) => (
     <div>
+        <Link to="/">Home</Link>
         <h2>Topics</h2>
         <ul>
             <li>
@@ -54,17 +55,9 @@ const Topics = ({match}) => (
 const App = () => (
     <Router>
         <div>
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/about">About</Link></li>
-                <li><Link to="/topics">Topics</Link></li>
-            </ul>
-
-            <hr/>
-
             <Route exact path="/" component={Home}/>
-            <Route path="/about" component={About}/>
-            <Route path="/topics" component={Topics}/>
+            <Route path="/memo" component={Memo}/>
+            <Route path="/category" component={Category}/>
         </div>
     </Router>
 );
