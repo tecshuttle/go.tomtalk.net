@@ -10,15 +10,11 @@ pipeline {
                 sh 'npm install'
             }
         }
-    }
-    stages {
         stage('test') {
             steps {
                 sh 'echo "test"'
             }
         }
-    }
-    stages {
         stage('deliver') {
             steps {
                 sh 'echo "deliver"'
