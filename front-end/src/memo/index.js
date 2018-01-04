@@ -54,7 +54,10 @@ class Memo extends Component {
 
         return (
             <Layout>
-                <Header><Link to="/">Home</Link></Header>
+                <Header>
+                    <Link to="/" style={{marginRight: 50}}>首页</Link>
+                    <Link to="/category">分类</Link>
+                </Header>
                 <Layout>
                     <Content>
                         <div style={{margin: 5}}>
