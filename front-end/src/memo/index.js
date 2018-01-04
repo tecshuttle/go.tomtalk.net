@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-import {Layout, Select, Button, Input, Icon, notification} from 'antd';
+import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
 import {fetchPostsIfNeeded, fetchMemoCategory} from '../Action'
 
 const {Header, Content, Footer} = Layout;
@@ -79,10 +79,9 @@ class Memo extends Component {
                         </div>
 
                         {this.props.memoList.items.map((item, idx) => (
-                            <div key={'item' + idx}>
-                                <h1>{item.question}</h1>
-                                <p>{item.answer}</p>
-                            </div>
+                            <Card title={item.question} style={{width: '100%'}} key={'item-' + idx}>
+                                {item.answer}
+                            </Card>
                         ))}
                     </Content>
 
