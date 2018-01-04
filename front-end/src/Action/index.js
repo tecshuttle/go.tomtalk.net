@@ -29,12 +29,14 @@ function receivePosts(category, json) {
     }
 }
 
-function shouldFetchPosts(state, subreddit) {
+function shouldFetchPosts(state, type_item) {
     //const posts = state.postsBySubreddit[subreddit];
     const items = state.memoList.items;
+
     if (items.length === 0) {
         return true
     } else {
+        //todo: 处理搜索和分类
         return true
     }
 }
@@ -49,13 +51,17 @@ function requestPosts(subreddit) {
 //categoryList
 export function fetchMemoCategory() {
     return (dispatch, getState) => {
-        return fetch('/api/memo/get-type-list')
-            .then(response => response.json())
-            .then(json => {
-                dispatch({type: 'RECEIVE_CATEGORY', data: json.data})
-            }).catch(error => {
-                console.error('LOAD_CATEGORY_LIST', error);
-            });
+        const state = getState();
+
+        if (state.categoryList.items.length === 0) {
+            return fetch('/api/memo/get-type-list')
+                .then(response => response.json())
+                .then(json => {
+                    dispatch({type: 'RECEIVE_CATEGORY', data: json.data})
+                }).catch(error => {
+                    console.error('LOAD_CATEGORY_LIST', error);
+                });
+        }
     }
 }
 
