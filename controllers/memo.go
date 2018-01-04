@@ -33,6 +33,7 @@ func (c *MemoController) GetList() {
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
 	} else if itemType == "search" {
 		keyword := c.GetString("keyword", "")
+		//todo: 空值不能查询
 		sql_ := "SELECT t.name AS type, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND (q.question LIKE '%%%s%%' OR q.answer LIKE '%%%s%%')"
 		sql = fmt.Sprintf(sql_, uid, keyword, keyword)

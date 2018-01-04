@@ -1,18 +1,18 @@
 //memoList
-export function fetchPostsIfNeeded(subreddit) {
+export function fetchPostsIfNeeded(subreddit, keyword) {
     return (dispatch, getState) => {
         if (shouldFetchPosts(getState(), subreddit)) {
-            return dispatch(fetchPosts(subreddit))
+            return dispatch(fetchPosts(subreddit, keyword))
         }
     }
 }
 
-function fetchPosts(category) {
+function fetchPosts(category, keyword) {
     return dispatch => {
 
         dispatch(requestPosts(category));
 
-        return fetch('/api/memo/get-list?item_type=' + category + '&uid=1')
+        return fetch('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1')
             .then(response => response.json())
             .then(json => {
                 dispatch(receivePosts(category, json))
@@ -25,12 +25,12 @@ function fetchPosts(category) {
 function receivePosts(category, json) {
     return {
         type: 'RECEIVE_MEMO',
-        data: json.data,
+        data: json.data === null ? [] : json.data,
     }
 }
 
 function shouldFetchPosts(state, subreddit) {
-    const posts = state.postsBySubreddit[subreddit];
+    //const posts = state.postsBySubreddit[subreddit];
     const items = state.memoList.items;
     if (items.length === 0) {
         return true
