@@ -1,13 +1,40 @@
 import {combineReducers} from 'redux'
 
-const memoList = (state = {
-    isFetching: false,
-    items: []
-}, action) => {
+const memoList = (state = {isFetching: false, items: []}, action) => {
     switch (action.type) {
         case 'REQUEST_MEMO':
             return {...state, isFetching: true};
         case 'RECEIVE_MEMO':
+            return {...state, items: action.data};
+        case 'ADD_MEMO':
+            return {...state, items: [...state.items, state.items.length + 1]};
+        case 'DELETE_TODO':
+            return [
+                ...state.slice(0, action.idx),
+                ...state.slice(action.idx + 1)
+            ];
+        case 'TOGGLE_EDIT':
+            return state.map(
+                todo => (todo.id === action.todo.id) ?
+                    {...todo, editing: !todo.editing}
+                    : todo
+            );
+        case 'TEXT_CHANGE':
+            return state.map(
+                todo => (todo.id === action.todo.id) ?
+                    {...todo, text: action.text}
+                    : todo
+            );
+        default:
+            return state
+    }
+};
+
+const categoryList = (state = {isFetching: false, items: []}, action) => {
+    switch (action.type) {
+        case 'REQUEST_MEMO':
+            return {...state, isFetching: true};
+        case 'RECEIVE_CATEGORY':
             return {...state, items: action.data};
         case 'ADD_MEMO':
             return {...state, items: [...state.items, state.items.length + 1]};
@@ -42,14 +69,7 @@ const selectedSubreddit = (state = 'active', action) => {
     }
 };
 
-function posts(
-    state = {
-        isFetching: false,
-        didInvalidate: false,
-        items: []
-    },
-    action
-) {
+function posts(state = {isFetching: false, didInvalidate: false, items: []}, action) {
     switch (action.type) {
         case 'INVALIDATE_SUBREDDIT':
             return Object.assign({}, state, {
@@ -85,5 +105,5 @@ function postsBySubreddit(state = {}, action) {
     }
 }
 
-const Reducer = combineReducers({memoList, selectedSubreddit, postsBySubreddit});
+const Reducer = combineReducers({memoList, categoryList, selectedSubreddit, postsBySubreddit});
 export default Reducer

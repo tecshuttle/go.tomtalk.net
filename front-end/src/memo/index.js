@@ -1,19 +1,26 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-import {Layout, Select} from 'antd';
-import {fetchPostsIfNeeded} from '../Action'
+import {Layout, Select, Button} from 'antd';
+import {fetchPostsIfNeeded, fetchMemoCategory} from '../Action'
 
 const {Header, Content, Footer} = Layout;
 const Option = Select.Option;
 
 class Memo extends Component {
+
     componentWillMount() {
         const {dispatch, selectedSubreddit} = this.props;
-        dispatch(fetchPostsIfNeeded(selectedSubreddit))
+        dispatch(fetchPostsIfNeeded(selectedSubreddit));
+        dispatch(fetchMemoCategory())
     }
 
-    onClick() {
+    onClick(category) {
+        this.props.dispatch(fetchPostsIfNeeded(category));
+    }
+
+    onActiveClick() {
+        this.props.dispatch(fetchPostsIfNeeded('active'));
     }
 
     render() {
@@ -23,18 +30,16 @@ class Memo extends Component {
                 <Header><Link to="/">Home</Link></Header>
                 <Layout>
                     <Content>
-                        main content
-                        <button onClick={() => this.onClick()}>New</button>
+                        <Button onClick={this.onActiveClick.bind(this)}>活动条目</Button>
 
-                        <Select defaultValue="lucy" style={{ width: 120 }} onChange={this.onClick}>
-                            <Option value="jack">Jack</Option>
-                            <Option value="lucy">Lucy</Option>
-                            <Option value="disabled" disabled>Disabled</Option>
-                            <Option value="Yiminghe">yiminghe</Option>
+                        <Select style={{width: 200}} placeholder='请选择分类' onChange={this.onClick.bind(this)}>
+                            {
+                                this.props.categoryList.items.map((item, idx) => (
+                                    <Option value={item.type} key={'cat-' + idx}>{item.type + ' ' + item.count}</Option>
+                                ))
+                            }
                         </Select>
 
-                        <h2>memo</h2>
-                        <hr/>
                         {this.props.memoList.items.map((item, idx) => (
                             <div key={'item' + idx}>
                                 <h1>{item.question}</h1>
@@ -53,6 +58,7 @@ class Memo extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         memoList: state.memoList,
+        categoryList: state.categoryList,
         selectedSubreddit: state.selectedSubreddit
     }
 };
