@@ -1,12 +1,15 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {
-    Link
-} from 'react-router-dom'
+import {Link} from 'react-router-dom'
+import {fetchPostsIfNeeded} from '../Action'
 
-export class Memo extends Component {
+class Memo extends Component {
     componentWillMount() {
-        console.log(this);
+        const {dispatch, selectedSubreddit} = this.props;
+        dispatch(fetchPostsIfNeeded(selectedSubreddit))
+    }
+
+    onClick() {
     }
 
     render() {
@@ -14,29 +17,26 @@ export class Memo extends Component {
             <div>
 
                 <p><Link to="/">Home</Link></p>
-
-                <button>New</button>
+                <button onClick={() => this.onClick()}>New</button>
 
                 <h2>memo</h2>
+                <hr/>
+                {this.props.memoList.items.map((item, idx) => (
+                    <div key={'item' + idx}>
+                        <h1>{item.question}</h1>
+                        <p>{item.answer}</p>
+                    </div>
+                ))}
             </div>
         )
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
-        memoList: state.memoList
+        memoList: state.memoList,
+        selectedSubreddit: state.selectedSubreddit
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onTodoClick: id => {
-           
-        },
-    }
-};
-
-Memo = connect(mapStateToProps, mapDispatchToProps)(Memo);
-
-export default Memo
+export default connect(mapStateToProps)(Memo);

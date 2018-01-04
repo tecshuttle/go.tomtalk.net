@@ -5,7 +5,8 @@ import {
     Link
 } from 'react-router-dom'
 import {Provider} from 'react-redux'
-import {createStore} from 'redux'
+import {createStore, applyMiddleware, compose} from 'redux'
+import thunkMiddleware from 'redux-thunk'
 import Reducer from './Reducer'
 import Memo from './Memo'
 
@@ -54,9 +55,13 @@ const Category = ({match}) => (
     </div>
 );
 
+
 let store = createStore(
     Reducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    compose(
+        applyMiddleware(thunkMiddleware),// 允许我们 dispatch() 函数
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
 );
 
 const App = () => (
