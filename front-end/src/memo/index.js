@@ -1,7 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
+import {Layout, Select} from 'antd';
 import {fetchPostsIfNeeded} from '../Action'
+
+const {Header, Content, Footer} = Layout;
+const Option = Select.Option;
 
 class Memo extends Component {
     componentWillMount() {
@@ -14,20 +18,34 @@ class Memo extends Component {
 
     render() {
         return (
-            <div>
 
-                <p><Link to="/">Home</Link></p>
-                <button onClick={() => this.onClick()}>New</button>
+            <Layout>
+                <Header><Link to="/">Home</Link></Header>
+                <Layout>
+                    <Content>
+                        main content
+                        <button onClick={() => this.onClick()}>New</button>
 
-                <h2>memo</h2>
-                <hr/>
-                {this.props.memoList.items.map((item, idx) => (
-                    <div key={'item' + idx}>
-                        <h1>{item.question}</h1>
-                        <p>{item.answer}</p>
-                    </div>
-                ))}
-            </div>
+                        <Select defaultValue="lucy" style={{ width: 120 }} onChange={this.onClick}>
+                            <Option value="jack">Jack</Option>
+                            <Option value="lucy">Lucy</Option>
+                            <Option value="disabled" disabled>Disabled</Option>
+                            <Option value="Yiminghe">yiminghe</Option>
+                        </Select>
+
+                        <h2>memo</h2>
+                        <hr/>
+                        {this.props.memoList.items.map((item, idx) => (
+                            <div key={'item' + idx}>
+                                <h1>{item.question}</h1>
+                                <p>{item.answer}</p>
+                            </div>
+                        ))}
+                    </Content>
+
+                </Layout>
+                <Footer>footer</Footer>
+            </Layout>
         )
     }
 }
