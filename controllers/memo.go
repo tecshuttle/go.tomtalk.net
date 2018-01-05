@@ -56,7 +56,7 @@ func (c *MemoController) GetTypeList() {
 	raw := orm.NewOrm()
 	var rows_orm []orm.Params
 
-	sql_ := "SELECT COUNT(q.uid) AS count, q.type_id, t.name AS type, t.color " +
+	sql_ := "SELECT COUNT(q.uid) AS count, q.type_id, t.priority, t.name AS type, t.color " +
 		"FROM item_type AS t LEFT JOIN (select * from questions where uid = %d) AS q ON (q.type_id = t.id) " +
 		"WHERE t.uid = %d AND t.priority !=0 GROUP BY t.id ORDER BY count DESC"
 
@@ -98,6 +98,45 @@ func (c *MemoController) SaveItem() {
 		sql = fmt.Sprintf(sql_, question, answer, explain, type_id, now, id, uid)
 	} else {
 		sql = "UPDATE questions SET mtime = " + mtime + ", sync_state = 'modify' WHERE id = " + id + " AND uid = " + uid
+	}
+
+	raw := orm.NewOrm()
+	result, err := raw.Raw(sql).Exec()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"sql": sql,
+		"id":  result,
+		"ret": true,
+	}
+
+	c.ServeJSON()
+
+}
+
+func (c *MemoController) SaveCategory() {
+	uid := "1"
+
+	//获取post参数
+	color := c.GetString("color", "")
+	id := c.GetString("id", "")
+	name := c.GetString("type_name", "")
+	fade_out := c.GetString("fade_out", "0")
+	priority := c.GetString("priority", "0")
+	//sync_state := c.GetString("sync_state", "")
+
+	sql := ""
+
+	if id == "0" {
+		sql_ := "INSERT INTO item_type (uid, name, priority, color, fade_out) " +
+			"VALUES (%s, '%s', %s, '%s', %s)"
+		sql = fmt.Sprintf(sql_, uid, name, priority, color, fade_out)
+	} else {
+		sql_ := "UPDATE item_type SET " +
+			"name = '%s', priority = %s, color = '%s', fade_out = %s WHERE `id` = %s"
+		sql = fmt.Sprintf(sql_, name, priority, color, fade_out, id)
 	}
 
 	raw := orm.NewOrm()

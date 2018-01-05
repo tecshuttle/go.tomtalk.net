@@ -1,3 +1,5 @@
+//import Async from 'react-promise'
+
 //memoList
 export function fetchPostsIfNeeded(subreddit, keyword) {
     return (dispatch, getState) => {
@@ -54,14 +56,75 @@ export function fetchMemoCategory() {
         const state = getState();
 
         if (state.categoryList.items.length === 0) {
-            return fetch('/api/memo/get-type-list')
-                .then(response => response.json())
-                .then(json => {
-                    dispatch({type: 'RECEIVE_CATEGORY', data: json.data})
-                }).catch(error => {
-                    console.error('LOAD_CATEGORY_LIST', error);
-                });
+            dispatch(fetchMemoCategoryAPI())
         }
+    }
+}
+
+function fetchMemoCategoryAPI() {
+    return dispatch => {
+        return fetch('/api/memo/get-type-list')
+            .then(response => response.json())
+            .then(json => {
+                dispatch({type: 'RECEIVE_CATEGORY', data: json.data})
+            }).catch(error => {
+                console.error('LOAD_CATEGORY_LIST', error);
+            });
+    }
+}
+
+export function fetchCategoryItem(type_id) {
+    return (dispatch, getState) => {
+        if (getState().categoryList.items.length === 0) {
+            return dispatch(fetchMemoCategoryAPI()).then(
+                () => {
+                    getState().categoryList.items.map((item, idx) => {
+                        if (item.type_id === type_id) {
+                            dispatch({type: 'SET_EDIT_CATEGORY', item: item})
+                        }
+                        return true;
+                    })
+                }
+            );
+        } else {
+            //todo:
+        }
+    }
+}
+
+export function setCategoryItem(type_id) {
+    return (dispatch, getState) => {
+        getState().categoryList.items.map((item, idx) => {
+            if (item.type_id === type_id) {
+                dispatch({type: 'SET_EDIT_CATEGORY', item: item});
+            }
+
+            return true;
+        })
+    }
+}
+
+export function updateCategoryItem(values) {
+    return (dispatch, getState) => {
+        // 修改state
+        dispatch({type: 'UPDATE_CATEGORY', values: values});
+
+        // 修改数据库
+        let formData = new FormData();
+
+        formData.append('id', values.type_id);
+        formData.append('type_name', values.type);
+        formData.append('priority', values.priority);
+        formData.append('color', values.color);
+
+        fetch('/api/memo/save-category', {
+            method: 'POST',
+            body: formData
+        }).then((response) => response.json()).then((responseData) => {
+            console.log(responseData);
+        }).catch(error => {
+            console.error(error);
+        });
     }
 }
 

@@ -49,12 +49,24 @@ const categoryList = (state = {isFetching: false, items: []}, action) => {
                     {...todo, editing: !todo.editing}
                     : todo
             );
-        case 'TEXT_CHANGE':
-            return state.map(
-                todo => (todo.id === action.todo.id) ?
-                    {...todo, text: action.text}
-                    : todo
-            );
+        case 'UPDATE_CATEGORY':
+            return {
+                ...state,
+                items: state.items.map(
+                    item => (item.type_id === action.values.type_id) ?
+                        {...item, priority: action.priority, color: action.values.color, type: action.values.type}
+                        : item
+                )
+            };
+        default:
+            return state
+    }
+};
+
+const categoryItem = (state = {color: '#000000', priority: 0, type_id: 0, type: '', count: ''}, action) => {
+    switch (action.type) {
+        case 'SET_EDIT_CATEGORY':
+            return {...action.item, color: '#' + action.item.color};
         default:
             return state
     }
@@ -105,5 +117,5 @@ function postsBySubreddit(state = {}, action) {
     }
 }
 
-const Reducer = combineReducers({memoList, categoryList, selectedSubreddit, postsBySubreddit});
+const Reducer = combineReducers({memoList, categoryList, categoryItem, selectedSubreddit, postsBySubreddit});
 export default Reducer

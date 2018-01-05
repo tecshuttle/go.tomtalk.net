@@ -13,4 +13,5 @@ func init() {
 	beego.Router("/api/memo/get-list", &controllers.MemoController{}, "get:GetList")
 	beego.Router("/api/memo/get-type-list", &controllers.MemoController{}, "get:GetTypeList")
 	beego.Router("/api/memo/save-item", &controllers.MemoController{}, "post:SaveItem")
+	beego.Router("/api/memo/save-category", &controllers.MemoController{}, "post:SaveCategory")
 }
