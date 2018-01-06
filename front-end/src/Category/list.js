@@ -11,6 +11,7 @@ class CategoryList_ extends Component {
     }
 
     onNew() {
+        this.props.dispatch({type: 'CLEAR_CATEGORY_ITEM'});
         this.props.history.push(this.props.match.url + '/new');
     }
 

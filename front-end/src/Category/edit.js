@@ -76,26 +76,26 @@ export class CategoryForm extends Component {
 
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <FormItem>
-                        {getFieldDecorator('color_')(
-                            <Input type="color" name="color_" onChange={this.onChangeColor}/>
+                        {getFieldDecorator('color_', {})(
+                            <Input type="color" onChange={this.onChangeColor}/>
                         )}
                     </FormItem>
 
                     <FormItem>
-                        {getFieldDecorator('color')(
-                            <Input name="color" onChange={this.onChangeColor} placeholder="标识颜色"/>
+                        {getFieldDecorator('color', {})(
+                            <Input onChange={this.onChangeColor} placeholder="标识颜色"/>
                         )}
                     </FormItem>
                     <FormItem>
-                        {getFieldDecorator('priority')(
-                            <InputNumber name='priority' min={0} defaultValue={0} style={{width: '100%'}}/>
+                        {getFieldDecorator('priority', {})(
+                            <InputNumber min={0} style={{width: '100%'}}/>
                         )}
                     </FormItem>
                     <FormItem>
                         {getFieldDecorator('type', {
                             rules: [{required: true, message: '请指定分类名称！'}],
                         })(
-                            <Input name="type" onChange={this.onChangeName} placeholder="分类名"/>
+                            <Input onChange={this.onChangeName} placeholder="分类名"/>
                         )}
                     </FormItem>
 

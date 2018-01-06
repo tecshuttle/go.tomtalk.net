@@ -54,7 +54,12 @@ const categoryList = (state = {isFetching: false, items: []}, action) => {
                 ...state,
                 items: state.items.map(
                     item => (item.type_id === action.values.type_id) ?
-                        {...item, priority: action.priority, color: action.values.color, type: action.values.type}
+                        {
+                            ...item,
+                            priority: action.values.priority,
+                            color: action.values.color,
+                            type: action.values.type
+                        }
                         : item
                 )
             };
@@ -63,10 +68,13 @@ const categoryList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
-const categoryItem = (state = {color: '#000000', priority: 0, type_id: 0, type: '', count: ''}, action) => {
+const emptyState = {color: '#000000', priority: 0, type_id: 0, type: '', count: ''};
+const categoryItem = (state = emptyState, action) => {
     switch (action.type) {
         case 'SET_EDIT_CATEGORY':
             return {...action.item, color: '#' + action.item.color};
+        case 'CLEAR_CATEGORY_ITEM':
+            return emptyState;
         default:
             return state
     }
