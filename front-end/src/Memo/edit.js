@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Form, Input} from 'antd'
 import {connect} from 'react-redux'
+import Textarea from 'react-textarea-autosize'
 import {fetchMemoItem, updateMemoItem, setMemoItem} from '../Action'
 
 const FormItem = Form.Item;
@@ -69,7 +70,9 @@ export class MemoForm extends Component {
                     </FormItem>
                     <FormItem>
                         {getFieldDecorator('answer', {})(
-                            <Input placeholder="内容"/>
+                            <Textarea
+                                style={{width: '100%', lineHeight: 1.5}}
+                                minRows={5} maxRows={18}/>
                         )}
                     </FormItem>
 
