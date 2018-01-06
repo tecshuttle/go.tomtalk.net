@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {Layout, Button} from 'antd'
+import {Layout, Button, Card} from 'antd'
 import {fetchMemoCategory} from '../Action'
 
 const {Content} = Layout;
@@ -27,19 +27,30 @@ class CategoryList_ extends Component {
                 <div style={{margin: 10}}>
                     <Button onClick={this.onNew.bind(me)}>新增</Button>
                 </div>
+                <div style={{margin: 10}}>
 
-                {
-                    this.props.categoryList.items.map((item, idx) => {
-                        const editBtn = <Button onClick={() => me.onEdit(item.type_id)}>编辑</Button>;
-                        const delBtn = (item.count === '0' ? <Button>删除</Button> : '');
+                    {
+                        this.props.categoryList.items.map((item, idx) => {
+                            const editBtn = <Button onClick={() => me.onEdit(item.type_id)}>编辑</Button>;
+                            const delBtn = (item.count === '0' ? <Button>删除</Button> : '');
 
-                        return (<p key={'cat-' + idx} style={{color: '#' + item.color}}>
-                            {item.color} {item.type}
-                            {editBtn}
-                            {delBtn}
-                        </p>)
-                    })
-                }
+                            return (
+
+                                <Card title={item.type} key={'cat-' + idx}
+                                      extra={<div>{editBtn} {delBtn}</div>}
+                                      style={{
+                                          display: 'inline-block',
+                                          marginBottom: 10,
+                                          marginRight: 10,
+                                          width: 300,
+                                          color: '#' + item.color
+                                      }}>
+                                    <p>等级：{item.priority}</p>
+                                </Card>
+                            )
+                        })
+                    }
+                </div>
             </Content>
         )
     }

@@ -6,7 +6,6 @@ import {CategoryList} from './list'
 
 const {Footer, Header} = Layout;
 
-
 export default class Category extends Component {
     render() {
         return (
@@ -16,7 +15,7 @@ export default class Category extends Component {
                     <Link to="/memo">Memo</Link>
                 </Header>
 
-                <Route eaact path={`${this.props.match.url}/edit/:typeId`} component={CategoryEdit}/>
+                <Route exact path={`${this.props.match.url}/edit/:typeId`} component={CategoryEdit}/>
                 <Route exact path={`${this.props.match.url}/new`} component={CategoryEdit}/>
                 <Route exact path={this.props.match.url} component={CategoryList}/>
 

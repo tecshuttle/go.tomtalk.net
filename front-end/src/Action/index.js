@@ -24,6 +24,64 @@ function fetchPosts(category, keyword) {
     }
 }
 
+export function setMemoItem(id) {
+    return (dispatch, getState) => {
+        getState().memoList.items.map((item, idx) => {
+            if (item.id === id) {
+                dispatch({type: 'SET_EDIT_MEMO', item: item});
+            }
+
+            return true;
+        })
+    }
+}
+
+export function fetchMemoItem(id) {
+    return (dispatch, getState) => {
+        if (getState().memoList.items.length === 0) {
+            return dispatch(fetchPosts('active', '')).then(
+                () => {
+                    getState().memoList.items.map((item, idx) => {
+                        if (item.id === id) {
+                            dispatch({type: 'SET_EDIT_MEMO', item: item})
+                        }
+                        return true;
+                    })
+                }
+            );
+        } else {
+            //todo:
+        }
+    }
+}
+
+export function updateMemoItem(values) {
+    return (dispatch, getState) => {
+        // 修改state
+        dispatch({type: 'UPDATE_MEMO', values: values});
+
+        // 修改数据库
+        let formData = new FormData();
+
+        formData.append('id', values.id);
+        formData.append('type_id', values.type_id);
+        formData.append('question', values.question);
+        formData.append('answer', values.answer);
+        formData.append('sync_state', values.sync_state);
+        //formData.append('mtime', values.mtime);
+
+        fetch('/api/memo/save-item', {
+            method: 'POST',
+            body: formData
+        }).then((response) => response.json()).then((responseData) => {
+            console.log(responseData);
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
+
 function receivePosts(category, json) {
     return {
         type: 'RECEIVE_MEMO',

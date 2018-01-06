@@ -11,6 +11,10 @@ const styles = {
 };
 
 export default class Home extends Component {
+    componentWillMount() {
+        document.title = 'TomTalk'
+    }
+
     render() {
         return (
             <Layout>

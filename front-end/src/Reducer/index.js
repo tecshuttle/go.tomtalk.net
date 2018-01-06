@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux'
 
+/******************** Memo Reducer ***********************/
 const memoList = (state = {isFetching: false, items: []}, action) => {
     switch (action.type) {
         case 'REQUEST_MEMO':
@@ -8,47 +9,51 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
             return {...state, items: action.data};
         case 'ADD_MEMO':
             return {...state, items: [...state.items, state.items.length + 1]};
-        case 'DELETE_TODO':
-            return [
-                ...state.slice(0, action.idx),
-                ...state.slice(action.idx + 1)
-            ];
-        case 'TOGGLE_EDIT':
-            return state.map(
-                todo => (todo.id === action.todo.id) ?
-                    {...todo, editing: !todo.editing}
-                    : todo
-            );
-        case 'TEXT_CHANGE':
-            return state.map(
-                todo => (todo.id === action.todo.id) ?
-                    {...todo, text: action.text}
-                    : todo
-            );
+        case 'UPDATE_MEMO':
+            return {
+                ...state,
+                items: state.items.map(
+                    item => (item.id === action.values.id) ?
+                        {
+                            ...item,
+                            question: action.values.question,
+                            answer: action.values.answer,
+                        }
+                        : item
+                )
+            };
+
         default:
             return state
     }
 };
 
+const emptyMemo = {
+    answer: '',
+    explain: '',
+    id: 0,
+    mtime: 0,
+    question: '',
+    sync_state: '',
+    type_id: 0,
+};
+
+const memoItem = (state = emptyMemo, action) => {
+    switch (action.type) {
+        case 'SET_EDIT_MEMO':
+            return {...action.item};
+        case 'CLEAR_MEMO_ITEM':
+            return emptyMemo;
+        default:
+            return state
+    }
+};
+
+/******************** Category Reducer **********************/
 const categoryList = (state = {isFetching: false, items: []}, action) => {
     switch (action.type) {
-        case 'REQUEST_MEMO':
-            return {...state, isFetching: true};
         case 'RECEIVE_CATEGORY':
             return {...state, items: action.data};
-        case 'ADD_MEMO':
-            return {...state, items: [...state.items, state.items.length + 1]};
-        case 'DELETE_TODO':
-            return [
-                ...state.slice(0, action.idx),
-                ...state.slice(action.idx + 1)
-            ];
-        case 'TOGGLE_EDIT':
-            return state.map(
-                todo => (todo.id === action.todo.id) ?
-                    {...todo, editing: !todo.editing}
-                    : todo
-            );
         case 'UPDATE_CATEGORY':
             return {
                 ...state,
@@ -68,13 +73,13 @@ const categoryList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
-const emptyState = {color: '#000000', priority: 0, type_id: 0, type: '', count: ''};
-const categoryItem = (state = emptyState, action) => {
+const emptyCategory = {color: '#000000', priority: 0, type_id: 0, type: '', count: ''};
+const categoryItem = (state = emptyCategory, action) => {
     switch (action.type) {
         case 'SET_EDIT_CATEGORY':
             return {...action.item, color: '#' + action.item.color};
         case 'CLEAR_CATEGORY_ITEM':
-            return emptyState;
+            return emptyCategory;
         default:
             return state
     }
@@ -125,5 +130,5 @@ function postsBySubreddit(state = {}, action) {
     }
 }
 
-const Reducer = combineReducers({memoList, categoryList, categoryItem, selectedSubreddit, postsBySubreddit});
+const Reducer = combineReducers({memoList, memoItem, categoryList, categoryItem, selectedSubreddit, postsBySubreddit});
 export default Reducer
