@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
 import {fetchPostsIfNeeded, fetchMemoCategory} from '../Action'
 
+const ReactMarkdown = require('react-markdown');
 const {Content} = Layout;
 const Option = Select.Option;
 const Search = Input.Search;
@@ -86,7 +87,7 @@ class MemoList_ extends Component {
                               extra={<Icon type="edit" onClick={() => me.onCardClick(item.id)}/>}
                               style={{width: 300, display: 'inline-block', marginRight: 10, marginBottom: 10}}
                               key={'item-' + idx}>
-                            {item.answer}
+                            <ReactMarkdown source={item.answer}/>
                         </Card>
                     ))}
                 </div>
