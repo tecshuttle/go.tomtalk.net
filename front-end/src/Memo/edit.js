@@ -62,36 +62,34 @@ export class MemoForm extends Component {
         const {getFieldDecorator} = this.props.form;
 
         return (
-            <div style={{margin: 10}}>
-                <Form onSubmit={this.handleSubmit} className="login-form">
-                    <FormItem>
-                        {getFieldDecorator('type_id', {
-                            initialValue: this.props.memoItem.type_id
-                        })(
-                            <Select style={{width: '100%'}} placeholder='请选择分类'>
-                                {
-                                    this.props.categoryList.items.map((item, idx) => (
-                                        <Option value={item.type_id} key={'cat-' + idx}>{item.type}</Option>
-                                    ))
-                                }
-                            </Select>
-                        )}
-                    </FormItem>
+            <Form onSubmit={this.handleSubmit} className="login-form" style={{margin: 10}}>
+                <FormItem>
+                    {getFieldDecorator('type_id', {
+                        initialValue: this.props.memoItem.type_id
+                    })(
+                        <Select style={{width: '100%'}} placeholder='请选择分类'>
+                            {
+                                this.props.categoryList.items.map((item, idx) => (
+                                    <Option value={item.type_id} key={'cat-' + idx}>{item.type}</Option>
+                                ))
+                            }
+                        </Select>
+                    )}
+                </FormItem>
 
-                    <FormItem>{getFieldDecorator('question', {})(<Input placeholder="标题"/>)}</FormItem>
+                <FormItem>{getFieldDecorator('question', {})(<Input placeholder="标题"/>)}</FormItem>
 
-                    <FormItem>
-                        {getFieldDecorator('answer', {})(
-                            <Textarea style={{width: '100%', lineHeight: 1.5}} minRows={5} maxRows={18}/>
-                        )}
-                    </FormItem>
+                <FormItem>
+                    {getFieldDecorator('answer', {})(
+                        <Textarea style={{width: '100%', lineHeight: 1.5}} minRows={5} maxRows={18}/>
+                    )}
+                </FormItem>
 
-                    <FormItem>
-                        <Button type="primary" htmlType="submit" style={{marginRight: 50}}>保存</Button>
-                        <Button onClick={this.onReturn.bind(this)}>返回</Button>
-                    </FormItem>
-                </Form>
-            </div>
+                <FormItem>
+                    <Button type="primary" htmlType="submit" style={{marginRight: 50}}>保存</Button>
+                    <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                </FormItem>
+            </Form>
         )
     }
 }

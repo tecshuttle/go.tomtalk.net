@@ -93,7 +93,9 @@ class MemoList_ extends Component {
 
                 <div style={{margin: 10}} id="memo-list">
                     {this.props.memoList.items.map((item, idx) => (
-                        <Card title={item.question}
+                        <Card title={[
+                            <Icon type='tag' key={'tag-' + idx} style={{color: '#' + item.color}}/>,
+                            <span style={{color: '#' + item.color}}>{item.type + ' ' + item.question}</span>]}
                               extra={<Icon type="edit" onClick={() => me.onCardClick(item.id)}/>}
                               style={{
                                   width: 300,
