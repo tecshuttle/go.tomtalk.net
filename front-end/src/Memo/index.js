@@ -16,6 +16,7 @@ export default class Memo extends Component {
                 </Header>
 
                 <Route exact path={`${this.props.match.url}`} component={MemoList}/>
+                <Route exact path={`${this.props.match.url}/new`} component={MemoEdit}/>
                 <Route exact path={`${this.props.match.url}/edit/:id`} component={MemoEdit}/>
 
                 <Footer>footer</Footer>

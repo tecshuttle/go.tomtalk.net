@@ -58,6 +58,10 @@ class MemoList_ extends Component {
         this.props.history.push(this.props.match.url + '/edit/' + id);
     }
 
+    onNew() {
+        this.props.history.push(this.props.match.url + '/new');
+    }
+
     render() {
         const {keyword} = this.state;
         const me = this;
@@ -66,6 +70,7 @@ class MemoList_ extends Component {
         return (
             <Content>
                 <div style={{margin: 10}}>
+                    <Button onClick={this.onNew.bind(this)} type='primary' style={{marginRight: 10}}>新建</Button>
                     <Button onClick={this.onActiveClick.bind(this)}>活动条目</Button>
 
                     <Select style={{width: 200, marginLeft: 10, marginRight: 10}} placeholder='请选择分类'
@@ -90,9 +95,15 @@ class MemoList_ extends Component {
                     {this.props.memoList.items.map((item, idx) => (
                         <Card title={item.question}
                               extra={<Icon type="edit" onClick={() => me.onCardClick(item.id)}/>}
-                              style={{width: 300, display: 'inline-block', marginRight: 10, marginBottom: 10}}
+                              style={{
+                                  width: 300,
+                                  color: '#' + item.color,
+                                  display: 'inline-block',
+                                  marginRight: 10,
+                                  marginBottom: 10
+                              }}
                               key={'memo-' + idx}>
-                            <ReactMarkdown source={item.answer}/>
+                            <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
                         </Card>
                     ))}
                 </div>

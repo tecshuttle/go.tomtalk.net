@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Button, Form, Input} from 'antd'
+import {Button, Form, Input, Select} from 'antd'
 import {connect} from 'react-redux'
 import Textarea from 'react-textarea-autosize'
 import {fetchMemoItem, updateMemoItem, setMemoItem} from '../Action'
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 export class MemoForm extends Component {
     constructor(props) {
@@ -64,15 +65,24 @@ export class MemoForm extends Component {
             <div style={{margin: 10}}>
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <FormItem>
-                        {getFieldDecorator('question', {})(
-                            <Input placeholder="标题"/>
+                        {getFieldDecorator('type_id', {
+                            initialValue: this.props.memoItem.type_id
+                        })(
+                            <Select style={{width: '100%'}} placeholder='请选择分类'>
+                                {
+                                    this.props.categoryList.items.map((item, idx) => (
+                                        <Option value={item.type_id} key={'cat-' + idx}>{item.type}</Option>
+                                    ))
+                                }
+                            </Select>
                         )}
                     </FormItem>
+
+                    <FormItem>{getFieldDecorator('question', {})(<Input placeholder="标题"/>)}</FormItem>
+
                     <FormItem>
                         {getFieldDecorator('answer', {})(
-                            <Textarea
-                                style={{width: '100%', lineHeight: 1.5}}
-                                minRows={5} maxRows={18}/>
+                            <Textarea style={{width: '100%', lineHeight: 1.5}} minRows={5} maxRows={18}/>
                         )}
                     </FormItem>
 
@@ -88,6 +98,7 @@ export class MemoForm extends Component {
 
 function mapStateToProps(state, ownProps) {
     return {
+        categoryList: state.categoryList,
         memoItem: state.memoItem,
         memoList: state.memoList
     }

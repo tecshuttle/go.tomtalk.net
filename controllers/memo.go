@@ -22,23 +22,23 @@ func (c *MemoController) GetList() {
 	now := time.Now().Add(- time.Hour * 24 * 7) //一星期
 
 	if itemType == "active" {
-		sql_ := "SELECT t.name AS type, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
+		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date <= '%s') OR (t.priority > 0 AND mtime > %d)) " +
 			"ORDER BY t.priority ASC, id ASC"
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
 	} else if itemType == "archive" {
-		sql_ := "SELECT t.name AS type, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
+		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date > '%s') OR (t.priority > 0 AND mtime <= %d)) " +
 			"ORDER BY t.priority ASC, id ASC"
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
 	} else if itemType == "search" {
 		keyword := c.GetString("keyword", "")
 		//todo: 空值不能查询
-		sql_ := "SELECT t.name AS type, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
+		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND (q.question LIKE '%%%s%%' OR q.answer LIKE '%%%s%%')"
 		sql = fmt.Sprintf(sql_, uid, keyword, keyword)
 	} else {
-		sql = fmt.Sprintf("SELECT t.name AS type, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) WHERE t.name = '%s' AND q.uid = %d", itemType, uid)
+		sql = fmt.Sprintf("SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) WHERE t.name = '%s' AND q.uid = %d", itemType, uid)
 	}
 
 	raw.Raw(sql).Values(&rows_orm)
