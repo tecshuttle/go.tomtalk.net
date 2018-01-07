@@ -56,7 +56,7 @@ func (c *MemoController) GetTypeList() {
 	raw := orm.NewOrm()
 	var rows_orm []orm.Params
 
-	sql_ := "SELECT COUNT(q.uid) AS count, q.type_id, t.priority, t.name AS type, t.color " +
+	sql_ := "SELECT COUNT(q.uid) AS count, t.id as type_id, t.priority, t.name AS type, t.color " +
 		"FROM item_type AS t LEFT JOIN (select * from questions where uid = %d) AS q ON (q.type_id = t.id) " +
 		"WHERE t.uid = %d AND t.priority !=0 GROUP BY t.id ORDER BY count DESC"
 

@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
 import {fetchPostsIfNeeded, fetchMemoCategory} from '../Action'
+import Isotope from 'isotope-layout'
 
 const ReactMarkdown = require('react-markdown');
 const {Content} = Layout;
@@ -20,6 +21,10 @@ class MemoList_ extends Component {
         const {dispatch, selectedSubreddit} = this.props;
         dispatch(fetchPostsIfNeeded(selectedSubreddit, ''));
         dispatch(fetchMemoCategory())
+    }
+
+    componentDidUpdate() {
+        new Isotope(document.querySelector('#memo-list'))
     }
 
     onClick(category) {
@@ -81,12 +86,12 @@ class MemoList_ extends Component {
                     />
                 </div>
 
-                <div style={{margin: 10}}>
+                <div style={{margin: 10}} id="memo-list">
                     {this.props.memoList.items.map((item, idx) => (
                         <Card title={item.question}
                               extra={<Icon type="edit" onClick={() => me.onCardClick(item.id)}/>}
                               style={{width: 300, display: 'inline-block', marginRight: 10, marginBottom: 10}}
-                              key={'item-' + idx}>
+                              key={'memo-' + idx}>
                             <ReactMarkdown source={item.answer}/>
                         </Card>
                     ))}
