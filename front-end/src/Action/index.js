@@ -81,6 +81,36 @@ export function updateMemoItem(values) {
     }
 }
 
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+export function createMemoItem() {
+    return (dispatch, getState) => {
+        let formData = new FormData();
+        formData.append('type_id', 0);
+        formData.append('question', '');
+        formData.append('answer', '');
+        formData.append('sync_state', '');
+
+        fetch('/api/memo', {
+            method: 'POST',
+            body: formData
+        }).then(handleErrors).then((response) => response.json()).then((responseData) => {
+            if (responseData.ret) {
+                dispatch(fetchPosts('active', ''));
+            } else {
+                console.log(responseData);
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
 
 function receivePosts(category, json) {
     return {

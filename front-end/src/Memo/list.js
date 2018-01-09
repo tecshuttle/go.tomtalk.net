@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
-import {fetchPostsIfNeeded, fetchMemoCategory} from '../Action'
+import {fetchPostsIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
 import Isotope from 'isotope-layout'
 
 const ReactMarkdown = require('react-markdown');
@@ -59,7 +59,7 @@ class MemoList_ extends Component {
     }
 
     onNew() {
-        this.props.history.push(this.props.match.url + '/new');
+        this.props.dispatch(createMemoItem());
     }
 
     render() {
@@ -94,12 +94,13 @@ class MemoList_ extends Component {
                 <div style={{margin: 10}} id="memo-list">
                     {this.props.memoList.items.map((item, idx) => (
                         <Card title={[
-                            <Icon type='tag' key={'tag-' + idx} style={{color: '#' + item.color}}/>,
-                            <span style={{color: '#' + item.color}}>{item.type + ' ' + item.question}</span>]}
+                            <Icon type='tag' key={'tag-' + idx} style={{color: (item.color === null ? '' : '#' + item.color)}}/>,
+                            <span style={{color: (item.color === null ? '' : '#' + item.color)}}
+                                  key={'span-' + idx}>{item.type + ' ' + item.question}</span>]}
                               extra={<Icon type="edit" onClick={() => me.onCardClick(item.id)}/>}
                               style={{
                                   width: 300,
-                                  color: '#' + item.color,
+                                  color: (item.color === null ? '' : '#' + item.color),
                                   display: 'inline-block',
                                   marginRight: 10,
                                   marginBottom: 10

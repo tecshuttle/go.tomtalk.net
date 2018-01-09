@@ -23,7 +23,7 @@ func (c *MemoController) GetList() {
 
 	if itemType == "active" {
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
-			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date <= '%s') OR (t.priority > 0 AND mtime > %d)) " +
+			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date <= '%s') OR (t.priority > 0 AND mtime > %d) OR q.type_id = 0) " +
 			"ORDER BY t.priority ASC, id ASC"
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
 	} else if itemType == "archive" {
@@ -82,15 +82,10 @@ func (c *MemoController) SaveItem() {
 	sync_state := c.GetString("sync_state", "")
 	mtime := c.GetString("mtime", "")
 
-	today := time.Now().Format("2006-01-02")
 	now := time.Now().Unix()
 	sql := ""
 
-	if id == "0" {
-		sql_ := "INSERT INTO questions (uid, question, answer, `explain`, type_id, next_play_date, mtime) " +
-			"VALUES (%s, '%s', '%s', '%s', %s, '%s', %d)"
-		sql = fmt.Sprintf(sql_, uid, question, answer, explain, type_id, today, now)
-	} else if mtime == "" {
+	if mtime == "" {
 		sync := " , sync_state = 'modify' "
 		if sync_state == "add" {
 			sync = ""
@@ -100,6 +95,25 @@ func (c *MemoController) SaveItem() {
 	} else {
 		sql = "UPDATE questions SET mtime = " + mtime + ", sync_state = 'modify' WHERE id = " + id + " AND uid = " + uid
 	}
+
+	raw := orm.NewOrm()
+	result, err := raw.Raw(sql).Exec()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"sql": sql,
+		"id":  result,
+		"ret": true,
+	}
+
+	c.ServeJSON()
+}
+
+func (c *MemoController) Create() {
+	uid := 1
+	sql := fmt.Sprintf("INSERT INTO questions (uid) VALUES (%d)", uid)
 
 	raw := orm.NewOrm()
 	result, err := raw.Raw(sql).Exec()
