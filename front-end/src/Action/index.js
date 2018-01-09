@@ -1,6 +1,6 @@
 //import Async from 'react-promise'
 
-//memoList
+/********************** Memo *********************/
 export function fetchPostsIfNeeded(subreddit, keyword) {
     return (dispatch, getState) => {
         if (shouldFetchPosts(getState(), subreddit)) {
@@ -108,7 +108,6 @@ function requestPosts(subreddit) {
     }
 }
 
-//categoryList
 export function fetchMemoCategory() {
     return (dispatch, getState) => {
         const state = getState();
@@ -131,13 +130,36 @@ function fetchMemoCategoryAPI() {
     }
 }
 
-export function fetchCategoryItem(type_id) {
+/********************** Category ********************/
+export function fetchCategoryList() {
+    return (dispatch, getState) => {
+        const state = getState();
+
+        if (state.categoryList.items.length === 0) {
+            dispatch(fetchCategoryListAPI())
+        }
+    }
+}
+
+function fetchCategoryListAPI() {
+    return dispatch => {
+        return fetch('/api/category')
+            .then(response => response.json())
+            .then(json => {
+                dispatch({type: 'RECEIVE_CATEGORY', data: json.data})
+            }).catch(error => {
+                console.error('LOAD_CATEGORY_LIST', error);
+            });
+    }
+}
+
+export function fetchCategoryItem(id) {
     return (dispatch, getState) => {
         if (getState().categoryList.items.length === 0) {
-            return dispatch(fetchMemoCategoryAPI()).then(
+            return dispatch(fetchCategoryListAPI()).then(
                 () => {
                     getState().categoryList.items.map((item, idx) => {
-                        if (item.type_id === type_id) {
+                        if (item.id === id) {
                             dispatch({type: 'SET_EDIT_CATEGORY', item: item})
                         }
                         return true;
@@ -150,10 +172,11 @@ export function fetchCategoryItem(type_id) {
     }
 }
 
-export function setCategoryItem(type_id) {
+export function setCategoryItem(id) {
     return (dispatch, getState) => {
         getState().categoryList.items.map((item, idx) => {
-            if (item.type_id === type_id) {
+            if (item.id === id) {
+                console.log(item);
                 dispatch({type: 'SET_EDIT_CATEGORY', item: item});
             }
 
@@ -163,6 +186,7 @@ export function setCategoryItem(type_id) {
 }
 
 export function updateCategoryItem(values) {
+    console.log(values);
     return (dispatch, getState) => {
         // 修改state
         dispatch({type: 'UPDATE_CATEGORY', values: values});
@@ -170,13 +194,13 @@ export function updateCategoryItem(values) {
         // 修改数据库
         let formData = new FormData();
 
-        formData.append('id', values.type_id);
-        formData.append('type_name', values.type);
+        formData.append('id', values.id);
+        formData.append('name', values.name);
         formData.append('priority', values.priority);
         formData.append('color', values.color);
 
-        fetch('/api/memo/save-category', {
-            method: 'POST',
+        fetch('/api/category', {
+            method: values.id === 0 ? 'POST' : 'PUT',
             body: formData
         }).then((response) => response.json()).then((responseData) => {
             console.log(responseData);
@@ -185,4 +209,3 @@ export function updateCategoryItem(values) {
         });
     }
 }
-

@@ -11,7 +11,10 @@ func init() {
 	beego.Router("/user/login-submit", &controllers.UserController{}, "post:LoginSubmit")
 
 	beego.Router("/api/memo/get-list", &controllers.MemoController{}, "get:GetList")
-	beego.Router("/api/memo/get-type-list", &controllers.MemoController{}, "get:GetTypeList")
 	beego.Router("/api/memo/save-item", &controllers.MemoController{}, "post:SaveItem")
-	beego.Router("/api/memo/save-category", &controllers.MemoController{}, "post:SaveCategory")
+	beego.Router("/api/memo/get-type-list", &controllers.MemoController{}, "get:GetTypeList")
+
+	beego.Router("/api/category", &controllers.CategoryController{}, "get:List")
+	beego.Router("/api/category", &controllers.CategoryController{}, "post:Create")
+	beego.Router("/api/category", &controllers.CategoryController{}, "put:Update")
 }

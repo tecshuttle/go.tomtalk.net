@@ -37,8 +37,9 @@ func (c *MemoController) GetList() {
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND (q.question LIKE '%%%s%%' OR q.answer LIKE '%%%s%%')"
 		sql = fmt.Sprintf(sql_, uid, keyword, keyword)
-	} else {
-		sql = fmt.Sprintf("SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) WHERE t.name = '%s' AND q.uid = %d", itemType, uid)
+	} else { // 分类查询
+		sql = fmt.Sprintf("SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) "+
+			"WHERE q.uid = %d AND t.name = '%s' ", uid, itemType)
 	}
 
 	raw.Raw(sql).Values(&rows_orm)
@@ -46,6 +47,7 @@ func (c *MemoController) GetList() {
 	//输出数据
 	c.Data["json"] = map[string]interface{}{
 		"data": rows_orm,
+		"sql":  sql,
 	}
 
 	c.ServeJSON()
@@ -59,7 +61,6 @@ func (c *MemoController) GetTypeList() {
 	sql_ := "SELECT COUNT(q.uid) AS count, t.id as type_id, t.priority, t.name AS type, t.color " +
 		"FROM item_type AS t LEFT JOIN (select * from questions where uid = %d) AS q ON (q.type_id = t.id) " +
 		"WHERE t.uid = %d AND t.priority !=0 GROUP BY t.id ORDER BY count DESC"
-
 	sql := fmt.Sprintf(sql_, uid, uid)
 	raw.Raw(sql).Values(&rows_orm)
 
@@ -113,44 +114,4 @@ func (c *MemoController) SaveItem() {
 	}
 
 	c.ServeJSON()
-
-}
-
-func (c *MemoController) SaveCategory() {
-	uid := "1"
-
-	//获取post参数
-	color := c.GetString("color", "")
-	id := c.GetString("id", "")
-	name := c.GetString("type_name", "")
-	fade_out := c.GetString("fade_out", "0")
-	priority := c.GetString("priority", "0")
-	//sync_state := c.GetString("sync_state", "")
-
-	sql := ""
-
-	if id == "0" {
-		sql_ := "INSERT INTO item_type (uid, name, priority, color, fade_out) " +
-			"VALUES (%s, '%s', %s, '%s', %s)"
-		sql = fmt.Sprintf(sql_, uid, name, priority, color, fade_out)
-	} else {
-		sql_ := "UPDATE item_type SET " +
-			"name = '%s', priority = %s, color = '%s', fade_out = %s WHERE `id` = %s"
-		sql = fmt.Sprintf(sql_, name, priority, color, fade_out, id)
-	}
-
-	raw := orm.NewOrm()
-	result, err := raw.Raw(sql).Exec()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	c.Data["json"] = map[string]interface{}{
-		"sql": sql,
-		"id":  result,
-		"ret": true,
-	}
-
-	c.ServeJSON()
-
 }

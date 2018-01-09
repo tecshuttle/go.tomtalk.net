@@ -19,13 +19,12 @@ export class CategoryForm extends Component {
                 this.setFieldsValue();
             });
         } else {
-            this.props.dispatch(setCategoryItem(this.props.match.params.typeId));
+            this.props.dispatch(setCategoryItem(this.props.match.params.id));
         }
-
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.categoryItem.type_id !== 0 && this.state.needLoad) {
+        if (this.props.categoryItem.id !== 0 && this.state.needLoad) {
             this.setFieldsValue();
             this.setState({needLoad: false});
         }
@@ -35,7 +34,7 @@ export class CategoryForm extends Component {
         this.props.form.setFieldsValue({
             color_: this.props.categoryItem.color,
             color: this.props.categoryItem.color,
-            type: this.props.categoryItem.type,
+            name: this.props.categoryItem.name,
             priority: this.props.categoryItem.priority,
         });
     }
@@ -69,42 +68,37 @@ export class CategoryForm extends Component {
 
     render() {
         const {getFieldDecorator} = this.props.form;
-
         return (
-            <div style={{margin: 10}}>
-                <h3>type_id: {this.props.match.params.typeId}</h3>
-
-                <Form onSubmit={this.handleSubmit} className="login-form">
-                    <FormItem>
-                        {getFieldDecorator('color_', {})(
-                            <Input type="color" onChange={this.onChangeColor}/>
-                        )}
-                    </FormItem>
-
-                    <FormItem>
-                        {getFieldDecorator('color', {})(
-                            <Input onChange={this.onChangeColor} placeholder="标识颜色"/>
-                        )}
-                    </FormItem>
-                    <FormItem>
-                        {getFieldDecorator('priority', {})(
-                            <InputNumber min={0} style={{width: '100%'}}/>
-                        )}
-                    </FormItem>
-                    <FormItem>
-                        {getFieldDecorator('type', {
-                            rules: [{required: true, message: '请指定分类名称！'}],
-                        })(
-                            <Input onChange={this.onChangeName} placeholder="分类名"/>
-                        )}
-                    </FormItem>
-
-                    <FormItem>
-                        <Button type="primary" htmlType="submit" style={{marginRight: 50}}>保存</Button>
-                        <Button onClick={this.onReturn.bind(this)}>返回</Button>
-                    </FormItem>
-                </Form>
-            </div>
+            <Form onSubmit={this.handleSubmit} className="login-form" style={{margin: 10}}>
+                <FormItem>
+                    {getFieldDecorator('color_', {})(<Input type="color" onChange={this.onChangeColor}/>)}
+                </FormItem>
+                <FormItem>
+                    {getFieldDecorator('color', {
+                        rules: [{required: true, message: '请指定标识颜色！'}],
+                    })(
+                        <Input onChange={this.onChangeColor} placeholder="标识颜色"/>
+                    )}
+                </FormItem>
+                <FormItem>
+                    {getFieldDecorator('priority', {
+                        rules: [{required: true, message: '请指定显示顺序！'}],
+                    })(
+                        <InputNumber min={0} style={{width: '100%'}} placeholder='显示顺序'/>
+                    )}
+                </FormItem>
+                <FormItem>
+                    {getFieldDecorator('name', {
+                        rules: [{required: true, message: '请指定分类名称！'}],
+                    })(
+                        <Input placeholder="分类名"/>
+                    )}
+                </FormItem>
+                <FormItem>
+                    <Button type="primary" htmlType="submit" style={{marginRight: 50}}>保存</Button>
+                    <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                </FormItem>
+            </Form>
         )
     }
 }
@@ -114,10 +108,7 @@ function mapStateToProps(state, ownProps) {
         categoryItem: state.categoryItem,
         categoryList: state.categoryList
     }
-
 }
 
 CategoryForm = connect(mapStateToProps)(CategoryForm);
-
 export const CategoryEdit = Form.create()(CategoryForm);
-

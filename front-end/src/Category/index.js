@@ -15,7 +15,7 @@ export default class Category extends Component {
                     <Link to="/memo">Memo</Link>
                 </Header>
 
-                <Route exact path={`${this.props.match.url}/edit/:typeId`} component={CategoryEdit}/>
+                <Route exact path={`${this.props.match.url}/edit/:id`} component={CategoryEdit}/>
                 <Route exact path={`${this.props.match.url}/new`} component={CategoryEdit}/>
                 <Route exact path={this.props.match.url} component={CategoryList}/>
 
