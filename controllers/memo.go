@@ -58,14 +58,17 @@ func (c *MemoController) GetTypeList() {
 	raw := orm.NewOrm()
 	var rows_orm []orm.Params
 
-	sql_ := "SELECT COUNT(q.uid) AS count, t.id as type_id, t.priority, t.name AS type, t.color " +
-		"FROM item_type AS t LEFT JOIN (select * from questions where uid = %d) AS q ON (q.type_id = t.id) " +
-		"WHERE t.uid = %d AND t.priority !=0 GROUP BY t.id ORDER BY count DESC"
+	sql_ := "SELECT q.count, t.id as type_id, t.priority, t.name AS type, t.color " +
+		"FROM item_type AS t LEFT JOIN (" +
+		"SELECT type_id, count(id) AS count FROM questions WHERE uid = %d GROUP BY type_id ORDER BY type_id" +
+		") AS q ON (q.type_id = t.id) " +
+		"WHERE t.uid = %d AND t.priority !=0 ORDER BY count DESC"
 	sql := fmt.Sprintf(sql_, uid, uid)
 	raw.Raw(sql).Values(&rows_orm)
 
 	c.Data["json"] = map[string]interface{}{
 		"data": rows_orm,
+		"sql":  sql,
 	}
 
 	c.ServeJSON()
