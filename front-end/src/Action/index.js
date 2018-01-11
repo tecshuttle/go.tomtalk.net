@@ -1,23 +1,22 @@
 //import Async from 'react-promise'
 
 /********************** Memo *********************/
-export function fetchPostsIfNeeded(subreddit, keyword) {
+export function fetchMemoListIfNeeded(subreddit, keyword) {
     return (dispatch, getState) => {
         if (shouldFetchPosts(getState(), subreddit)) {
-            return dispatch(fetchPosts(subreddit, keyword))
+            return dispatch(fetchMemoList(subreddit, keyword))
         }
     }
 }
 
-function fetchPosts(category, keyword) {
+function fetchMemoList(category, keyword) {
     return dispatch => {
-
         dispatch(requestPosts(category));
 
         return fetch('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1')
             .then(response => response.json())
             .then(json => {
-                dispatch(receivePosts(category, json))
+                dispatch(receiveMemoList(category, json))
             }).catch(error => {
                 console.error('LOAD_LIST', error);
             });
@@ -39,7 +38,7 @@ export function setMemoItem(id) {
 export function fetchMemoItem(id) {
     return (dispatch, getState) => {
         if (getState().memoList.items.length === 0) {
-            return dispatch(fetchPosts('active', '')).then(
+            return dispatch(fetchMemoList('active', '')).then(
                 () => {
                     getState().memoList.items.map((item, idx) => {
                         if (item.id === id) {
@@ -68,7 +67,6 @@ export function updateMemoItem(values) {
         formData.append('question', values.question);
         formData.append('answer', values.answer);
         formData.append('sync_state', values.sync_state);
-        //formData.append('mtime', values.mtime);
 
         fetch('/api/memo/save-item', {
             method: 'POST',
@@ -101,7 +99,7 @@ export function createMemoItem() {
             body: formData
         }).then(handleErrors).then((response) => response.json()).then((responseData) => {
             if (responseData.ret) {
-                dispatch(fetchPosts('active', ''));
+                dispatch(fetchMemoList('active', ''));
             } else {
                 console.log(responseData);
             }
@@ -111,8 +109,7 @@ export function createMemoItem() {
     }
 }
 
-
-function receivePosts(category, json) {
+function receiveMemoList(category, json) {
     return {
         type: 'RECEIVE_MEMO',
         data: json.data === null ? [] : json.data,
@@ -120,7 +117,6 @@ function receivePosts(category, json) {
 }
 
 function shouldFetchPosts(state, type_item) {
-    //const posts = state.postsBySubreddit[subreddit];
     const items = state.memoList.items;
 
     if (items.length === 0) {
@@ -153,9 +149,9 @@ function fetchMemoCategoryAPI() {
         return fetch('/api/memo/get-type-list')
             .then(response => response.json())
             .then(json => {
-                dispatch({type: 'RECEIVE_CATEGORY', data: json.data})
+                dispatch({type: 'RECEIVE_MEMO_CATEGORY', data: json.data})
             }).catch(error => {
-                console.error('LOAD_CATEGORY_LIST', error);
+                console.error(error);
             });
     }
 }

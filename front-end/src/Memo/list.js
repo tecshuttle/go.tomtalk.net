@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
-import {fetchPostsIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
+import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
 import Isotope from 'isotope-layout'
 
 const ReactMarkdown = require('react-markdown');
@@ -18,8 +18,8 @@ class MemoList_ extends Component {
     }
 
     componentWillMount() {
-        const {dispatch, selectedSubreddit} = this.props;
-        dispatch(fetchPostsIfNeeded(selectedSubreddit, ''));
+        const {dispatch, selectedCategory} = this.props;
+        dispatch(fetchMemoListIfNeeded(selectedCategory, ''));
         dispatch(fetchMemoCategory())
     }
 
@@ -28,11 +28,11 @@ class MemoList_ extends Component {
     }
 
     onClick(category) {
-        this.props.dispatch(fetchPostsIfNeeded(category, ''));
+        this.props.dispatch(fetchMemoListIfNeeded(category, ''));
     }
 
     onActiveClick() {
-        this.props.dispatch(fetchPostsIfNeeded('active', ''));
+        this.props.dispatch(fetchMemoListIfNeeded('active', ''));
     }
 
     onSearch(keyword) {
@@ -41,7 +41,7 @@ class MemoList_ extends Component {
                 message: '空值不能搜索！'
             });
         } else {
-            this.props.dispatch(fetchPostsIfNeeded('search', keyword));
+            this.props.dispatch(fetchMemoListIfNeeded('search', keyword));
         }
     }
 
@@ -76,9 +76,10 @@ class MemoList_ extends Component {
                     <Select style={{width: 200, marginLeft: 10, marginRight: 10}} placeholder='请选择分类'
                             onChange={this.onClick.bind(this)}>
                         {
-                            this.props.categoryList.items.map((item, idx) => (
-                                <Option value={item.type}
-                                        key={'cat-' + idx}>{item.type + ' ' + item.count}</Option>
+                            this.props.memoCategoryList.items.map((item, idx) => (
+                                <Option value={item.type} key={'cat-' + idx}>
+                                    {item.type + ' ' + (item.count === null ? 0 : item.count)}
+                                </Option>
                             ))
                         }
                     </Select>
@@ -118,8 +119,8 @@ class MemoList_ extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         memoList: state.memoList,
-        categoryList: state.categoryList,
-        selectedSubreddit: state.selectedSubreddit
+        memoCategoryList: state.memoCategoryList,
+        selectedCategory: state.selectedCategory
     }
 };
 

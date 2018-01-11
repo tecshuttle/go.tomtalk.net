@@ -49,6 +49,15 @@ const memoItem = (state = emptyMemo, action) => {
     }
 };
 
+const memoCategoryList = (state = {isFetching: false, items: []}, action) => {
+    switch (action.type) {
+        case 'RECEIVE_MEMO_CATEGORY':
+            return {...state, items: action.data};
+        default:
+            return state
+    }
+};
+
 /******************** Category Reducer **********************/
 const categoryList = (state = {isFetching: false, items: []}, action) => {
     switch (action.type) {
@@ -85,7 +94,7 @@ const categoryItem = (state = emptyCategory, action) => {
     }
 };
 
-const selectedSubreddit = (state = 'active', action) => {
+const selectedCategory = (state = 'active', action) => {
     switch (action.type) {
         case 'SELECT_SUBREDDIT':
             return action.subreddit;
@@ -94,41 +103,5 @@ const selectedSubreddit = (state = 'active', action) => {
     }
 };
 
-function posts(state = {isFetching: false, didInvalidate: false, items: []}, action) {
-    switch (action.type) {
-        case 'INVALIDATE_SUBREDDIT':
-            return Object.assign({}, state, {
-                didInvalidate: true
-            });
-        case 'REQUEST_POSTS':
-            return Object.assign({}, state, {
-                isFetching: true,
-                didInvalidate: false
-            });
-        case 'RECEIVE_POSTS':
-            return Object.assign({}, state, {
-                isFetching: false,
-                didInvalidate: false,
-                items: action.posts,
-                lastUpdated: action.receivedAt
-            });
-        default:
-            return state
-    }
-}
-
-function postsBySubreddit(state = {}, action) {
-    switch (action.type) {
-        case 'INVALIDATE_SUBREDDIT':
-        case 'RECEIVE_POSTS':
-        case 'REQUEST_POSTS':
-            return Object.assign({}, state, {
-                [action.subreddit]: posts(state[action.subreddit], action)
-            });
-        default:
-            return state
-    }
-}
-
-const Reducer = combineReducers({memoList, memoItem, categoryList, categoryItem, selectedSubreddit, postsBySubreddit});
+const Reducer = combineReducers({memoList, memoItem, memoCategoryList, categoryList, categoryItem, selectedCategory});
 export default Reducer
