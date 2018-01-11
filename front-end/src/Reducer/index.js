@@ -103,5 +103,15 @@ const selectedCategory = (state = 'active', action) => {
     }
 };
 
-const Reducer = combineReducers({memoList, memoItem, memoCategoryList, categoryList, categoryItem, selectedCategory});
+/******************** Todo Reducer **********************/
+const todoList = (state = {isFetching: false, items: []}, action) => {
+    switch (action.type) {
+        case 'RECEIVE_TODO_LIST':
+            return {...state, items: action.data};
+        default:
+            return state
+    }
+};
+
+const Reducer = combineReducers({memoList, memoItem, memoCategoryList, categoryList, categoryItem, selectedCategory, todoList});
 export default Reducer

@@ -235,3 +235,27 @@ export function updateCategoryItem(values) {
         });
     }
 }
+
+/********************** Todo ********************/
+export function fetchTodoListIfNeed() {
+    return (dispatch, getState) => {
+        const state = getState();
+
+        if (state.todoList.items.length === 0) {
+            dispatch(fetchTodoList())
+        }
+    }
+}
+
+function fetchTodoList() {
+    return dispatch => {
+        return fetch('http://todo.tomtalk.com/todo/get_jobs_of_week?day=2018-01-08&project_id=')
+            .then(response => response.json())
+            .then(json => {
+                dispatch({type: 'RECEIVE_TODO_LIST', data: json})
+            }).catch(error => {
+                console.error(error);
+            });
+    }
+}
+
