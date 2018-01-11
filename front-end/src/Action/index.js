@@ -214,9 +214,6 @@ export function setCategoryItem(id) {
 export function updateCategoryItem(values) {
     console.log(values);
     return (dispatch, getState) => {
-        // 修改state
-        dispatch({type: 'UPDATE_CATEGORY', values: values});
-
         // 修改数据库
         let formData = new FormData();
 
@@ -229,7 +226,11 @@ export function updateCategoryItem(values) {
             method: values.id === 0 ? 'POST' : 'PUT',
             body: formData
         }).then((response) => response.json()).then((responseData) => {
-            console.log(responseData);
+            if (values.id === 0) {
+                dispatch(fetchCategoryListAPI()) //新增刷新列表
+            } else {
+                dispatch({type: 'UPDATE_CATEGORY', values: values}); //编辑更新列表
+            }
         }).catch(error => {
             console.error(error);
         });
