@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
 import {Layout, Button, Card} from 'antd'
-import {fetchCategoryList} from '../Action'
+import {fetchCategoryList, deleteCategoryItem} from '../Action'
 
 const {Content} = Layout;
 
@@ -19,6 +19,10 @@ class CategoryList_ extends Component {
         this.props.history.push(this.props.match.url + '/edit/' + id);
     }
 
+    onDelete(id) {
+        this.props.dispatch(deleteCategoryItem(id));
+    }
+
     render() {
         const me = this;
 
@@ -33,7 +37,7 @@ class CategoryList_ extends Component {
                     {
                         this.props.categoryList.items.map((item, idx) => {
                             const editBtn = <Button onClick={() => me.onEdit(item.id)}>编辑</Button>;
-                            const delBtn = (item.count === '0' ? <Button>删除</Button> : '');
+                            const delBtn = (item.count === null ? <Button onClick={() => me.onDelete(item.id)}>删除</Button> : '');
 
                             return (
 

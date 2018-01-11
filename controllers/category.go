@@ -15,12 +15,15 @@ func (c *CategoryController) List() {
 	raw := orm.NewOrm()
 	var rows_orm []orm.Params
 
-	sql_ := "SELECT * FROM item_type WHERE uid = %d AND priority !=0 ORDER BY priority DESC"
-	sql := fmt.Sprintf(sql_, uid)
+	sql_ := "SELECT t.*, q.count FROM item_type  AS t	LEFT JOIN (" +
+		"SELECT	type_id, count(id) AS count	FROM questions WHERE uid = %d GROUP BY type_id) AS q " +
+		"ON (t.id = q.type_id) WHERE uid = %d AND priority !=0 ORDER BY priority DESC"
+	sql := fmt.Sprintf(sql_, uid, uid)
 	raw.Raw(sql).Values(&rows_orm)
 
 	c.Data["json"] = map[string]interface{}{
 		"data": rows_orm,
+		"sql":  sql,
 	}
 
 	c.ServeJSON()
@@ -71,6 +74,28 @@ func (c *CategoryController) Update() {
 		"sql": sql,
 		"id":  result,
 		"ret": true,
+	}
+
+	c.ServeJSON()
+}
+func (c *CategoryController) Delete() {
+	//获取提交参数
+	id_str := c.Ctx.Input.Param(":id")
+	//id, err := strconv.ParseInt(id_str, 10, 64)
+
+	o := orm.NewOrm()
+	sql_ := "DELETE FROM item_type WHERE id = %s"
+	sql := fmt.Sprintf(sql_, id_str)
+	_, err := o.Raw(sql).Exec()
+	if err == nil {
+		fmt.Println("ok")
+	} else {
+		fmt.Println(err)
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+		"sql":     sql,
 	}
 
 	c.ServeJSON()

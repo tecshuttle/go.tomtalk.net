@@ -236,6 +236,20 @@ export function updateCategoryItem(values) {
     }
 }
 
+export function deleteCategoryItem(id) {
+    return (dispatch, getState) => {
+        fetch('/api/category/' + id, {
+            method: 'DELETE',
+        }).then((response) => response.json()).then((responseData) => {
+            if (responseData.success) {
+                dispatch({type: 'DELETE_CATEGORY_ITEM', id: id});
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
 /********************** Todo ********************/
 export function fetchTodoListIfNeed() {
     return (dispatch, getState) => {
@@ -249,10 +263,10 @@ export function fetchTodoListIfNeed() {
 
 function fetchTodoList() {
     return dispatch => {
-        return fetch('http://todo.tomtalk.com/todo/get_jobs_of_week?day=2018-01-08&project_id=')
+        return fetch('/api/todo/get-jobs-of-week?day=2018-01-08')
             .then(response => response.json())
             .then(json => {
-                dispatch({type: 'RECEIVE_TODO_LIST', data: json})
+                dispatch({type: 'RECEIVE_TODO_LIST', data: json.data})
             }).catch(error => {
                 console.error(error);
             });
