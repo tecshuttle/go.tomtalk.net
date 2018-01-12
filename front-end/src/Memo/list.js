@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
-import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem, deleteMemoItem} from '../Action'
+import {Layout, Select, Button, Input, Icon, notification} from 'antd';
+import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
+import {CardM} from './card'
 import Isotope from 'isotope-layout'
 
-const ReactMarkdown = require('react-markdown');
 const {Content} = Layout;
 const Option = Select.Option;
 const Search = Input.Search;
@@ -15,6 +15,8 @@ class MemoList_ extends Component {
         this.state = {
             keyword: '',
         };
+
+        this.onEdit = this.onEdit.bind(this);
     }
 
     componentWillMount() {
@@ -54,21 +56,16 @@ class MemoList_ extends Component {
         this.setState({keyword: e.target.value});
     };
 
-    onEdit(id) {
-        this.props.history.push(this.props.match.url + '/edit/' + id);
-    }
-
-    onDelete(id) {
-        this.props.dispatch(deleteMemoItem(id));
-    }
-
     onNew() {
         this.props.dispatch(createMemoItem());
     }
 
+    onEdit(id) {
+        this.props.history.push(this.props.match.url + '/edit/' + id);
+    }
+
     render() {
         const {keyword} = this.state;
-        const me = this;
         const suffix = keyword ? <Icon type="close-circle" onClick={this.emitEmpty}/> : null;
 
         return (
@@ -97,50 +94,12 @@ class MemoList_ extends Component {
                 </div>
 
                 <div style={{margin: 10}} id="memo-list">
-                    {this.props.memoList.items.map((item, idx) => {
-                        const delBtn = (
-                            item.question === '' && item.answer === '' ?
-                                <Icon type="delete" onClick={() => me.onDelete(item.id)} style={{marginRight: 10}}/>
-                                : ''
-                        );
-                        const editBtn = <Icon type="edit" onClick={() => me.onEdit(item.id)}/>;
-
-                        const memoCard = <Card title={[
-                            <Icon type='tag' key={'tag-' + idx} style={{color: (item.color === null ? '' : '#' + item.color)}}/>,
-                            <span style={{color: (item.color === null ? '' : '#' + item.color)}}
-                                  key={'span-' + idx}>{item.type + ' ' + item.question}</span>]}
-                                               extra={<div>{delBtn}{editBtn}</div>}
-                                               style={{
-                                                   width: 300,
-                                                   color: (item.color === null ? '' : '#' + item.color),
-                                                   display: 'inline-block',
-                                                   marginRight: 10,
-                                                   marginBottom: 10
-                                               }}
-                                               key={'memo-' + idx}>
-                            <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
-                        </Card>;
-
-                        const emptyCard = <Card
-                            style={{
-                                width: 300,
-                                display: 'inline-block',
-                                marginRight: 10,
-                                marginBottom: 10
-                            }}
-                            bodyStyle={{
-                                color: '#333333',
-                                padding: 5
-                            }}
-                            key={'memo-' + idx}>
-
-                            <Icon type="tag-o" style={{fontSize: 30, marginLeft: 10}}/>
-                            <Icon type="file-text" style={{fontSize: 30, marginLeft: 10}}/>
-                            <Icon type="camera-o" style={{fontSize: 30, marginLeft: 10}}/>
-                            <Icon type="delete" onClick={() => me.onDelete(item.id)} style={{fontSize: 30, float: 'right'}}/>
-                        </Card>;
-
-                        return ( item.module === null ? emptyCard : memoCard )
+                    {this.props.memoList.items.map((item, i) => {
+                        if (item.module === null) {
+                            return (<CardM type="empty" item={item} idx={i} key={'memo-' + i}/>)
+                        } else {
+                            return (<CardM type="memo" item={item} idx={i} key={'memo-' + i} onEdit={this.onEdit}/>)
+                        }
                     })}
                 </div>
             </Content>
