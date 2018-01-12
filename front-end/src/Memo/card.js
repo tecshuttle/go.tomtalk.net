@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Icon, Card} from 'antd';
+import {Icon, Card, Popconfirm} from 'antd';
 import {connect} from 'react-redux'
 import {deleteMemoItem, updateMemoItem} from '../Action'
 
@@ -29,9 +29,15 @@ export class CardM_ extends Component {
     }
 
     photoCard(item) {
-        return <Card style={styles.style}
-                     cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"/>}>
-            <Meta title="Europe Street beat" description="www.instagram.com"/>
+        const img = <img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"/>;
+        const confirm = <Popconfirm title="真要删除图片吗？" onConfirm={() => this.onDelete(item.id)} okText="坚决删除"
+                                    cancelText="还是算了">
+            <Icon type="delete"/>
+        </Popconfirm>;
+        const title = <div><span>Europe Street beat</span>{confirm}</div>;
+
+        return <Card style={styles.style} cover={img}>
+            <Meta title={title} description="www.instagram.com"/>
         </Card>;
     }
 
