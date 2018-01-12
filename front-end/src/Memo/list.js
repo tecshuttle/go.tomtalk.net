@@ -98,7 +98,7 @@ class MemoList_ extends Component {
                         if (item.module === null) {
                             return (<CardM type="empty" item={item} idx={i} key={'memo-' + i}/>)
                         } else {
-                            return (<CardM type="memo" item={item} idx={i} key={'memo-' + i} onEdit={this.onEdit}/>)
+                            return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i} onEdit={this.onEdit}/>)
                         }
                     })}
                 </div>

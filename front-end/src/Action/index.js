@@ -66,6 +66,7 @@ export function updateMemoItem(values) {
         formData.append('type_id', values.type_id);
         formData.append('question', values.question);
         formData.append('answer', values.answer);
+        formData.append('module', values.module);
         formData.append('sync_state', values.sync_state);
 
         fetch('/api/memo/save-item', {

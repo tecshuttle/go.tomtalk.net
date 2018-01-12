@@ -82,6 +82,7 @@ func (c *MemoController) SaveItem() {
 	question := c.GetString("question", "")
 	answer := c.GetString("answer", "")
 	explain := c.GetString("explain", "")
+	module := c.GetString("module", "")
 	sync_state := c.GetString("sync_state", "")
 	mtime := c.GetString("mtime", "")
 
@@ -93,8 +94,8 @@ func (c *MemoController) SaveItem() {
 		if sync_state == "add" {
 			sync = ""
 		}
-		sql_ := "UPDATE questions SET question = '%s', answer = '%s', `explain` = '%s', type_id = %s, mtime = %d" + sync + " WHERE id = %s AND uid = %s"
-		sql = fmt.Sprintf(sql_, question, answer, explain, type_id, now, id, uid)
+		sql_ := "UPDATE questions SET module='%s', question='%s', answer='%s', `explain`='%s', type_id=%s, mtime=%d" + sync + " WHERE id=%s AND uid=%s"
+		sql = fmt.Sprintf(sql_, module, question, answer, explain, type_id, now, id, uid)
 	} else {
 		sql = "UPDATE questions SET mtime = " + mtime + ", sync_state = 'modify' WHERE id = " + id + " AND uid = " + uid
 	}
