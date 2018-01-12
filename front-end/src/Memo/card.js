@@ -55,9 +55,14 @@ export class CardM_ extends Component {
     memoCard(item) {
         const delBtn = (item.question === '' && item.answer === '' ? <Icon type="delete" onClick={() => this.onDelete(item.id)}/> : '');
         const editBtn = <Icon type="edit" onClick={() => this.props.onEdit(item.id)} style={{marginLeft: 10}}/>;
+        const title = <span style={{color: '#' + item.color}}>
+            {item.type === null ? "" : <Icon type='tag'/>}
+            {item.type === null ? "" : ' ' + item.type + ' '}
+            {item.question}
+            </span>;
 
         return <Card style={{...styles.style, color: '#' + item.color}}
-                     title={<span style={{color: '#' + item.color}}><Icon type='tag'/>{item.type + ' ' + item.question}</span>}
+                     title={title}
                      extra={<div>{delBtn}{editBtn}</div>}>
             <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
         </Card>;

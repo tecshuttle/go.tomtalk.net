@@ -41,14 +41,17 @@ func (c *CategoryController) Create() {
 	SQL := "INSERT INTO item_type (uid, name, priority, color, fade_out) VALUES (%s, '%s', %s, '%s', %s)"
 	sql := fmt.Sprintf(SQL, uid, name, priority, color, fadeOut)
 	raw := orm.NewOrm()
+	id := int64(0)
 	result, err := raw.Raw(sql).Exec()
 	if err != nil {
 		fmt.Println(err)
+	} else {
+		id, _ = result.LastInsertId()
 	}
 
 	c.Data["json"] = map[string]interface{}{
 		"sql": sql,
-		"id":  result,
+		"id":  id,
 		"ret": true,
 	}
 	c.ServeJSON()

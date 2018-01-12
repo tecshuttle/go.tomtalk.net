@@ -117,7 +117,7 @@ const categoryList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
-const emptyCategory = {id: 0, color: '#000000', priority: 0, name: ''};
+const emptyCategory = {id: 0, color: '#000000', priority: 1, name: ''};
 const categoryItem = (state = emptyCategory, action) => {
     switch (action.type) {
         case 'SET_EDIT_CATEGORY':

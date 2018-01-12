@@ -68,8 +68,9 @@ export class MemoForm extends Component {
                         initialValue: this.props.memoItem.type_id
                     })(
                         <Select style={{width: '100%'}} placeholder='请选择分类'>
+                            <Option value='0'>请选择分类</Option>
                             {
-                                this.props.categoryList.items.map((item, idx) => (
+                                this.props.memoCategoryList.items.map((item, idx) => (
                                     <Option value={item.type_id} key={'cat-' + idx}>{item.type}</Option>
                                 ))
                             }
@@ -96,7 +97,7 @@ export class MemoForm extends Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        categoryList: state.categoryList,
+        memoCategoryList: state.memoCategoryList,
         memoItem: state.memoItem,
         memoList: state.memoList
     }

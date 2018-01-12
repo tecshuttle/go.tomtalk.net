@@ -88,7 +88,7 @@ export class CategoryForm extends Component {
                     {getFieldDecorator('priority', {
                         rules: [{required: true, message: '请指定显示顺序！'}],
                     })(
-                        <InputNumber min={0} style={{width: '100%'}} placeholder='显示顺序'/>
+                        <InputNumber min={1} style={{width: '100%'}} placeholder='显示顺序'/>
                     )}
                 </FormItem>
                 <FormItem>
