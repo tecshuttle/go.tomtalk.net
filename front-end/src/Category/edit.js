@@ -13,13 +13,17 @@ export class CategoryForm extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.categoryList.items.length === 0) {
             this.props.dispatch(fetchCategoryItem(this.props.match.params.typeId)).then(() => {
                 this.setFieldsValue();
             });
         } else {
-            this.props.dispatch(setCategoryItem(this.props.match.params.id));
+            if (this.props.match.params.id === undefined) {
+                this.setFieldsValue();
+            } else {
+                this.props.dispatch(setCategoryItem(this.props.match.params.id));
+            }
         }
     }
 
@@ -31,6 +35,7 @@ export class CategoryForm extends Component {
     }
 
     setFieldsValue() {
+        console.log(this.props.categoryItem);
         this.props.form.setFieldsValue({
             color_: this.props.categoryItem.color,
             color: this.props.categoryItem.color,
@@ -47,15 +52,14 @@ export class CategoryForm extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            if (!err) {
+            if (err) {
+                console.log(err);
+            } else {
                 delete  values.color_;  // 为数据干净些，不给state传颜色指示器变量。
                 values.color = values.color.replace(/#/, ''); // 数据库里存的是不变#号的颜色。todo: 修改规则，数据库存带#号的颜色。
                 this.props.dispatch(updateCategoryItem({...this.props.categoryItem, ...values}));
-            } else {
-                console.log(err);
+                this.props.history.goBack();
             }
-
-            this.props.history.goBack();
         });
     };
 

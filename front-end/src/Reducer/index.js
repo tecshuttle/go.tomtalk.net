@@ -28,6 +28,15 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
+const selectedCategory = (state = 'active', action) => {
+    switch (action.type) {
+        case 'SELECT_SUBREDDIT':
+            return action.subreddit;
+        default:
+            return state
+    }
+};
+
 const emptyMemo = {
     answer: '',
     explain: '',
@@ -103,15 +112,6 @@ const categoryItem = (state = emptyCategory, action) => {
             return {...action.item, color: '#' + action.item.color};
         case 'CLEAR_CATEGORY_ITEM':
             return emptyCategory;
-        default:
-            return state
-    }
-};
-
-const selectedCategory = (state = 'active', action) => {
-    switch (action.type) {
-        case 'SELECT_SUBREDDIT':
-            return action.subreddit;
         default:
             return state
     }

@@ -33,15 +33,14 @@ class CategoryList_ extends Component {
                 </div>
 
                 <div style={{margin: 10}}>
-
                     {
                         this.props.categoryList.items.map((item, idx) => {
                             const editBtn = <Button onClick={() => me.onEdit(item.id)}>编辑</Button>;
                             const delBtn = (item.count === null ? <Button onClick={() => me.onDelete(item.id)}>删除</Button> : '');
 
                             return (
-
-                                <Card title={item.name} key={'cat-' + idx}
+                                <Card title={<span style={{color: '#' + item.color}}>{item.name}</span>}
+                                      key={'cat-' + idx}
                                       extra={<div>{editBtn} {delBtn}</div>}
                                       style={{
                                           display: 'inline-block',
@@ -61,7 +60,7 @@ class CategoryList_ extends Component {
     }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
     return {
         categoryList: state.categoryList
     }

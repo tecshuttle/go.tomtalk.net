@@ -13,16 +13,16 @@ type CategoryController struct {
 func (c *CategoryController) List() {
 	uid := 1
 	raw := orm.NewOrm()
-	var rows_orm []orm.Params
+	var rows []orm.Params
 
-	sql_ := "SELECT t.*, q.count FROM item_type  AS t	LEFT JOIN (" +
+	SQL := "SELECT t.*, q.count FROM item_type  AS t	LEFT JOIN (" +
 		"SELECT	type_id, count(id) AS count	FROM questions WHERE uid = %d GROUP BY type_id) AS q " +
 		"ON (t.id = q.type_id) WHERE uid = %d AND priority !=0 ORDER BY priority DESC"
-	sql := fmt.Sprintf(sql_, uid, uid)
-	raw.Raw(sql).Values(&rows_orm)
+	sql := fmt.Sprintf(SQL, uid, uid)
+	raw.Raw(sql).Values(&rows)
 
 	c.Data["json"] = map[string]interface{}{
-		"data": rows_orm,
+		"data": rows,
 		"sql":  sql,
 	}
 
@@ -35,11 +35,11 @@ func (c *CategoryController) Create() {
 	//获取post参数
 	color := c.GetString("color", "")
 	name := c.GetString("name", "")
-	fade_out := c.GetString("fade_out", "0")
+	fadeOut := c.GetString("fade_out", "0")
 	priority := c.GetString("priority", "0")
 
-	sql_ := "INSERT INTO item_type (uid, name, priority, color, fade_out) VALUES (%s, '%s', %s, '%s', %s)"
-	sql := fmt.Sprintf(sql_, uid, name, priority, color, fade_out)
+	SQL := "INSERT INTO item_type (uid, name, priority, color, fade_out) VALUES (%s, '%s', %s, '%s', %s)"
+	sql := fmt.Sprintf(SQL, uid, name, priority, color, fadeOut)
 	raw := orm.NewOrm()
 	result, err := raw.Raw(sql).Exec()
 	if err != nil {
@@ -59,11 +59,11 @@ func (c *CategoryController) Update() {
 	color := c.GetString("color", "")
 	id := c.GetString("id", "")
 	name := c.GetString("name", "")
-	fade_out := c.GetString("fade_out", "0")
+	fadeOut := c.GetString("fade_out", "0")
 	priority := c.GetString("priority", "0")
 
-	sql_ := "UPDATE item_type SET name = '%s', priority = %s, color = '%s', fade_out = %s WHERE `id` = %s"
-	sql := fmt.Sprintf(sql_, name, priority, color, fade_out, id)
+	SQL := "UPDATE item_type SET name = '%s', priority = %s, color = '%s', fade_out = %s WHERE `id` = %s"
+	sql := fmt.Sprintf(SQL, name, priority, color, fadeOut, id)
 	raw := orm.NewOrm()
 	result, err := raw.Raw(sql).Exec()
 	if err != nil {
@@ -78,14 +78,12 @@ func (c *CategoryController) Update() {
 
 	c.ServeJSON()
 }
+
 func (c *CategoryController) Delete() {
-	//获取提交参数
-	id_str := c.Ctx.Input.Param(":id")
-	//id, err := strconv.ParseInt(id_str, 10, 64)
+	idStr := c.Ctx.Input.Param(":id")
 
 	o := orm.NewOrm()
-	sql_ := "DELETE FROM item_type WHERE id = %s"
-	sql := fmt.Sprintf(sql_, id_str)
+	sql := fmt.Sprintf("DELETE FROM item_type WHERE id = %s", idStr)
 	_, err := o.Raw(sql).Exec()
 	if err == nil {
 		fmt.Println("ok")
