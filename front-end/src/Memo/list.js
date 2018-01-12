@@ -5,6 +5,7 @@ import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Actio
 import {CardM} from './card'
 import Isotope from 'isotope-layout'
 
+const imagesLoaded = require('imagesloaded');
 const {Content} = Layout;
 const Option = Select.Option;
 const Search = Input.Search;
@@ -26,7 +27,10 @@ class MemoList_ extends Component {
     }
 
     componentDidUpdate() {
-        new Isotope(document.querySelector('#memo-list'))
+        const $grid = new Isotope(document.querySelector('#memo-list'));
+        imagesLoaded(document.querySelector('#memo-list'), function () {
+            $grid.arrange();
+        });
     }
 
     onClick(category) {
