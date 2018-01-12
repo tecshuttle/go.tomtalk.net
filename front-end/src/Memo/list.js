@@ -104,23 +104,43 @@ class MemoList_ extends Component {
                                 : ''
                         );
                         const editBtn = <Icon type="edit" onClick={() => me.onEdit(item.id)}/>;
-                        return (
-                            <Card title={[
-                                <Icon type='tag' key={'tag-' + idx} style={{color: (item.color === null ? '' : '#' + item.color)}}/>,
-                                <span style={{color: (item.color === null ? '' : '#' + item.color)}}
-                                      key={'span-' + idx}>{item.type + ' ' + item.question}</span>]}
-                                  extra={<div>{delBtn}{editBtn}</div>}
-                                  style={{
-                                      width: 300,
-                                      color: (item.color === null ? '' : '#' + item.color),
-                                      display: 'inline-block',
-                                      marginRight: 10,
-                                      marginBottom: 10
-                                  }}
-                                  key={'memo-' + idx}>
-                                <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
-                            </Card>
-                        )
+
+                        const memoCard = <Card title={[
+                            <Icon type='tag' key={'tag-' + idx} style={{color: (item.color === null ? '' : '#' + item.color)}}/>,
+                            <span style={{color: (item.color === null ? '' : '#' + item.color)}}
+                                  key={'span-' + idx}>{item.type + ' ' + item.question}</span>]}
+                                               extra={<div>{delBtn}{editBtn}</div>}
+                                               style={{
+                                                   width: 300,
+                                                   color: (item.color === null ? '' : '#' + item.color),
+                                                   display: 'inline-block',
+                                                   marginRight: 10,
+                                                   marginBottom: 10
+                                               }}
+                                               key={'memo-' + idx}>
+                            <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
+                        </Card>;
+
+                        const emptyCard = <Card
+                            style={{
+                                width: 300,
+                                display: 'inline-block',
+                                marginRight: 10,
+                                marginBottom: 10
+                            }}
+                            bodyStyle={{
+                                color: '#333333',
+                                padding: 5
+                            }}
+                            key={'memo-' + idx}>
+
+                            <Icon type="tag-o" style={{fontSize: 30, marginLeft: 10}}/>
+                            <Icon type="file-text" style={{fontSize: 30, marginLeft: 10}}/>
+                            <Icon type="camera-o" style={{fontSize: 30, marginLeft: 10}}/>
+                            <Icon type="delete" onClick={() => me.onDelete(item.id)} style={{fontSize: 30, float: 'right'}}/>
+                        </Card>;
+
+                        return ( item.module === null ? emptyCard : memoCard )
                     })}
                 </div>
             </Content>
