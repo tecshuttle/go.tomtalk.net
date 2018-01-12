@@ -22,7 +22,19 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
                         : item
                 )
             };
-
+        case 'DELETE_MEMO_ITEM':
+            for (var i in state.items) {
+                if (state.items[i].id === action.id) {
+                    return {
+                        ...state,
+                        items: [
+                            ...state.items.slice(0, i * 1),
+                            ...state.items.slice((i * 1) + 1)
+                        ]
+                    }
+                }
+            }
+            return state;
         default:
             return state
     }

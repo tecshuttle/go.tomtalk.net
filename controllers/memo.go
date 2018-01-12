@@ -116,18 +116,41 @@ func (c *MemoController) SaveItem() {
 
 func (c *MemoController) Create() {
 	uid := 1
-	sql := fmt.Sprintf("INSERT INTO questions (uid) VALUES (%d)", uid)
+	sql := fmt.Sprintf("INSERT INTO questions (uid, question, answer, `explain`) VALUES(%d, '', '', '')", uid)
 
 	raw := orm.NewOrm()
 	result, err := raw.Raw(sql).Exec()
+	id := int64(0)
 	if err != nil {
 		fmt.Println(err)
+	} else {
+		id, _ = result.LastInsertId()
 	}
 
 	c.Data["json"] = map[string]interface{}{
 		"sql": sql,
-		"id":  result,
+		"id":  id,
 		"ret": true,
+	}
+
+	c.ServeJSON()
+}
+
+func (c *MemoController) Delete() {
+	idStr := c.Ctx.Input.Param(":id")
+
+	o := orm.NewOrm()
+	sql := fmt.Sprintf("DELETE FROM questions WHERE id = %s", idStr)
+	_, err := o.Raw(sql).Exec()
+	if err == nil {
+		fmt.Println("ok")
+	} else {
+		fmt.Println(err)
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+		"sql":     sql,
 	}
 
 	c.ServeJSON()

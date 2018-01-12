@@ -109,6 +109,20 @@ export function createMemoItem() {
     }
 }
 
+export function deleteMemoItem(id) {
+    return (dispatch, getState) => {
+        fetch('/api/memo/' + id, {
+            method: 'DELETE',
+        }).then((response) => response.json()).then((responseData) => {
+            if (responseData.success) {
+                dispatch({type: 'DELETE_MEMO_ITEM', id: id});
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
 function receiveMemoList(category, json) {
     return {
         type: 'RECEIVE_MEMO',

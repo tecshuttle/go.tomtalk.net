@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Layout, Select, Button, Input, Icon, notification, Card} from 'antd';
-import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
+import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem, deleteMemoItem} from '../Action'
 import Isotope from 'isotope-layout'
 
 const ReactMarkdown = require('react-markdown');
@@ -54,8 +54,12 @@ class MemoList_ extends Component {
         this.setState({keyword: e.target.value});
     };
 
-    onCardClick(id) {
+    onEdit(id) {
         this.props.history.push(this.props.match.url + '/edit/' + id);
+    }
+
+    onDelete(id) {
+        this.props.dispatch(deleteMemoItem(id));
     }
 
     onNew() {
@@ -93,30 +97,38 @@ class MemoList_ extends Component {
                 </div>
 
                 <div style={{margin: 10}} id="memo-list">
-                    {this.props.memoList.items.map((item, idx) => (
-                        <Card title={[
-                            <Icon type='tag' key={'tag-' + idx} style={{color: (item.color === null ? '' : '#' + item.color)}}/>,
-                            <span style={{color: (item.color === null ? '' : '#' + item.color)}}
-                                  key={'span-' + idx}>{item.type + ' ' + item.question}</span>]}
-                              extra={<Icon type="edit" onClick={() => me.onCardClick(item.id)}/>}
-                              style={{
-                                  width: 300,
-                                  color: (item.color === null ? '' : '#' + item.color),
-                                  display: 'inline-block',
-                                  marginRight: 10,
-                                  marginBottom: 10
-                              }}
-                              key={'memo-' + idx}>
-                            <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
-                        </Card>
-                    ))}
+                    {this.props.memoList.items.map((item, idx) => {
+                        const delBtn = (
+                            item.question === '' && item.answer === '' ?
+                                <Icon type="delete" onClick={() => me.onDelete(item.id)} style={{marginRight: 10}}/>
+                                : ''
+                        );
+                        const editBtn = <Icon type="edit" onClick={() => me.onEdit(item.id)}/>;
+                        return (
+                            <Card title={[
+                                <Icon type='tag' key={'tag-' + idx} style={{color: (item.color === null ? '' : '#' + item.color)}}/>,
+                                <span style={{color: (item.color === null ? '' : '#' + item.color)}}
+                                      key={'span-' + idx}>{item.type + ' ' + item.question}</span>]}
+                                  extra={<div>{delBtn}{editBtn}</div>}
+                                  style={{
+                                      width: 300,
+                                      color: (item.color === null ? '' : '#' + item.color),
+                                      display: 'inline-block',
+                                      marginRight: 10,
+                                      marginBottom: 10
+                                  }}
+                                  key={'memo-' + idx}>
+                                <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
+                            </Card>
+                        )
+                    })}
                 </div>
             </Content>
         )
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         memoList: state.memoList,
         memoCategoryList: state.memoCategoryList,
