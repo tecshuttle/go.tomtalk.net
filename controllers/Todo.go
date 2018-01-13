@@ -90,11 +90,80 @@ func gatherJobsByDay(jobsOfWeek []orm.Params) [][]orm.Params {
 		}
 	}*/
 
-	//输出为数组
+	//输出为数组。第0天为星期天，转为第6天，其它天下标-1，往前提一天。
 	arr := make([][]orm.Params, 7)
 	for i, day := range list {
-		arr[i] = day
+		if i == 0 {
+			arr[6] = day
+		} else {
+			arr[i-1] = day
+		}
 	}
 
 	return arr
+}
+
+func parseInt(intStr interface{}) (number int64) {
+	number, _ = strconv.ParseInt(fmt.Sprintf("%s", intStr), 10, 64)
+	return
+}
+
+func (c *TodoController) CreateJob() {
+	uid := 1
+	id := int64(0)
+
+	//取得任务当天的开始时间
+	iDay, _ := strconv.ParseInt(c.GetString("i_day", ""), 10, 64)
+	weekDay := c.GetString("week_day", "")
+	week := getTimeRangeOfWeek(weekDay)
+
+	startTime := week["start"] + (iDay-1)*(3600*24)
+	if iDay == 0 {
+		startTime = week["start"] + 6*(3600*24)
+	}
+
+	//如果当天已存在任务，则新任务添加在原有任务后面
+	hasJob, job, sql1 := isHadJobDay(startTime)
+	if hasJob {
+		startTime = parseInt(job["start_time"]) + parseInt(job["time_long"]) + 1
+	}
+
+	SQL := "INSERT INTO tomtalk.todo_lists (user_id, job_name, project_id, start_time, time_long) VALUES (%d, '%s', %d, '%d', %d)"
+	sql2 := fmt.Sprintf(SQL, uid, "#", 0, startTime, 3600)
+	raw := orm.NewOrm()
+
+	result, err := raw.Raw(sql2).Exec()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		id, _ = result.LastInsertId()
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+		"id":      id,
+		"sql1":    sql1,
+		"sql2":    sql2,
+		"job":     job,
+	}
+	c.ServeJSON()
+}
+
+func isHadJobDay(start int64) (bool, orm.Params, string) {
+	end := start + 3600*24 - 1
+	SQL := "SELECT * FROM tomtalk.todo_lists WHERE start_time >=%d AND start_time <= %d ORDER BY start_time DESC"
+	sql := fmt.Sprintf(SQL, start, end)
+
+	raw := orm.NewOrm()
+	var rows []orm.Params
+	num, err := raw.Raw(sql).Values(&rows)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if num == 0 {
+		return false, rows[0], sql
+	} else {
+		return true, rows[0], sql
+	}
 }

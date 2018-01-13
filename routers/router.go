@@ -25,4 +25,5 @@ func init() {
 	beego.Router("/api/category/:id", &controllers.CategoryController{}, "delete:Delete")
 
 	beego.Router("/api/todo/get-jobs-of-week", &controllers.TodoController{}, "get:GetJobsOfWeek")
+	beego.Router("/api/todo/job", &controllers.TodoController{}, "post:CreateJob")
 }

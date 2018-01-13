@@ -270,7 +270,6 @@ export function deleteCategoryItem(id) {
 export function fetchTodoListIfNeed() {
     return (dispatch, getState) => {
         const state = getState();
-
         if (state.todoList.items.length === 0) {
             dispatch(fetchTodoList())
         }
@@ -286,6 +285,27 @@ function fetchTodoList() {
             }).catch(error => {
                 console.error(error);
             });
+    }
+}
+
+export function createTodoJob(i_day) {
+    return (dispatch, getState) => {
+        let formData = new FormData();
+        formData.append('i_day', i_day);
+        formData.append('week_day', '2018-01-08');
+
+        fetch('/api/todo/job', {
+            method: 'POST',
+            body: formData
+        }).then(handleErrors).then((response) => response.json()).then((responseData) => {
+            if (responseData.success) {
+                dispatch(fetchTodoList());
+            } else {
+                console.log(responseData);
+            }
+        }).catch(error => {
+            console.error(error);
+        });
     }
 }
 

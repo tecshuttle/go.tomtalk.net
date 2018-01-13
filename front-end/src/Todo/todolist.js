@@ -1,49 +1,41 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
-import {Layout, Card} from 'antd'
-import {fetchTodoListIfNeed} from '../Action'
-
-const {Content} = Layout;
+import {Card, Icon} from 'antd'
+import {fetchTodoListIfNeed, createTodoJob} from '../Action'
 
 class TodoList_ extends Component {
     componentWillMount() {
         this.props.dispatch(fetchTodoListIfNeed())
     }
 
-    render() {
-        return (
-            <Content>
-                <div style={{margin: 10}}>
-                    {
-                        this.props.todoList.items.map((item, idx) => {
-                            return (
-                                <Card title={item.name} key={'cat-' + idx}
-                                      style={{
-                                          display: 'inline-block',
-                                          marginBottom: 10,
-                                          marginRight: 10,
-                                          width: 250,
-                                          color: '#' + item.color
-                                      }}>
-                                    {
-                                        item.map((job, idx) => {
-                                            return (
-                                                <p key={'job-' + idx}>
-                                                    {job.job_name}
-                                                </p>
-                                            )
-                                        })
+    onNew(i_day) {
+        i_day = (i_day > 6 ? 0 : i_day);
+        this.props.dispatch(createTodoJob(i_day));
+    }
 
-                                    }
-                                </Card>
-                            )
-                        })
-                    }
-                </div>
-            </Content>
-        )
+    render() {
+        return <div style={{margin: 10}}>
+            {this.props.todoList.items.map((item, idx) =>
+                <Card title={item.name}
+                      key={'cat-' + idx} style={styles.card}
+                      actions={[<Icon type="plus-circle-o" onClick={() => this.onNew(idx + 1)}/>]}>
+                    {item.map((job, idx) => <p key={'job-' + idx} style={job.status === '1' ? {color: "#dddddd"} : {}}>
+                        {job.job_name}
+                    </p>)}
+                </Card>)
+            }
+        </div>
     }
 }
+
+const styles = {
+    card: {
+        display: 'inline-block',
+        marginBottom: 10,
+        marginRight: 10,
+        width: 250,
+    }
+};
 
 function mapStateToProps(state, ownProps) {
     return {
