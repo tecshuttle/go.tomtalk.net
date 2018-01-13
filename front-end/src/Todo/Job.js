@@ -1,24 +1,16 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 import PropTypes from 'prop-types'
 import {findDOMNode} from 'react-dom'
 import {DragSource, DropTarget} from 'react-dnd'
-import ItemTypes from './ItemTypes'
+import ItemTypes from './Sortable/ItemTypes'
 
 var flow = require('lodash/flow');
-
-const style = {
-    //border: '1px dashed gray',
-    //marginBottom: '.5rem',
-    padding: '0.5rem 1rem',
-    backgroundColor: 'white',
-    cursor: 'move',
-}
 
 const cardSource = {
     beginDrag(props) {
         return {
-            id: props.id,
-            index: props.index,
+            id: props.idx,
+            index: props.idx,
         }
     },
 }
@@ -69,11 +61,11 @@ const cardTarget = {
 
         const item = monitor.getItem();
         console.log(item, component.props.day);
-        return { moved: true };
+        return {moved: true};
     }
 }
 
-export class Card extends Component {
+export class Job extends Component {
     static propTypes = {
         connectDragSource: PropTypes.func.isRequired,
         connectDropTarget: PropTypes.func.isRequired,
@@ -85,6 +77,7 @@ export class Card extends Component {
     };
 
     constructor(props) {
+        console.log(props);
         super(props)
         this.state = {checkbox: ''}
     }
@@ -100,16 +93,16 @@ export class Card extends Component {
             connectDragSource,
             connectDropTarget,
         } = this.props
-        const opacity = isDragging ? 0.3 : 1
+
+        const {idx, job} = this.props;
 
         return connectDragSource(
-            connectDropTarget(<div style={{...style, opacity}}>
-                {this.state.checkbox}{text}
-            </div>)
+            connectDropTarget(<p key={'job-' + idx} style={job.status === '1' ? {color: "#dddddd"} : {}}>
+                {job.job_name}
+            </p>)
         )
     }
 }
-
 
 export default flow(
     DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
@@ -119,4 +112,4 @@ export default flow(
     DropTarget(ItemTypes.CARD, cardTarget, connect => ({
         connectDropTarget: connect.dropTarget(),
     }))
-)(Card)
+)(Job)
