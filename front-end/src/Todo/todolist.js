@@ -33,7 +33,7 @@ const styles = {
         display: 'inline-block',
         marginBottom: 10,
         marginRight: 10,
-        width: 250,
+        width: 255,
     }
 };
 
