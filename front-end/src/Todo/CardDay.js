@@ -4,9 +4,10 @@ import {Card, Icon} from 'antd'
 import {createTodoJob} from '../Action'
 import {DragDropContext} from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
-import {Job} from './Job'
+import Job from './Job'
+import {connect} from "react-redux";
 
-class CardDay extends Component {
+class CardDay_ extends Component {
     constructor(props) {
         super(props)
         this.moveCard = this.moveCard.bind(this)
@@ -75,4 +76,5 @@ const styles = {
     }
 };
 
+export const CardDay = connect()(CardDay_);
 export default DragDropContext(HTML5Backend)(CardDay)

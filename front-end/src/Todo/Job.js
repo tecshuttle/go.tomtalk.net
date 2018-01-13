@@ -17,8 +17,6 @@ const cardSource = {
 
 const cardTarget = {
     hover(props, monitor, component) {
-        //console.log(props, monitor, component);
-
         const dragIndex = monitor.getItem().index
         const hoverIndex = props.index
 
@@ -77,19 +75,15 @@ export class Job extends Component {
     };
 
     constructor(props) {
-        console.log(props);
         super(props)
         this.state = {checkbox: ''}
     }
 
     componentWillMount() {
-        console.log(this.props);
     }
 
     render() {
         const {
-            text,
-            isDragging,
             connectDragSource,
             connectDropTarget,
         } = this.props
@@ -97,7 +91,7 @@ export class Job extends Component {
         const {idx, job} = this.props;
 
         return connectDragSource(
-            connectDropTarget(<p key={'job-' + idx} style={job.status === '1' ? {color: "#dddddd"} : {}}>
+            connectDropTarget(<p key={'job-' + idx} id={idx} style={job.status === '1' ? {color: "#dddddd"} : {}}>
                 {job.job_name}
             </p>)
         )

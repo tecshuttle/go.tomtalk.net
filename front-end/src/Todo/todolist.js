@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {CardDay} from './CardDay'
+import CardDay from './CardDay'
 import {connect} from 'react-redux'
 import {fetchTodoListIfNeed} from '../Action'
 
