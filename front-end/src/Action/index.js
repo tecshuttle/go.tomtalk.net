@@ -169,6 +169,26 @@ export function deleteMemoItem(id) {
     }
 }
 
+export function inBoxMemoItem(id) {
+    return (dispatch, getState) => {
+        var now = new Date().getTime();
+        let formData = new FormData();
+        formData.append('id', id);
+        formData.append('mtime', parseInt((now / 1000) - (3600 * 24 * 10)));
+
+        fetch('/api/memo/save-item', {
+            method: 'POST',
+            body: formData
+        }).then((response) => response.json()).then((responseData) => {
+            if (responseData.ret) {
+                dispatch({type: 'DELETE_MEMO_ITEM', id: id});
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
 function receiveMemoList(category, json) {
     return {
         type: 'RECEIVE_MEMO',

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Icon, Card, Popconfirm} from 'antd';
 import {connect} from 'react-redux'
-import {deleteMemoItem, updateMemoItem} from '../Action'
+import {deleteMemoItem, inBoxMemoItem, updateMemoItem} from '../Action'
 
 const {Meta} = Card;
 const ReactMarkdown = require('react-markdown');
@@ -12,6 +12,10 @@ export class CardM_ extends Component {
 
     onDelete(id) {
         this.props.dispatch(deleteMemoItem(id));
+    }
+
+    onInBox(id) {
+        this.props.dispatch(inBoxMemoItem(id));
     }
 
     setModule(module) {
@@ -56,7 +60,10 @@ export class CardM_ extends Component {
 
     memoCard(item) {
         const color = (item.color === null ? '#000000' : '#' + item.color);
-        const delBtn = (item.question === '' && item.answer === '' ? <Icon type="delete" onClick={() => this.onDelete(item.id)}/> : '');
+        const delBtn = (item.question === '' && item.answer === '' ?
+                <Icon type="delete" style={{marginRight: 10}} onClick={() => this.onDelete(item.id)}/>
+                : ''
+        );
         const editBtn = <Icon type="edit" onClick={() => this.props.onEdit(item.id)} style={{marginLeft: 10}}/>;
         const title = <span style={{color: color}}>
             <Icon type='tag'/>
@@ -65,7 +72,7 @@ export class CardM_ extends Component {
 
         return <Card style={{...styles.style, color: color}}
                      title={title}
-                     extra={<div>{delBtn}{editBtn}</div>}>
+                     extra={<div>{delBtn}<Icon type="inbox" onClick={() => this.onInBox(item.id)}/>{editBtn}</div>}>
             <ReactMarkdown style={{color: color}} source={item.answer}/>
         </Card>;
     }
