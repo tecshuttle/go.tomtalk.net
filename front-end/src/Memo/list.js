@@ -26,11 +26,24 @@ class MemoList_ extends Component {
         dispatch(fetchMemoCategory())
     }
 
+    componentDidMount() {
+        if (this.isotopeInstance === undefined) {
+            this.isotopeInstance = new Isotope(this.getList(), {transitionDuration: 0})
+        }
+    }
+
     componentDidUpdate() {
-        const $grid = new Isotope(document.querySelector('#memo-list'));
-        imagesLoaded(document.querySelector('#memo-list'), function () {
-            $grid.arrange();
+        this.isotopeInstance.reloadItems();
+        this.isotopeInstance.arrange();
+
+        const me = this;
+        imagesLoaded(this.getList(), function () {
+            me.isotopeInstance.arrange();
         });
+    }
+
+    getList() {
+        return document.querySelector('#memo-list')
     }
 
     onClick(category) {
