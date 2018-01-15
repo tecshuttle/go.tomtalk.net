@@ -50,7 +50,7 @@ export class CardM_ extends Component {
         return <Card style={{...styles.style, color: color}}
                      title={<span style={{color: color}}><Icon type='file-text'/>{item.type} 字数：{item.answer.length}</span>}
                      extra={<div>{delBtn}{editBtn}</div>}>
-            <h2>{item.question}</h2>
+            <h2 style={{cursor: 'pointer'}} onClick={() => this.props.blogShow(item.id)}>{item.question}</h2>
         </Card>;
     }
 

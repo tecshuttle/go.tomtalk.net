@@ -59,7 +59,7 @@ export function setMemoItem(id) {
 export function fetchMemoItem(id) {
     return (dispatch, getState) => {
         if (getState().memoList.items.length === 0) {
-            return dispatch(fetchMemoList('active', '')).then(
+            return dispatch(fetchMemoList('', '')).then(
                 () => {
                     getState().memoList.items.map((item, idx) => {
                         if (item.id === id) {
@@ -145,7 +145,7 @@ export function createMemoItem() {
             body: formData
         }).then(handleErrors).then((response) => response.json()).then((responseData) => {
             if (responseData.ret) {
-                dispatch(fetchMemoList('active', ''));
+                dispatch(fetchMemoList('', ''));
             } else {
                 console.log(responseData);
             }

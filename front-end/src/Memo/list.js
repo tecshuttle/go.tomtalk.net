@@ -18,6 +18,7 @@ class MemoList_ extends Component {
         };
 
         this.onEdit = this.onEdit.bind(this);
+        this.blogShow = this.blogShow.bind(this);
     }
 
     componentWillMount() {
@@ -86,6 +87,10 @@ class MemoList_ extends Component {
         this.props.history.push(this.props.match.url + '/edit/' + id);
     }
 
+    blogShow(id) {
+        this.props.history.push(this.props.match.url + '/blog/' + id);
+    }
+
     render() {
         const {keyword} = this.state;
         const suffix = keyword ? <Icon type="close-circle" key='keyword' onClick={this.emitEmpty}/> : null;
@@ -121,7 +126,8 @@ class MemoList_ extends Component {
                         if (item.module === null) {
                             return (<CardM type="empty" item={item} idx={i} key={'memo-' + i}/>)
                         } else {
-                            return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i} onEdit={this.onEdit}/>)
+                            return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i}
+                                           onEdit={this.onEdit} blogShow={this.blogShow}/>)
                         }
                     })}
                 </div>
