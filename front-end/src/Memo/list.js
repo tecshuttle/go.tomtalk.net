@@ -14,15 +14,15 @@ class MemoList_ extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            keyword: '',
+            keyword: this.props.memoListFilter.keyword,
         };
 
         this.onEdit = this.onEdit.bind(this);
     }
 
     componentWillMount() {
-        const {dispatch, selectedCategory} = this.props;
-        dispatch(fetchMemoListIfNeeded(selectedCategory, ''));
+        const {dispatch, memoListFilter} = this.props;
+        dispatch(fetchMemoListIfNeeded({category: memoListFilter.category, keyword: memoListFilter.keyword}));
         dispatch(fetchMemoCategory())
     }
 
@@ -46,30 +46,35 @@ class MemoList_ extends Component {
         return document.querySelector('#memo-list')
     }
 
-    onClick(category) {
-        this.props.dispatch(fetchMemoListIfNeeded(category, ''));
+    onActiveClick() {
+        //this.setState({keyword: ''});
+        this.props.dispatch(fetchMemoListIfNeeded({category: '', keyword: ''}));
     }
 
-    onActiveClick() {
-        this.props.dispatch(fetchMemoListIfNeeded('active', ''));
+    onChangeCategory(category) {
+        this.props.dispatch(fetchMemoListIfNeeded({category: category, keyword: this.props.memoListFilter.keyword}));
     }
 
     onSearch(keyword) {
+        this.setState({keyword: keyword});
+
         if (keyword === '') {
             notification.open({
                 message: '空值不能搜索！'
             });
-        } else {
-            this.props.dispatch(fetchMemoListIfNeeded('search', keyword));
         }
+
+        this.props.dispatch(fetchMemoListIfNeeded({category: this.props.memoListFilter.category, keyword: keyword}));
     }
 
+    //响应搜索框清空按钮事件
     emitEmpty = () => {
-        this.keywordInput.focus();
         this.setState({keyword: ''});
+        this.props.dispatch(fetchMemoListIfNeeded({category: this.props.memoListFilter.category, keyword: ''}));
+        this.keywordInput.focus();
     };
 
-    onChangeUserName = (e) => {
+    onChangeKeyword = (e) => {
         this.setState({keyword: e.target.value});
     };
 
@@ -83,7 +88,7 @@ class MemoList_ extends Component {
 
     render() {
         const {keyword} = this.state;
-        const suffix = keyword ? <Icon type="close-circle" onClick={this.emitEmpty}/> : null;
+        const suffix = keyword ? <Icon type="close-circle" key='keyword' onClick={this.emitEmpty}/> : null;
 
         return (
             <Content>
@@ -92,7 +97,8 @@ class MemoList_ extends Component {
                     <Button onClick={this.onActiveClick.bind(this)}>活动条目</Button>
 
                     <Select style={{width: 200, marginLeft: 10, marginRight: 10}} placeholder='请选择分类'
-                            onChange={this.onClick.bind(this)}>
+                            onChange={this.onChangeCategory.bind(this)} value={this.props.memoListFilter.category}>
+                        <Option value="" key='cat-00'>全部分类</Option>
                         {
                             this.props.memoCategoryList.items.map((item, idx) => (
                                 <Option value={item.type} key={'cat-' + idx}>
@@ -105,7 +111,7 @@ class MemoList_ extends Component {
                     <Search
                         style={{width: 200}} placeholder="请输入搜索关键字"
                         onSearch={this.onSearch.bind(this)} enterButton value={keyword}
-                        suffix={suffix} onChange={this.onChangeUserName}
+                        suffix={suffix} onChange={this.onChangeKeyword}
                         ref={node => this.keywordInput = node}
                     />
                 </div>
@@ -127,8 +133,8 @@ class MemoList_ extends Component {
 const mapStateToProps = (state) => {
     return {
         memoList: state.memoList,
+        memoListFilter: state.memoListFilter,
         memoCategoryList: state.memoCategoryList,
-        selectedCategory: state.selectedCategory
     }
 };
 

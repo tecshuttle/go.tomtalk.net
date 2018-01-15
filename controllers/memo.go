@@ -18,10 +18,11 @@ func (c *MemoController) GetList() {
 	var rows_orm []orm.Params
 
 	itemType := c.GetString("item_type", "")
+	keyword := c.GetString("keyword", "")
 	today := time.Now().Format("2006-01-02")
 	now := time.Now().Add(- time.Hour * 24 * 7) //一星期
 
-	if itemType == "active" {
+	if itemType == "" && keyword == "" {
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date <= '%s') OR (t.priority > 0 AND mtime > %d) OR q.type_id = 0) " +
 			"ORDER BY t.priority ASC, id ASC"
@@ -31,8 +32,7 @@ func (c *MemoController) GetList() {
 			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date > '%s') OR (t.priority > 0 AND mtime <= %d)) " +
 			"ORDER BY t.priority ASC, id ASC"
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
-	} else if itemType == "search" {
-		keyword := c.GetString("keyword", "")
+	} else if keyword != "" {
 		//todo: 空值不能查询
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
 			"WHERE q.uid = %d AND (q.question LIKE '%%%s%%' OR q.answer LIKE '%%%s%%')"

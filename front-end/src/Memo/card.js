@@ -44,27 +44,29 @@ export class CardM_ extends Component {
     blogCard(item) {
         const delBtn = (item.question === '' && item.answer === '' ? <Icon type="delete" onClick={() => this.onDelete(item.id)}/> : '');
         const editBtn = <Icon type="edit" onClick={() => this.props.onEdit(item.id)} style={{marginLeft: 10}}/>;
+        const color = (item.color === null ? '#000000' : '#' + item.color);
 
-        return <Card style={{...styles.style, color: '#' + item.color}}
-                     title={<span style={{color: '#' + item.color}}><Icon type='file-text'/>{item.type} 字数：{item.answer.length}</span>}
+
+        return <Card style={{...styles.style, color: color}}
+                     title={<span style={{color: color}}><Icon type='file-text'/>{item.type} 字数：{item.answer.length}</span>}
                      extra={<div>{delBtn}{editBtn}</div>}>
             <h2>{item.question}</h2>
         </Card>;
     }
 
     memoCard(item) {
+        const color = (item.color === null ? '#000000' : '#' + item.color);
         const delBtn = (item.question === '' && item.answer === '' ? <Icon type="delete" onClick={() => this.onDelete(item.id)}/> : '');
         const editBtn = <Icon type="edit" onClick={() => this.props.onEdit(item.id)} style={{marginLeft: 10}}/>;
-        const title = <span style={{color: '#' + item.color}}>
-            {item.type === null ? "" : <Icon type='tag'/>}
-            {item.type === null ? "" : ' ' + item.type + ' '}
-            {item.question}
+        const title = <span style={{color: color}}>
+            <Icon type='tag'/>
+            {item.type === null ? "" : ' ' + item.type + ' '} {item.question}
             </span>;
 
-        return <Card style={{...styles.style, color: '#' + item.color}}
+        return <Card style={{...styles.style, color: color}}
                      title={title}
                      extra={<div>{delBtn}{editBtn}</div>}>
-            <ReactMarkdown style={{color: '#' + item.color}} source={item.answer}/>
+            <ReactMarkdown style={{color: color}} source={item.answer}/>
         </Card>;
     }
 

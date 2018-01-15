@@ -18,6 +18,9 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
                             ...item,
                             question: action.values.question,
                             answer: action.values.answer,
+                            type_id: action.values.type_id,
+                            type: action.values.type,
+                            color: action.values.color,
                         }
                         : item
                 )
@@ -40,10 +43,14 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
-const selectedCategory = (state = 'active', action) => {
+const memoListFilter = (state = {category: '', keyword: ''}, action) => {
     switch (action.type) {
-        case 'SELECT_SUBREDDIT':
-            return action.subreddit;
+        case 'SET_MEMO_FILTER_CATEGORY':
+            return {...state, category: action.category};
+        case 'SET_MEMO_FILTER_KEYWORD':
+            return {...state, keyword: action.keyword};
+        case 'SET_MEMO_LIST_FILTER':
+            return action.filter;
         default:
             return state
     }
@@ -139,5 +146,5 @@ const todoList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
-const Reducer = combineReducers({memoList, memoItem, memoCategoryList, categoryList, categoryItem, selectedCategory, todoList});
+const Reducer = combineReducers({memoListFilter, memoCategoryList, memoList, memoItem, categoryList, categoryItem, todoList});
 export default Reducer

@@ -1,22 +1,43 @@
 //import Async from 'react-promise'
+import {notification} from 'antd'
 
 /********************** Memo *********************/
-export function fetchMemoListIfNeeded(subreddit, keyword) {
+export function fetchMemoListIfNeeded(memoFilter) {
     return (dispatch, getState) => {
-        if (shouldFetchPosts(getState(), subreddit)) {
-            return dispatch(fetchMemoList(subreddit, keyword))
+        if (shouldFetchPosts(getState(), memoFilter)) {
+            dispatch({type: 'SET_MEMO_LIST_FILTER', filter: memoFilter})
+            return dispatch(fetchMemoList(memoFilter.category, memoFilter.keyword))
+        }
+    }
+}
+
+// 通过把memoFilter里面的两个参数：category、keyword，与state原有值进行比较，判断是否要重新加载列表。
+function shouldFetchPosts(state, memoFilter) {
+    const items = state.memoList.items;
+
+    if (items.length === 0) {
+        return true
+    } else {
+        //处理搜索和分类
+        if (memoFilter.category === state.memoListFilter.category && memoFilter.keyword === state.memoListFilter.keyword) {
+            return false
+        } else {
+            return true
         }
     }
 }
 
 function fetchMemoList(category, keyword) {
     return dispatch => {
-        dispatch(requestPosts(category));
-
+        dispatch({type: 'SET_MEMO_FILTER_CATEGORY', category});
         return fetch('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1')
             .then(response => response.json())
             .then(json => {
-                dispatch(receiveMemoList(category, json))
+                if (json.data.length > 300) {
+                    notification.open({message: '列表结果有>300条，请精简查询条件！'});
+                } else {
+                    dispatch(receiveMemoList(category, json))
+                }
             }).catch(error => {
                 console.error('LOAD_LIST', error);
             });
@@ -54,26 +75,50 @@ export function fetchMemoItem(id) {
     }
 }
 
-export function updateMemoItem(values) {
+export function updateMemoItem(newItem) {
     return (dispatch, getState) => {
-        // 修改state
-        dispatch({type: 'UPDATE_MEMO', values: values});
+        const state = getState();
+
+        //获取旧Item，与新值对比，如果分类有变化：1、更新item分类名称；2、刷新分类列表。
+        let oldItem = null;
+        state.memoList.items.map((node) => {
+            if (node.id === newItem.id) {
+                oldItem = node;
+            }
+            return true
+        });
+
+        console.log(oldItem, newItem);
+        if (oldItem.type_id === newItem.type_id) {
+            dispatch({type: 'UPDATE_MEMO', values: newItem});
+        } else {
+            state.memoCategoryList.items.map((node) => {
+                if (node.type_id === newItem.type_id) {
+                    dispatch({type: 'UPDATE_MEMO', values: {...newItem, type: node.type, color: node.color}});
+                }
+
+                return true
+            });
+        }
 
         // 修改数据库
         let formData = new FormData();
 
-        formData.append('id', values.id);
-        formData.append('type_id', values.type_id);
-        formData.append('question', values.question);
-        formData.append('answer', values.answer);
-        formData.append('module', values.module);
-        formData.append('sync_state', values.sync_state);
+        formData.append('id', newItem.id);
+        formData.append('type_id', newItem.type_id);
+        formData.append('question', newItem.question);
+        formData.append('answer', newItem.answer);
+        formData.append('module', newItem.module);
+        formData.append('sync_state', newItem.sync_state);
 
         fetch('/api/memo/save-item', {
             method: 'POST',
             body: formData
         }).then((response) => response.json()).then((responseData) => {
             console.log(responseData);
+            if (oldItem.type_id !== newItem.type_id) {
+                dispatch(fetchMemoCategoryAPI())
+            }
         }).catch(error => {
             console.error(error);
         });
@@ -131,29 +176,11 @@ function receiveMemoList(category, json) {
     }
 }
 
-function shouldFetchPosts(state, type_item) {
-    const items = state.memoList.items;
-
-    if (items.length === 0) {
-        return true
-    } else {
-        //todo: 处理搜索和分类
-        return true
-    }
-}
-
-function requestPosts(subreddit) {
-    return {
-        type: 'REQUEST_POSTS',
-        subreddit
-    }
-}
-
 export function fetchMemoCategory() {
     return (dispatch, getState) => {
         const state = getState();
 
-        if (state.categoryList.items.length === 0) {
+        if (state.memoCategoryList.items.length === 0) {
             dispatch(fetchMemoCategoryAPI())
         }
     }
