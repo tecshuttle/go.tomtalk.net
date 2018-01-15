@@ -12,15 +12,7 @@ class CardDay_ extends Component {
         super(props)
         this.moveCard = this.moveCard.bind(this)
         this.state = {
-            cards: [
-                {id: 1, text: 'Write a cool JS library'},
-                {id: 2, text: 'Make it generic enough'},
-                {id: 3, text: 'Write README'},
-                {id: 4, text: 'Create some examples'},
-                {id: 5, text: 'Spam in Twitter and IRC to promote it (note that this element is taller than the others)'},
-                {id: 6, text: '???'},
-                {id: 7, text: 'PROFIT'},
-            ],
+            cards: props.jobs
         }
     }
 
@@ -47,17 +39,19 @@ class CardDay_ extends Component {
     }
 
     render() {
-        const {idx, jobs} = this.props;
+        const {cards} = this.state;
+        const {idx} = this.props;
         return <Card style={styles.card}
                      actions={[<Icon type="plus-circle-o" onClick={() => this.onNew(idx + 1)}/>]}>
             {
-                jobs.map((job, idx) =>
+                cards.map((job, i) =>
                     <Job
+                        idx={i}
                         job={job}
-                        day={idx}
-                        key={idx}
-                        index={idx}
-                        id={idx}
+                        day={i}
+                        key={job.id}
+                        index={i}
+                        id={job.id}
                         text={job.job_name}
                         moveCard={this.moveCard}
                     />

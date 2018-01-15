@@ -57,8 +57,6 @@ const cardTarget = {
             return;
         }
 
-        const item = monitor.getItem();
-        console.log(item, component.props.day);
         return {moved: true};
     }
 }
@@ -83,15 +81,14 @@ export class Job extends Component {
     }
 
     render() {
-        const {
-            connectDragSource,
-            connectDropTarget,
-        } = this.props
-
+        const {isDragging, connectDragSource, connectDropTarget} = this.props
         const {idx, job} = this.props;
+        const opacity = isDragging ? 0.3 : 1
 
         return connectDragSource(
-            connectDropTarget(<p key={'job-' + idx} id={idx} style={job.status === '1' ? {color: "#dddddd"} : {}}>
+            connectDropTarget(<p key={'job-' + idx}
+                                 id={idx}
+                                 style={{opacity, margin: 0, color: job.status === '1' ? '#dddddd' : ''}}>
                 {job.job_name}
             </p>)
         )
