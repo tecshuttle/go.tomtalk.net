@@ -50,7 +50,6 @@ export class CardM_ extends Component {
         const editBtn = <Icon type="edit" onClick={() => this.props.onEdit(item.id)} style={{marginLeft: 10}}/>;
         const color = (item.color === null ? '#000000' : '#' + item.color);
 
-
         return <Card style={{...styles.style, color: color}}
                      title={<span style={{color: color}}><Icon type='file-text'/>{item.type} 字数：{item.answer.length}</span>}
                      extra={<div>{delBtn}{editBtn}</div>}>

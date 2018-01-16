@@ -11,6 +11,8 @@ npm run build
 
 # 部署本地运行环境：
 echo "3 --------- deploy localhost ---------"
+rm -rf ../static/css/*
+rm -rf ../static/js/*
 cp -r build/static/css/* ../static/css
 cp -r build/static/js/* ../static/js
 cp -r build/index.html ../views
