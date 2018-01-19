@@ -3,22 +3,27 @@ import PropTypes from 'prop-types'
 import {findDOMNode} from 'react-dom'
 import {DragSource, DropTarget} from 'react-dnd'
 import ItemTypes from './Sortable/ItemTypes'
+import {connect} from "react-redux";
 
 var flow = require('lodash/flow');
 
+// 当前拖动对象所带的参数
 const cardSource = {
     beginDrag(props) {
         return {
-            id: props.idx,
-            index: props.idx,
+            id: props.id,
+            iDay: props.iDay,
+            index: props.index,
         }
     },
-}
+};
 
+// component为悬浮对象
 const cardTarget = {
     hover(props, monitor, component) {
-        const dragIndex = monitor.getItem().index
-        const hoverIndex = props.index
+        const dragItem = monitor.getItem();
+        const dragIndex = dragItem.index;
+        const hoverIndex = props.index;
 
         // Don't replace items with themselves
         if (dragIndex === hoverIndex) {
@@ -26,16 +31,16 @@ const cardTarget = {
         }
 
         // Determine rectangle on screen
-        const hoverBoundingRect = findDOMNode(component).getBoundingClientRect()
+        const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
 
         // Get vertical middle
-        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
         // Determine mouse position
-        const clientOffset = monitor.getClientOffset()
+        const clientOffset = monitor.getClientOffset();
 
         // Get pixels to the top
-        const hoverClientY = clientOffset.y - hoverBoundingRect.top
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
         // Dragging downwards
         if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
@@ -48,8 +53,15 @@ const cardTarget = {
         }
 
         // Time to actually perform the action
-        props.moveCard(dragIndex, hoverIndex)
-        monitor.getItem().index = hoverIndex
+        // 获取前后iDay，判断有无跨天
+        if (dragItem.iDay === props.iDay) {
+            //console.log(dragItem); //当前拖动对象
+            //console.log(props);  //当前悬浮对象
+            props.moveCard(dragItem.iDay, dragIndex, hoverIndex);
+            dragItem.index = hoverIndex
+        } else {
+            props.moveDay(dragItem, {id: props.id, iDay: props.iDay, index: props.index})
+        }
     },
 
     drop(props, monitor, component) {
@@ -59,7 +71,7 @@ const cardTarget = {
 
         return {moved: true};
     }
-}
+};
 
 export class Job extends Component {
     static propTypes = {
@@ -69,11 +81,12 @@ export class Job extends Component {
         isDragging: PropTypes.bool.isRequired,
         id: PropTypes.any.isRequired,
         text: PropTypes.string.isRequired,
+        moveDay: PropTypes.func.isRequired,
         moveCard: PropTypes.func.isRequired,
     };
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {checkbox: ''}
     }
 
@@ -81,13 +94,13 @@ export class Job extends Component {
     }
 
     render() {
-        const {isDragging, connectDragSource, connectDropTarget} = this.props
-        const {idx, job} = this.props;
-        const opacity = isDragging ? 0.3 : 1
+        const {isDragging, connectDragSource, connectDropTarget} = this.props;
+        const {id, job} = this.props;
+        const opacity = isDragging ? 0.3 : 1;
 
         return connectDragSource(
-            connectDropTarget(<p key={'job-' + idx}
-                                 id={idx}
+            connectDropTarget(<p key={id}
+                                 id={id}
                                  style={{opacity, margin: 0, color: job.status === '1' ? '#dddddd' : ''}}>
                 {job.job_name}
             </p>)

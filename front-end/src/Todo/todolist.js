@@ -11,8 +11,8 @@ class TodoList_ extends Component {
     render() {
         return <div style={{margin: 10}}>
             {
-                this.props.todoList.items.map((item, idx) =>
-                    <CardDay jobs={item} idx={idx} key={'day-' + idx}/>
+                this.props.todoList.items.map((item, i) =>
+                    <CardDay jobs={item} iDay={i} key={'day-' + i}/>
                 )
             }
         </div>

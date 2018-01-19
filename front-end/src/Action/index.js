@@ -356,3 +356,18 @@ export function createTodoJob(i_day) {
     }
 }
 
+export function moveDay(source, target) {
+    console.log(source, target);
+    return (dispatch, getState) => {
+        dispatch({type: 'ADD_JOB', source: source, target: target});
+        dispatch({type: 'REMOVE_JOB', iDay: source.iDay, id: source.id});
+    }
+}
+
+export function moveCard(iDay, sourceIndex, targetIndex) {
+    console.log(iDay, sourceIndex, targetIndex);
+    return (dispatch, getState) => {
+        dispatch({type: 'MOVE_JOB', iDay: iDay, sourceIndex: sourceIndex, targetIndex: targetIndex});
+    }
+}
+

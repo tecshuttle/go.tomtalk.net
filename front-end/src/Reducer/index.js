@@ -138,9 +138,76 @@ const categoryItem = (state = emptyCategory, action) => {
 
 /******************** Todo Reducer **********************/
 const todoList = (state = {isFetching: false, items: []}, action) => {
+
     switch (action.type) {
         case 'RECEIVE_TODO_LIST':
             return {...state, items: action.data};
+        case 'REMOVE_JOB':
+            const iDayJobs = state.items[action.iDay];
+            for (var i in iDayJobs) {
+                if (iDayJobs[i].id === action.id) {
+                    state.items[action.iDay] = [
+                        ...iDayJobs.slice(0, i * 1),
+                        ...iDayJobs.slice((i * 1) + 1)
+                    ];
+                }
+            }
+
+            return {...state};
+        case 'ADD_JOB':
+            // 取源job
+            const sourceJobs = state.items[action.source.iDay];
+            const sourceJob = sourceJobs.filter((job) => job.id === action.source.id);
+            console.log(sourceJob[0]);
+
+            if (sourceJob[0] === undefined) {
+                return state
+            }
+
+            // 插入job
+            let targetJobs = state.items[action.target.iDay];
+
+            for (var i in targetJobs) {
+                console.log(i * 1, action.target.index);
+
+                if (i * 1 === action.target.index) {
+                    state.items[action.target.iDay] = [
+                        ...targetJobs.slice(0, i * 1),
+                        sourceJob[0],
+                        ...targetJobs.slice((i * 1))
+                    ];
+                    console.log(state.items[action.target.iDay]);
+                }
+            }
+
+            //console.log(state.items[action.target.iDay]);
+
+            return {...state};
+        case 'MOVE_JOB':
+            console.log('<-----------------------');
+            // 取源sourceJob
+            const sourceJob_ = state.items[action.iDay][action.sourceIndex];
+
+            //删除sourceJob
+            let sourceJobs_ = state.items[action.iDay];
+            let newJobs = [
+                ...sourceJobs_.slice(0, action.sourceIndex * 1),
+                ...sourceJobs_.slice((action.sourceIndex * 1) + 1)
+            ];
+
+            //插入到targetIndex
+            let jobs = [
+                ...newJobs.slice(0, action.targetIndex * 1),
+                sourceJob_,
+                ...newJobs.slice((action.targetIndex * 1))
+            ];
+
+            state.items[action.iDay] = jobs;
+            console.log(state.items);
+            console.log('----------------------->');
+
+
+            return {...state};
         default:
             return state
     }
