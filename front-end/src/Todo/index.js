@@ -2,16 +2,14 @@ import React, {Component} from 'react'
 import {Route, Link} from 'react-router-dom'
 import {Layout} from 'antd'
 import {TodoList} from './todolist'
-import {Projects} from './Sortable/projects'
-import {monthAnalyze} from './MultipleTargets/monthanalyze'
 
 const {Header, Footer} = Layout;
 const styles = {
     link: {marginRight: 50}
 };
 
-//const Projects = () => ( <div><h2>Projects</h2></div> );
-//const monthAnalyze = () => ( <div><h2>month Analyze</h2></div> );
+const Projects = () => ( <div><h2>Projects</h2></div> );
+const monthAnalyze = () => ( <div><h2>month Analyze</h2></div> );
 const weekAnalyze = () => ( <div><h2>week Analyze</h2></div> );
 const weekReport = () => ( <div><h2>week Report</h2></div> );
 const exportData = () => ( <div><h2>export Data</h2></div> );
