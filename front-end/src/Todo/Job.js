@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import {findDOMNode} from 'react-dom'
 import {DragSource, DropTarget} from 'react-dnd'
 import ItemTypes from './Sortable/ItemTypes'
-import {connect} from "react-redux";
 
 var flow = require('lodash/flow');
 
@@ -53,14 +52,14 @@ const cardTarget = {
         }
 
         // Time to actually perform the action
-        // 获取前后iDay，判断有无跨天
+        // 获取前后iDay，判断有无跨天。dragItem为当前拖动对象，props为当前悬浮对象。
         if (dragItem.iDay === props.iDay) {
-            //console.log(dragItem); //当前拖动对象
-            //console.log(props);  //当前悬浮对象
             props.moveCard(dragItem.iDay, dragIndex, hoverIndex);
-            dragItem.index = hoverIndex
+            dragItem.index = hoverIndex;
         } else {
-            props.moveDay(dragItem, {id: props.id, iDay: props.iDay, index: props.index})
+            props.moveDay(dragItem, {id: props.id, iDay: props.iDay, index: props.index});
+            dragItem.iDay = props.iDay;
+            dragItem.index = props.index;
         }
     },
 
@@ -69,6 +68,7 @@ const cardTarget = {
             return;
         }
 
+        props.moved(props.iDay, props.id);
         return {moved: true};
     }
 };
@@ -96,7 +96,7 @@ export class Job extends Component {
     render() {
         const {isDragging, connectDragSource, connectDropTarget} = this.props;
         const {id, job} = this.props;
-        const opacity = isDragging ? 0.3 : 1;
+        const opacity = (isDragging || job.isDragging ? 0.3 : 1);
 
         return connectDragSource(
             connectDropTarget(<p key={id}
@@ -113,7 +113,7 @@ export default flow(
         connectDragSource: connect.dragSource(),
         isDragging: monitor.isDragging(),
     })),
-    DropTarget(ItemTypes.CARD, cardTarget, connect => ({
+    DropTarget(ItemTypes.CARD, cardTarget, (connect) => ({
         connectDropTarget: connect.dropTarget(),
     }))
 )(Job)

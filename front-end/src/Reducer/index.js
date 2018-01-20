@@ -143,7 +143,7 @@ const todoList = (state = {isFetching: false, items: []}, action) => {
         case 'RECEIVE_TODO_LIST':
             return {...state, items: action.data};
         case 'REMOVE_JOB':
-            const iDayJobs = state.items[action.iDay];
+            let iDayJobs = state.items[action.iDay];
             for (var i in iDayJobs) {
                 if (iDayJobs[i].id === action.id) {
                     state.items[action.iDay] = [
@@ -157,34 +157,28 @@ const todoList = (state = {isFetching: false, items: []}, action) => {
         case 'ADD_JOB':
             // 取源job
             const sourceJobs = state.items[action.source.iDay];
-            const sourceJob = sourceJobs.filter((job) => job.id === action.source.id);
-            console.log(sourceJob[0]);
-
-            if (sourceJob[0] === undefined) {
-                return state
+            let sourceJob = null;
+            for (i in sourceJobs) {
+                if (sourceJobs[i].id === action.source.id) {
+                    sourceJob = sourceJobs[i];
+                }
             }
 
             // 插入job
             let targetJobs = state.items[action.target.iDay];
 
-            for (var i in targetJobs) {
-                console.log(i * 1, action.target.index);
-
-                if (i * 1 === action.target.index) {
+            for (var j in targetJobs) {
+                if (j * 1 === action.target.index) {
                     state.items[action.target.iDay] = [
-                        ...targetJobs.slice(0, i * 1),
-                        sourceJob[0],
-                        ...targetJobs.slice((i * 1))
+                        ...targetJobs.slice(0, j * 1),
+                        {...sourceJob, isDragging: true},
+                        ...targetJobs.slice((j * 1))
                     ];
-                    console.log(state.items[action.target.iDay]);
                 }
             }
 
-            //console.log(state.items[action.target.iDay]);
-
             return {...state};
         case 'MOVE_JOB':
-            console.log('<-----------------------');
             // 取源sourceJob
             const sourceJob_ = state.items[action.iDay][action.sourceIndex];
 
@@ -203,10 +197,19 @@ const todoList = (state = {isFetching: false, items: []}, action) => {
             ];
 
             state.items[action.iDay] = jobs;
-            console.log(state.items);
-            console.log('----------------------->');
-
-
+            return {...state};
+        case 'MOVED_JOB':
+            // 取源job
+            iDayJobs = state.items[action.iDay];
+            let items = state.items;
+            for (j in iDayJobs) {
+                if (iDayJobs[j].id === action.id) {
+                    iDayJobs[j].isDragging = false;
+                    break
+                }
+            }
+            items[action.iDay] = iDayJobs;
+            state.items[action.iDay] = [...iDayJobs];
             return {...state};
         default:
             return state

@@ -357,7 +357,6 @@ export function createTodoJob(i_day) {
 }
 
 export function moveDay(source, target) {
-    console.log(source, target);
     return (dispatch, getState) => {
         dispatch({type: 'ADD_JOB', source: source, target: target});
         dispatch({type: 'REMOVE_JOB', iDay: source.iDay, id: source.id});
@@ -365,9 +364,19 @@ export function moveDay(source, target) {
 }
 
 export function moveCard(iDay, sourceIndex, targetIndex) {
-    console.log(iDay, sourceIndex, targetIndex);
     return (dispatch, getState) => {
         dispatch({type: 'MOVE_JOB', iDay: iDay, sourceIndex: sourceIndex, targetIndex: targetIndex});
+    }
+}
+
+/**
+ * job拖动时，会加了isDragging = true 属性，拖动结束后去除这个属性。
+ * @param iDay
+ * @param id
+ */
+export function moved(iDay, id) {
+    return (dispatch, getState) => {
+        dispatch({type: 'MOVED_JOB', iDay: iDay, id: id});
     }
 }
 

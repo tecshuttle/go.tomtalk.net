@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import update from 'immutability-helper'
 import {Card, Icon} from 'antd'
-import {createTodoJob, moveDay, moveCard} from '../Action'
+import {createTodoJob, moveDay, moveCard, moved} from '../Action'
 import {DragDropContext} from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import Job from './Job'
@@ -12,6 +11,7 @@ class CardDay_ extends Component {
         super(props);
         this.moveCard = this.moveCard.bind(this);
         this.moveDay = this.moveDay.bind(this);
+        this.moved = this.moved.bind(this);
         this.state = {
             cards: props.jobs
         }
@@ -27,30 +27,15 @@ class CardDay_ extends Component {
     }
 
     moveDay(dragItem, hoverItem) {
-        const {cards} = this.state;
         this.props.dispatch(moveDay(dragItem, hoverItem))
-        //const dragCard = cards[dragIndex]
-        /*this.setState(
-            update(this.state, {
-                cards: {
-                    $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
-                },
-            }),
-        )*/
     }
 
     moveCard(iDay, dragIndex, hoverIndex) {
-        const {cards} = this.state;
-        const dragCard = cards[dragIndex];
         this.props.dispatch(moveCard(iDay, dragIndex, hoverIndex));
+    }
 
-        /*this.setState(
-            update(this.state, {
-                cards: {
-                    $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
-                },
-            }),
-        )*/
+    moved(iDay, id) {
+        this.props.dispatch(moved(iDay, id));
     }
 
     render() {
@@ -68,6 +53,7 @@ class CardDay_ extends Component {
                         text={job.job_name}
                         moveDay={this.moveDay}
                         moveCard={this.moveCard}
+                        moved={this.moved}
                     />
                 )
             }
