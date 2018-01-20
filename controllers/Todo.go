@@ -129,7 +129,7 @@ func (c *TodoController) CreateJob() {
 	}
 
 	SQL := "INSERT INTO tomtalk.todo_lists (user_id, job_name, project_id, start_time, time_long) VALUES (%d, '%s', %d, '%d', %d)"
-	sql2 := fmt.Sprintf(SQL, uid, "#", 0, startTime, 3600)
+	sql2 := fmt.Sprintf(SQL, uid, "", 0, startTime, 3600)
 	raw := orm.NewOrm()
 
 	result, err := raw.Raw(sql2).Exec()

@@ -87,10 +87,24 @@ export class Job extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {checkbox: ''}
+        this.state = {checkbox: ''};
+        this.edit = this.edit.bind(this);
     }
 
     componentWillMount() {
+    }
+
+    onClick() {
+        console.log(this.props.job.job_name);
+    }
+
+    delete() {
+        console.log('delete ' + this.props.job.job_name);
+    }
+
+    edit(e) {
+        e.preventDefault();
+        console.log('edit ' + this.props.job.job_name);
     }
 
     render() {
@@ -98,12 +112,22 @@ export class Job extends Component {
         const {id, job} = this.props;
         const opacity = (isDragging || job.isDragging ? 0.3 : 1);
 
+        let delBtn = null;
+        if (job.job_name === '') {
+            delBtn = <div>
+                <span onClick={() => this.delete()}>删除</span>
+                <span onClick={this.edit}>编辑</span>
+            </div>
+        }
+
         return connectDragSource(
-            connectDropTarget(<p key={id}
-                                 id={id}
-                                 style={{opacity, margin: 0, color: job.status === '1' ? '#dddddd' : ''}}>
+            connectDropTarget(<div key={id}
+                                   id={id}
+                                   onClick={() => this.onClick()}
+                                   style={{opacity, margin: 0, color: job.status === '1' ? '#dddddd' : ''}}>
                 {job.job_name}
-            </p>)
+                {delBtn}
+            </div>)
         )
     }
 }
