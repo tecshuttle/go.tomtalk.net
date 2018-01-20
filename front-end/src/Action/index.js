@@ -376,6 +376,36 @@ export function moveCard(iDay, sourceIndex, targetIndex) {
  */
 export function moved(iDay, id) {
     return (dispatch, getState) => {
+        // 更新数据库数据
+        let formData = new FormData();
+        formData.append('id', id);
+        formData.append('week_date', '2018-01-08');
+        formData.append('to_day', 'day' + (iDay === 6 ? 0 : iDay + 1));
+        const jobs = getState().todoList.items[iDay];
+
+        for (var i in jobs) {
+            if (jobs[i].id === id) {
+                const prev_job = jobs[i - 1];
+                const next_job = jobs[i * 1 + 1];
+                formData.append('prev_job_id', prev_job === undefined ? 0 : prev_job.id);
+                formData.append('next_job_id', next_job === undefined ? 0 : next_job.id);
+            }
+        }
+
+        fetch('/api/todo/move-job', {
+            method: 'POST',
+            body: formData
+        }).then(handleErrors).then((response) => response.json()).then((responseData) => {
+            if (responseData.success) {
+                //dispatch(fetchTodoList());
+            } else {
+                console.log(responseData);
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+
+        //更新state
         dispatch({type: 'MOVED_JOB', iDay: iDay, id: id});
     }
 }

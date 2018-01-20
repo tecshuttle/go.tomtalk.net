@@ -32,10 +32,10 @@ func (c *TodoController) GetJobsOfWeek() {
 func getAllJobsOfWeek(day string) ([]orm.Params, string) {
 	uid := 1
 	week := getTimeRangeOfWeek(day)
-	sql_ := "SELECT * FROM tomtalk.todo_lists " +
+	SQL := "SELECT * FROM tomtalk.todo_lists " +
 		"WHERE user_id = %d AND start_time >= %d AND start_time <= %d " +
 		"ORDER BY status DESC, start_time ASC"
-	sql := fmt.Sprintf(sql_, uid, week["start"], week["end"])
+	sql := fmt.Sprintf(SQL, uid, week["start"], week["end"])
 
 	raw := orm.NewOrm()
 	var rows []orm.Params
@@ -166,4 +166,259 @@ func isHadJobDay(start int64) (bool, orm.Params, string) {
 	} else {
 		return true, rows[0], sql
 	}
+}
+
+/**
+ * 调整任务的时间
+ * 1、如果没有后续任务，则本任务时间为前一任务start_time + 1
+ * 2、如果有后续任务，则本任务时间为前一任务start_time + 1，后续任务时间顺延
+ * 3、如果没有前置任务，则本任务时间为当日0时，后续任务顺延
+ */
+func (c *TodoController) MoveJob() {
+	id := c.GetString("id", "") //取job ID
+	prevJobId := c.GetString("prev_job_id", "")
+	nextJobId := c.GetString("next_job_id", "")
+	toDay := c.GetString("to_day", "")
+	weekDate := c.GetString("week_date", "")
+
+	//没有前置任务
+	if prevJobId == "0" {
+		day := getTimeRangeOfDay("to_day", toDay, weekDate)
+		allJobs := allJobsOfDay(day)
+
+		//当前任务，全部移到当天结束前最后时刻
+		for key, row := range allJobs {
+			SQL := "UPDATE tomtalk.todo_lists SET start_time = %d WHERE id = %d"
+			sql := fmt.Sprintf(SQL, day["end"]-int64(len(allJobs))+int64(key), parseInt(row["id"]))
+			raw := orm.NewOrm()
+			_, err := raw.Raw(sql).Exec()
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+
+		//把当前任务，放到本日最前面
+		SQL := "UPDATE tomtalk.todo_lists SET start_time = %d WHERE id = %s"
+		sql := fmt.Sprintf(SQL, day["start"], id)
+		raw := orm.NewOrm()
+		_, err := raw.Raw(sql).Exec()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		//后续任务顺延
+		reorderRestJobStartTime(id)
+	}
+
+	//没有后续任务
+	if nextJobId == "0" {
+		//取目的日期，最后一个任务
+		day := getTimeRangeOfDay("to_day", toDay, weekDate)
+		allJobs := allJobsOfDay(day)
+		lastJob := allJobs[len(allJobs)-1]
+
+		SQL := "UPDATE tomtalk.todo_lists SET start_time = %d WHERE id = %d"
+		sql := fmt.Sprintf(SQL, parseInt(lastJob["start_time"])+1, parseInt(id))
+		raw := orm.NewOrm()
+		_, err := raw.Raw(sql).Exec()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		reorderRestJobStartTime(fmt.Sprintf("%s", allJobs[0]["id"])) //后续任务顺延
+	}
+
+	//接前置任务，后续任务顺延
+	if prevJobId != "0" && nextJobId != "0" {
+		//取任务当天的结束时间
+		job := getJobById(id)
+
+		dayStr := time.Unix(parseInt(job["start_time"]), 0).Format("2006-01-02") //设置时间戳 使用模板格式化为日期字符串
+		start, _ := time.ParseInLocation("2006-01-02", dayStr, loc)
+		endOfDay := start.Unix() + 3600*24 - 1
+
+		//当前任务以下，全部移到当天结束前最后时刻
+		allJobs := siblingsOfJob(id)
+		isFind := false
+		for key, row := range allJobs {
+			if isFind {
+				SQL := "UPDATE tomtalk.todo_lists SET start_time = %d WHERE id = %d"
+				sql := fmt.Sprintf(SQL, endOfDay-int64(len(allJobs))+int64(key), parseInt(row["id"]))
+				raw := orm.NewOrm()
+				_, err := raw.Raw(sql).Exec()
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
+
+			if parseInt(row["id"]) == parseInt(prevJobId) {
+				isFind = true
+			}
+		}
+
+		//当前任务，移到前置任务后
+		prevJob := getJobById(prevJobId)
+		SQL := "UPDATE tomtalk.todo_lists SET start_time = %d WHERE id = %d"
+		sql := fmt.Sprintf(SQL, parseInt(prevJob["start_time"])+1, parseInt(id))
+		raw := orm.NewOrm()
+		_, err := raw.Raw(sql).Exec()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		reorderRestJobStartTime(id) //后续任务顺延
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+	}
+
+	c.ServeJSON()
+}
+
+//周视图传to_day参数
+//日视图传date参数
+func getTimeRangeOfDay(viewType string, day string, weekDate string) map[string]int64 {
+	start := int64(0)
+
+	if viewType == "date" {
+		/*
+	    $date = $this->input->post('date', true);
+		$start = strtotime($date);
+		$day   = (object)array(
+		'start' => $start,
+		'end'   => $start + 3600 * 24 - 1
+		);
+
+		return $day;
+		*/
+	}
+
+	if viewType == "to_day" {
+		toDay, _ := strconv.ParseInt(substr(day, 3, 1), 10, 64)
+		week := getTimeRangeOfWeek(weekDate)
+
+		if toDay == 0 {
+			start = week["start"] + 6*(3600*24)
+		} else {
+			start = week["start"] + (toDay-1)*(3600*24)
+		}
+	}
+
+	return map[string]int64{
+		"start": start,
+		"end":   start + 3600*24 - 1,
+	}
+}
+
+func substr(str string, start int, length int) string {
+	rs := []rune(str)
+	rl := len(rs)
+	end := 0
+
+	if start < 0 {
+		start = rl - 1 + start
+	}
+	end = start + length
+
+	if start > end {
+		start, end = end, start
+	}
+
+	if start < 0 {
+		start = 0
+	}
+	if start > rl {
+		start = rl
+	}
+	if end < 0 {
+		end = 0
+	}
+	if end > rl {
+		end = rl
+	}
+
+	return string(rs[start:end])
+}
+
+//取任务当天，全部任务
+func allJobsOfDay(day map[string]int64) []orm.Params {
+	SQL := "SELECT * FROM tomtalk.todo_lists WHERE start_time >= %d AND start_time <= %d ORDER BY start_time ASC"
+	sql := fmt.Sprintf(SQL, day["start"], day["end"])
+
+	raw := orm.NewOrm()
+	var rows []orm.Params
+	num, err := raw.Raw(sql).Values(&rows)
+	if err == nil && num > 0 {
+		//something
+	} else {
+		fmt.Println(err)
+	}
+
+	return rows
+}
+
+func reorderRestJobStartTime(jobId string) {
+	job := getJobById(jobId)
+	restStart := parseInt(job["start_time"]) + 1
+	allJobs := siblingsOfJob(jobId)
+	isFind := false
+
+	for _, row := range allJobs {
+		if isFind {
+			SQL := "UPDATE tomtalk.todo_lists SET start_time = %d WHERE id = %d"
+			sql := fmt.Sprintf(SQL, restStart, parseInt(row["id"]))
+			raw := orm.NewOrm()
+			_, err := raw.Raw(sql).Exec()
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			restStart += 1
+		}
+
+		if parseInt(row["id"]) == parseInt(jobId) {
+			isFind = true
+		}
+	}
+}
+
+func getJobById(id string) orm.Params {
+	SQL := "SELECT * FROM tomtalk.todo_lists WHERE id= %s"
+	sql := fmt.Sprintf(SQL, id)
+
+	raw := orm.NewOrm()
+	var rows []orm.Params
+	num, err := raw.Raw(sql).Values(&rows)
+	if err == nil && num > 0 {
+		//something
+	} else {
+		fmt.Println(err)
+	}
+
+	return rows[0]
+}
+
+// 取出当前job在所日的所有job。
+func siblingsOfJob(jobId string) []orm.Params {
+	job := getJobById(jobId)
+
+	//取任务当天的结束时间
+	dayStr := time.Unix(parseInt(job["start_time"]), 0).Format("2006-01-02") //设置时间戳 使用模板格式化为日期字符串
+	start, _ := time.ParseInLocation("2006-01-02", dayStr, loc)
+	endOfDay := start.Unix() + 3600*24 - 1
+
+	SQL := "SELECT * FROM tomtalk.todo_lists WHERE start_time >= %d AND start_time <= %d ORDER BY start_time ASC"
+	sql := fmt.Sprintf(SQL, start.Unix(), endOfDay)
+
+	raw := orm.NewOrm()
+	var rows []orm.Params
+	num, err := raw.Raw(sql).Values(&rows)
+	if err == nil && num > 0 {
+		//something
+	} else {
+		fmt.Println(err)
+	}
+
+	return rows
 }
