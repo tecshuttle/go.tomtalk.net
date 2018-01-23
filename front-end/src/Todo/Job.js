@@ -3,8 +3,16 @@ import PropTypes from 'prop-types'
 import {findDOMNode} from 'react-dom'
 import {DragSource, DropTarget} from 'react-dnd'
 import ItemTypes from './Sortable/ItemTypes'
-import {Modal, Button} from 'antd';
+import {Modal, Button, Form, Input, Slider, DatePicker} from 'antd';
+import moment from 'moment';
 
+
+function formatter(value) {
+    return `${value} 小时`;
+}
+
+const FormItem = Form.Item;
+const {TextArea} = Input;
 var flow = require('lodash/flow');
 
 // 当前拖动对象所带的参数
@@ -74,7 +82,7 @@ const cardTarget = {
     }
 };
 
-export class Job extends Component {
+class Job_ extends Component {
     static propTypes = {
         connectDragSource: PropTypes.func.isRequired,
         connectDropTarget: PropTypes.func.isRequired,
@@ -97,6 +105,13 @@ export class Job extends Component {
     }
 
     componentWillMount() {
+    }
+
+    setFieldsValue() {
+        this.props.form.setFieldsValue({
+            name: this.props.job.job_name,
+            desc: this.props.job.job_desc,
+        });
     }
 
     showModal = () => {
@@ -143,6 +158,8 @@ export class Job extends Component {
             </div>
         }
 
+        const {getFieldDecorator} = this.props.form;
+
         return connectDragSource(
             connectDropTarget(<div>
                     <div key={id}
@@ -164,14 +181,48 @@ export class Job extends Component {
                             <Button key="submit" type="primary" onClick={this.handleOk}>Submit</Button>,
                         ]}
                     >
-                        <p>{job.id}</p>
-                        <p>{job.job_name}</p>
+                        <Form onSubmit={this.handleSubmit}>
+                            <FormItem>
+                                {getFieldDecorator('start', {
+                                    initialValue: moment(this.props.job.start_time * 1000)
+                                })(
+                                    <DatePicker/>
+                                )}
+                            </FormItem>
+
+                            <FormItem>
+                                {getFieldDecorator('name', {
+                                    initialValue: this.props.job.job_name
+                                })(
+                                    <Input placeholder="工作名称"/>
+                                )}
+                            </FormItem>
+
+                            <FormItem>
+                                {getFieldDecorator('long', {
+                                    initialValue: this.props.job.time_long / 3600
+                                })(
+                                    <Slider tipFormatter={formatter} min={0} max={5} step={0.1}/>
+                                )}
+                            </FormItem>
+
+                            <FormItem>
+                                {getFieldDecorator('desc', {
+                                    initialValue: this.props.job.job_desc
+                                })(
+                                    <TextArea placeholder="工作内容"
+                                              autosize={{minRows: 2, maxRows: 8}}/>
+                                )}
+                            </FormItem>
+                        </Form>
                     </Modal>
                 </div>
             )
         )
     }
 }
+
+export const Job = Form.create()(Job_);
 
 export default flow(
     DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
@@ -182,3 +233,4 @@ export default flow(
         connectDropTarget: connect.dropTarget(),
     }))
 )(Job)
+

@@ -40,7 +40,6 @@ class CardDay_ extends Component {
     }
 
     deleteJob(iDay, id) {
-        console.log('delete job:' + id);
         this.props.dispatch(deleteJob(iDay, id));
     }
 
