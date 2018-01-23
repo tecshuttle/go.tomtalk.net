@@ -3,7 +3,7 @@ import {Route, Link} from 'react-router-dom'
 import {Layout} from 'antd'
 import {TodoList} from './todolist'
 
-const {Header, Footer} = Layout;
+const {Header} = Layout;
 const styles = {
     link: {marginRight: 50}
 };
@@ -34,8 +34,6 @@ export default class Todo extends Component {
                 <Route exact path={`${this.props.match.url}/week-analyze`} component={weekAnalyze}/>
                 <Route exact path={`${this.props.match.url}/week-report`} component={weekReport}/>
                 <Route exact path={`${this.props.match.url}/export-data`} component={exportData}/>
-
-                <Footer> Footer </Footer>
             </Layout>
         )
     }

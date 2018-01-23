@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {findDOMNode} from 'react-dom'
 import {DragSource, DropTarget} from 'react-dnd'
 import ItemTypes from './Sortable/ItemTypes'
+import {Modal, Button} from 'antd';
 
 var flow = require('lodash/flow');
 
@@ -87,27 +88,48 @@ export class Job extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {checkbox: ''};
-        this.edit = this.edit.bind(this);
+        this.state = {
+            checkbox: '',
+            visible: false,
+        };
+        this.onClick = this.onClick.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     componentWillMount() {
     }
 
-    onClick() {
-        console.log(this.props.job.job_name);
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
+    }
+
+    handleOk = (e) => {
+        this.setState({
+            visible: false,
+        });
+    }
+
+    handleCancel = (e) => {
+        e.preventDefault();
+        this.setState({
+            visible: false,
+        });
+    }
+
+    onClick(e) {
+        this.showModal();
     }
 
     delete() {
-        console.log('delete ' + this.props.job.job_name);
-    }
-
-    edit(e) {
-        e.preventDefault();
-        console.log('edit ' + this.props.job.job_name);
+        this.setState({
+            visible: false,
+        });
     }
 
     render() {
+        const me = this;
         const {isDragging, connectDragSource, connectDropTarget} = this.props;
         const {id, job} = this.props;
         const opacity = (isDragging || job.isDragging ? 0.3 : 1);
@@ -121,13 +143,31 @@ export class Job extends Component {
         }
 
         return connectDragSource(
-            connectDropTarget(<div key={id}
-                                   id={id}
-                                   onClick={() => this.onClick()}
-                                   style={{opacity, margin: 0, color: job.status === '1' ? '#dddddd' : ''}}>
-                {job.job_name}
-                {delBtn}
-            </div>)
+            connectDropTarget(<div>
+                    <div key={id}
+                         id={id}
+                         onClick={this.onClick}
+                         style={{opacity, margin: 0, color: job.status === '1' ? '#dddddd' : ''}}>
+                        {job.job_name}
+                        {delBtn}
+                    </div>
+
+                    <Modal
+                        title="Basic Modal"
+                        visible={this.state.visible}
+                        onOk={me.handleOk}
+                        onCancel={me.handleCancel}
+                        footer={[
+                            <Button key="delete" onClick={this.delete}>删除</Button>,
+                            <Button key="back" onClick={this.handleCancel}>Return</Button>,
+                            <Button key="submit" type="primary" onClick={this.handleOk}>Submit</Button>,
+                        ]}
+                    >
+                        <p>{job.id}</p>
+                        <p>{job.job_name}</p>
+                    </Modal>
+                </div>
+            )
         )
     }
 }
