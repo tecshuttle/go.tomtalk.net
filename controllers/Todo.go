@@ -422,3 +422,23 @@ func siblingsOfJob(jobId string) []orm.Params {
 
 	return rows
 }
+
+func (c *TodoController) Delete() {
+	idStr := c.Ctx.Input.Param(":id")
+
+	o := orm.NewOrm()
+	sql := fmt.Sprintf("DELETE FROM tomtalk.todo_lists WHERE id = %s", idStr)
+	_, err := o.Raw(sql).Exec()
+	if err == nil {
+		fmt.Println("ok")
+	} else {
+		fmt.Println(err)
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+		"sql":     sql,
+	}
+
+	c.ServeJSON()
+}

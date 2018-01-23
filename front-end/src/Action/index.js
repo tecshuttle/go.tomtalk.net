@@ -410,3 +410,17 @@ export function moved(iDay, id) {
     }
 }
 
+export function deleteJob(iDay, id) {
+    return (dispatch, getState) => {
+        fetch('/api/todo/job/' + id, {
+            method: 'DELETE',
+        }).then((response) => response.json()).then((json) => {
+            if (json.success) {
+                dispatch({type: 'REMOVE_JOB', iDay: iDay, id: id});
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+

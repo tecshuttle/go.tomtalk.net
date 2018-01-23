@@ -126,6 +126,7 @@ export class Job extends Component {
         this.setState({
             visible: false,
         });
+        this.props.deleteJob(this.props.iDay, this.props.job.id);
     }
 
     render() {

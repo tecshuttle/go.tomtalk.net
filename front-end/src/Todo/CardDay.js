@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Card, Icon} from 'antd'
-import {createTodoJob, moveDay, moveCard, moved} from '../Action'
+import {createTodoJob, moveDay, moveCard, moved, deleteJob} from '../Action'
 import {DragDropContext} from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import Job from './Job'
@@ -12,6 +12,7 @@ class CardDay_ extends Component {
         this.moveCard = this.moveCard.bind(this);
         this.moveDay = this.moveDay.bind(this);
         this.moved = this.moved.bind(this);
+        this.deleteJob = this.deleteJob.bind(this);
         this.state = {
             cards: props.jobs
         }
@@ -38,6 +39,11 @@ class CardDay_ extends Component {
         this.props.dispatch(moved(iDay, id));
     }
 
+    deleteJob(iDay, id) {
+        console.log('delete job:' + id);
+        this.props.dispatch(deleteJob(iDay, id));
+    }
+
     render() {
         const {cards} = this.props;
         const {iDay} = this.props;
@@ -54,6 +60,7 @@ class CardDay_ extends Component {
                         moveDay={this.moveDay}
                         moveCard={this.moveCard}
                         moved={this.moved}
+                        deleteJob={this.deleteJob}
                     />
                 )
             }
