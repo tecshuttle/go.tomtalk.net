@@ -50,8 +50,11 @@ class CardDay_ extends Component {
 
     render() {
         const {iDay, cards} = this.props;
+        const lastCellStyle = (iDay === 6 ? {marginRight: 0} : {});
 
-        return <Card style={styles.card} actions={[<Icon type="plus-circle-o" onClick={() => this.onNew(iDay + 1)}/>]}>
+        return <Card style={{...styles.card, ...lastCellStyle}}
+                     bodyStyle={{padding: 10}}
+                     actions={[<Icon type="plus-circle-o" onClick={() => this.onNew(iDay + 1)}/>]}>
             {
                 cards.map((job, i) =>
                     <Job
@@ -75,10 +78,9 @@ class CardDay_ extends Component {
 
 const styles = {
     card: {
-        display: 'inline-block',
-        marginBottom: 10,
+        flex: 1,
         marginRight: 10,
-        width: 255,
+        alignSelf: 'flex-start'
     }
 };
 

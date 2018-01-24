@@ -9,10 +9,10 @@ class TodoList_ extends Component {
     }
 
     render() {
-        return <div style={{margin: 10}}>
+        return <div style={{margin: 10, display: 'flex', flexDirection: 'row'}}>
             {
                 this.props.todoList.items.map((item, i) =>
-                    <CardDay jobs={item} iDay={i} key={'day-' + i}/>
+                    <CardDay jobs={item} iDay={i} key={'day-' + i} style={{flex: 1}}/>
                 )
             }
         </div>
