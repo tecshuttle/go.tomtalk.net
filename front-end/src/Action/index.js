@@ -356,6 +356,39 @@ export function createTodoJob(i_day) {
     }
 }
 
+export function saveJob(iDay, job) {
+    return (dispatch, getState) => {
+        //更新state
+        dispatch({type: 'UPDATE_JOB', iDay: iDay, job: job});
+
+        //todo: 完成则刷新列表，否则只更新列表。
+
+        //更新数据库
+        let formData = new FormData();
+        formData.append('project_id', job.project_id);
+        formData.append('id', job.id);
+        formData.append('job_name', job.job_name);
+        formData.append('job_type_id', job.job_type_id);
+        formData.append('task_type_id', job.task_type_id);
+        formData.append('time_long', job.time_long);
+        formData.append('job_desc', job.job_desc);
+        formData.append('status', job.status);
+
+        fetch('/api/todo/job', {
+            method: 'PUT',
+            body: formData,
+        }).then((response) => response.json()).then((json) => {
+            if (json.success) {
+                dispatch(fetchTodoList());
+            } else {
+                console.log(json);
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
 export function moveDay(source, target) {
     return (dispatch, getState) => {
         dispatch({type: 'ADD_JOB', source: source, target: target});
@@ -423,4 +456,3 @@ export function deleteJob(iDay, id) {
         });
     }
 }
-

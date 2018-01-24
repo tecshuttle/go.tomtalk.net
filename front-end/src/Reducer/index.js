@@ -138,7 +138,6 @@ const categoryItem = (state = emptyCategory, action) => {
 
 /******************** Todo Reducer **********************/
 const todoList = (state = {isFetching: false, items: []}, action) => {
-
     switch (action.type) {
         case 'RECEIVE_TODO_LIST':
             return {...state, items: action.data};
@@ -210,6 +209,17 @@ const todoList = (state = {isFetching: false, items: []}, action) => {
             }
             items[action.iDay] = iDayJobs;
             state.items[action.iDay] = [...iDayJobs];
+            return {...state};
+        case 'UPDATE_JOB':
+            // 取源job
+            iDayJobs = state.items[action.iDay];
+            for (j in iDayJobs) {
+                if (iDayJobs[j].id === action.job.id) {
+                    iDayJobs[j] = {...action.job};
+                    break
+                }
+            }
+            state.items[action.iDay] = iDayJobs;
             return {...state};
         default:
             return state

@@ -28,4 +28,5 @@ func init() {
 	beego.Router("/api/todo/job", &controllers.TodoController{}, "post:CreateJob")
 	beego.Router("/api/todo/move-job", &controllers.TodoController{}, "post:MoveJob")
 	beego.Router("/api/todo/job/:id", &controllers.TodoController{}, "delete:Delete")
+	beego.Router("/api/todo/job", &controllers.TodoController{}, "put:Update")
 }

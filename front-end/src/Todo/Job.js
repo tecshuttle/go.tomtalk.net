@@ -6,7 +6,6 @@ import ItemTypes from './Sortable/ItemTypes'
 import {Modal, Button, Form, Input, Slider, DatePicker} from 'antd';
 import moment from 'moment';
 
-
 function formatter(value) {
     return `${value} 小时`;
 }
@@ -102,6 +101,8 @@ class Job_ extends Component {
         };
         this.onClick = this.onClick.bind(this);
         this.delete = this.delete.bind(this);
+        this.doneJob = this.doneJob.bind(this);
+        this.saveJob = this.saveJob.bind(this);
     }
 
     componentWillMount() {
@@ -144,6 +145,24 @@ class Job_ extends Component {
         this.props.deleteJob(this.props.iDay, this.props.job.id);
     }
 
+    saveJob() {
+        this.setState({
+            visible: false,
+        });
+
+        this.props.saveJob(this.props.iDay, this.props.job.id);
+    }
+
+    doneJob() {
+        this.setState({
+            visible: false,
+        });
+
+        let job = {...this.props.job};
+        job.status = "1";
+        this.props.saveJob(this.props.iDay, job);
+    }
+
     render() {
         const me = this;
         const {isDragging, connectDragSource, connectDropTarget} = this.props;
@@ -177,8 +196,9 @@ class Job_ extends Component {
                         onCancel={me.handleCancel}
                         footer={[
                             <Button key="delete" onClick={this.delete}>删除</Button>,
-                            <Button key="back" onClick={this.handleCancel}>Return</Button>,
-                            <Button key="submit" type="primary" onClick={this.handleOk}>Submit</Button>,
+                            <Button key="cancel" onClick={this.handleCancel}>取消</Button>,
+                            <Button key="done" onClick={this.doneJob}>完成</Button>,
+                            <Button key="save" onClick={this.handleOk} type="primary">保存</Button>,
                         ]}
                     >
                         <Form onSubmit={this.handleSubmit}>

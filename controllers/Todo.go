@@ -6,6 +6,7 @@ import (
 	"time"
 	"github.com/astaxie/beego/orm"
 	"strconv"
+	"strings"
 )
 
 type TodoController struct {
@@ -441,4 +442,86 @@ func (c *TodoController) Delete() {
 	}
 
 	c.ServeJSON()
+}
+
+func (c *TodoController) Update() {
+	id := c.GetString("id", "")
+	fields := map[string]string{
+		"project_id":   c.GetString("project_id", ""),
+		"job_name":     c.GetString("job_name", ""),
+		"job_desc":     c.GetString("job_desc", ""),
+		"job_type_id":  c.GetString("job_type_id", ""),
+		"time_long":    c.GetString("time_long", ""),
+		"task_type_id": "0",
+	}
+
+	if fields["job_type_id"] == "3" {
+		fields["task_type_id"] = c.GetString("task_type_id", "")
+	}
+
+	//是否要切换日期
+	startTime := c.GetString("start_time", "")
+	if startTime != "" {
+		fields["start_time"] = startTime
+	}
+
+	status := c.GetString("status", "")
+	//标记任务是否完成。任务，列在完成队列尾部。
+	if status != "" {
+		fields["status"] = status
+		if startTime == "" {
+			//取最后一个完成的任务
+			culJob := getJobById(id)
+			jobDate := time.Unix(parseInt(culJob["start_time"]), 0).Format("2006-01-02")
+			lastDoneJob, ret := getLastDoneJob(jobDate)
+
+			if ret {
+				fields["start_time"] = fmt.Sprintf("%d", parseInt(lastDoneJob["start_time"])+int64(1))
+			}
+		}
+	}
+
+	UpdateById("tomtalk.todo_lists", fields, id)
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+	}
+
+	c.ServeJSON()
+}
+
+func UpdateById(table string, fields map[string]string, id string) {
+	var setFields = make([]string, 0, len(fields))
+
+	for key, value := range fields {
+		setFields = append(setFields, key+"='"+value+"'")
+	}
+
+	SQL := "UPDATE %s SET %s WHERE id=%s"
+	sql := fmt.Sprintf(SQL, table, strings.Join(setFields, ", "), id)
+
+	raw := orm.NewOrm()
+	_, err := raw.Raw(sql).Exec()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func getLastDoneJob(date string) (orm.Params, bool) {
+	dayStart, _ := time.ParseInLocation("2006-01-02 15:04:05", date+" 00:00:00", loc)
+	dayEnd, _ := time.ParseInLocation("2006-01-02 15:04:05", date+" 23:59:59", loc)
+
+	SQL := "SELECT * FROM tomtalk.todo_lists WHERE start_time >= %d AND start_time <= %d AND status = 1 ORDER BY start_time ASC"
+	sql := fmt.Sprintf(SQL, dayStart.Unix(), dayEnd.Unix())
+	raw := orm.NewOrm()
+	var rows []orm.Params
+	num, err := raw.Raw(sql).Values(&rows)
+	if err == nil && num > 0 {
+		//something
+	} else {
+		fmt.Println(err)
+		return rows[0], false
+	}
+
+	return rows[len(rows)-1], true
 }

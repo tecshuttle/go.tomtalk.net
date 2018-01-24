@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Card, Icon} from 'antd'
-import {createTodoJob, moveDay, moveCard, moved, deleteJob} from '../Action'
+import {createTodoJob, moveDay, moveCard, moved, deleteJob, saveJob} from '../Action'
 import {DragDropContext} from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import Job from './Job'
@@ -13,6 +13,7 @@ class CardDay_ extends Component {
         this.moveDay = this.moveDay.bind(this);
         this.moved = this.moved.bind(this);
         this.deleteJob = this.deleteJob.bind(this);
+        this.saveJob = this.saveJob.bind(this);
         this.state = {
             cards: props.jobs
         }
@@ -43,9 +44,13 @@ class CardDay_ extends Component {
         this.props.dispatch(deleteJob(iDay, id));
     }
 
+    saveJob(iDay, job) {
+        this.props.dispatch(saveJob(iDay, job));
+    }
+
     render() {
-        const {cards} = this.props;
-        const {iDay} = this.props;
+        const {iDay, cards} = this.props;
+
         return <Card style={styles.card} actions={[<Icon type="plus-circle-o" onClick={() => this.onNew(iDay + 1)}/>]}>
             {
                 cards.map((job, i) =>
@@ -60,6 +65,7 @@ class CardDay_ extends Component {
                         moveCard={this.moveCard}
                         moved={this.moved}
                         deleteJob={this.deleteJob}
+                        saveJob={this.saveJob}
                     />
                 )
             }
@@ -78,6 +84,7 @@ const styles = {
 
 function mapStateToProps(state, ownProps) {
     return {
+        todoLists: state.todoList, //不引入列表，job修改后，不会触发render。
         cards: state.todoList.items[ownProps.iDay]
     }
 }
