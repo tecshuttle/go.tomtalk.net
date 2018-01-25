@@ -374,6 +374,11 @@ export function saveJob(iDay, job) {
         formData.append('job_desc', job.job_desc);
         formData.append('status', job.status);
 
+        //如果start_time===0则是编辑，否则为标记任务完成。
+        if (job.start_time !== 0) {
+            formData.append('start_time', job.start_time);
+        }
+
         fetch('/api/todo/job', {
             method: 'PUT',
             body: formData,

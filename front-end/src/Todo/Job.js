@@ -102,7 +102,6 @@ class Job_ extends Component {
         this.onClick = this.onClick.bind(this);
         this.delete = this.delete.bind(this);
         this.doneJob = this.doneJob.bind(this);
-        this.saveJob = this.saveJob.bind(this);
     }
 
     componentWillMount() {
@@ -119,20 +118,31 @@ class Job_ extends Component {
         this.setState({
             visible: true,
         });
-    }
+    };
 
     handleOk = (e) => {
-        this.setState({
-            visible: false,
+        e.preventDefault();
+        this.setState({visible: false});
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let job = {...this.props.job};
+                job.start_time = values.start_time.unix();
+                job.job_name = values.job_name;
+                job.job_desc = values.job_desc;
+                job.time_long = values.time_long * 3600;
+                this.props.saveJob(this.props.iDay, job);
+            } else {
+                console.log(err);
+            }
         });
-    }
+    };
 
     handleCancel = (e) => {
         e.preventDefault();
         this.setState({
             visible: false,
         });
-    }
+    };
 
     onClick(e) {
         this.showModal();
@@ -145,14 +155,6 @@ class Job_ extends Component {
         this.props.deleteJob(this.props.iDay, this.props.job.id);
     }
 
-    saveJob() {
-        this.setState({
-            visible: false,
-        });
-
-        this.props.saveJob(this.props.iDay, this.props.job.id);
-    }
-
     doneJob() {
         this.setState({
             visible: false,
@@ -160,6 +162,7 @@ class Job_ extends Component {
 
         let job = {...this.props.job};
         job.status = "1";
+        job.start_time = 0;
         this.props.saveJob(this.props.iDay, job);
     }
 
@@ -203,7 +206,7 @@ class Job_ extends Component {
                     >
                         <Form onSubmit={this.handleSubmit}>
                             <FormItem>
-                                {getFieldDecorator('start', {
+                                {getFieldDecorator('start_time', {
                                     initialValue: moment(this.props.job.start_time * 1000)
                                 })(
                                     <DatePicker/>
@@ -211,7 +214,7 @@ class Job_ extends Component {
                             </FormItem>
 
                             <FormItem>
-                                {getFieldDecorator('name', {
+                                {getFieldDecorator('job_name', {
                                     initialValue: this.props.job.job_name
                                 })(
                                     <Input placeholder="工作名称"/>
@@ -219,7 +222,7 @@ class Job_ extends Component {
                             </FormItem>
 
                             <FormItem>
-                                {getFieldDecorator('long', {
+                                {getFieldDecorator('time_long', {
                                     initialValue: this.props.job.time_long / 3600
                                 })(
                                     <Slider tipFormatter={formatter} min={0} max={5} step={0.1}/>
@@ -227,7 +230,7 @@ class Job_ extends Component {
                             </FormItem>
 
                             <FormItem>
-                                {getFieldDecorator('desc', {
+                                {getFieldDecorator('job_desc', {
                                     initialValue: this.props.job.job_desc
                                 })(
                                     <TextArea placeholder="工作内容"
