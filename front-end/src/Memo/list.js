@@ -127,6 +127,7 @@ class MemoList_ extends Component {
                             return (<CardM type="empty" item={item} idx={i} key={'memo-' + i}/>)
                         } else {
                             return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i}
+                                           isotopeInstance={this.isotopeInstance}
                                            onEdit={this.onEdit} blogShow={this.blogShow}/>)
                         }
                     })}

@@ -20,6 +20,7 @@ export default class Todo extends Component {
             <Layout>
                 <Header>
                     <Link to="/" style={styles.link}>首页</Link>
+                    <Link to="/memo" style={styles.link}>Memo</Link>
                     <Link to={`${this.props.match.url}`} style={styles.link}>Todo</Link>
                     <Link to={`${this.props.match.url}/projects`} style={styles.link}>项目列表</Link>
                     <Link to={`${this.props.match.url}/month-analyze`} style={styles.link}>月统计</Link>

@@ -13,6 +13,7 @@ export default class Memo extends Component {
             <Layout>
                 <Header>
                     <Link to="/" style={{marginRight: 50}}>首页</Link>
+                    <Link to="/todo" style={{marginRight: 50}}>Todo</Link>
                     <Link to="/category">分类</Link>
                 </Header>
 

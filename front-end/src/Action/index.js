@@ -88,7 +88,6 @@ export function updateMemoItem(newItem) {
             return true
         });
 
-        console.log(oldItem, newItem);
         if (oldItem.type_id === newItem.type_id) {
             dispatch({type: 'UPDATE_MEMO', values: newItem});
         } else {
@@ -115,7 +114,6 @@ export function updateMemoItem(newItem) {
             method: 'POST',
             body: formData
         }).then((response) => response.json()).then((responseData) => {
-            console.log(responseData);
             if (oldItem.type_id !== newItem.type_id) {
                 dispatch(fetchMemoCategoryAPI())
             }
