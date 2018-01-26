@@ -36,7 +36,14 @@ func (c *UserController) LoginSubmit() {
 	user := models.Users{Email: email, Password: passwordMd5}
 
 	if err := o.Read(&user, "email", "password"); err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
+		c.Data["json"] = map[string]interface{}{
+			"success": false,
+			"uid":     user.Uid,
+			"email":   user.Email,
+			"name":    user.Name,
+			"msg":     "登入邮箱或密码不正确！",
+		}
 	} else {
 		c.SetSession("uid", user.Uid)
 		c.SetSession("user_name", user.Name)
@@ -45,23 +52,39 @@ func (c *UserController) LoginSubmit() {
 		afterMonth := time.Now().Add(time.Hour * 24 * 30) //30天
 
 		uid := http.Cookie{
-			Name:     "uid",
-			Value:    fmt.Sprintf("%d", user.Uid),
-			Path:     "/",
-			Expires:  afterMonth,
+			Name:    "uid",
+			Value:   fmt.Sprintf("%d", user.Uid),
+			Path:    "/",
+			Expires: afterMonth,
 		}
 
 		c.Ctx.ResponseWriter.Header().Set("Set-Cookie", uid.String())
 
 		name := http.Cookie{
-			Name:     "name",
-			Value:    user.Name,
-			Path:     "/",
-			Expires:  afterMonth,
+			Name:    "name",
+			Value:   user.Name,
+			Path:    "/",
+			Expires: afterMonth,
 		}
 
 		c.Ctx.ResponseWriter.Header().Add("Set-Cookie", name.String())
+
+		email := http.Cookie{
+			Name:    "email",
+			Value:   user.Email,
+			Path:    "/",
+			Expires: afterMonth,
+		}
+
+		c.Ctx.ResponseWriter.Header().Add("Set-Cookie", email.String())
+
+		c.Data["json"] = map[string]interface{}{
+			"success": true,
+			"uid":     user.Uid,
+			"email":   user.Email,
+			"name":    user.Name,
+		}
 	}
 
-	c.Ctx.Redirect(302, "/")
+	c.ServeJSON()
 }

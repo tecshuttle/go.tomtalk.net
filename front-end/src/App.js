@@ -8,7 +8,7 @@ import Memo from './Memo'
 import Category from './Category'
 import Home from './Home'
 import Todo from './Todo'
-
+import Login from './Login'
 
 let store = createStore(
     Reducer,
@@ -26,6 +26,7 @@ const App = () => (
                 <Route path="/memo" component={Memo}/>
                 <Route path="/todo" component={Todo}/>
                 <Route path="/category" component={Category}/>
+                <Route path="/login" component={Login}/>
             </div>
         </Router>
     </Provider>

@@ -20,7 +20,8 @@ export default class Home extends Component {
             <Layout>
                 <Header>
                     <Link to="/memo" style={styles.link}>Memo</Link>
-                    <Link to="/todo">Todo</Link>
+                    <Link to="/todo" style={styles.link}>Todo</Link>
+                    <Link to="/login">Login</Link>
                 </Header>
                 <Content>Home</Content>
                 <Footer>Footer</Footer>

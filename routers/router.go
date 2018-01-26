@@ -11,7 +11,7 @@ func init() {
 	beego.Router("/memo", &controllers.MainController{})
 
 	beego.Router("/user/login", &controllers.UserController{}, "get:Login")
-	beego.Router("/user/login-submit", &controllers.UserController{}, "post:LoginSubmit")
+	beego.Router("/api/user/login-submit", &controllers.UserController{}, "post:LoginSubmit")
 
 	beego.Router("/api/memo/get-list", &controllers.MemoController{}, "get:GetList")
 	beego.Router("/api/memo", &controllers.MemoController{}, "post:Create")
