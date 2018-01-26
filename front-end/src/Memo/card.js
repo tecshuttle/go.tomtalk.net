@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {Icon, Form, Card, Input, Select, Popconfirm} from 'antd';
 import {connect} from 'react-redux'
 import {deleteMemoItem, inBoxMemoItem, updateMemoItem} from '../Action'
+import Textarea from 'react-textarea-autosize'
 
 const {Meta} = Card;
 const FormItem = Form.Item;
@@ -146,8 +147,22 @@ export class CardM_ extends Component {
                         {getFieldDecorator('answer', {
                             initialValue: item.answer
                         })(
-                            <TextArea placeholder="工作内容"
-                                      autosize={true}/>
+                            <Textarea placeholder="工作内容"
+                                      style={{
+                                          width: '100%',
+                                          border: '1px solid #d9d9d9',
+                                          borderRadius: '4px',
+                                          overflow: 'auto',
+                                          resize: 'vertical',
+                                          padding: '4px 11px',
+                                          overflowY: 'hidden',
+                                          lineHeight: 1.5,
+                                      }}
+                                      onHeightChange={(height, instance) => {
+                                          console.log(instance.rowCount);
+                                          this.props.isotopeInstance.arrange();
+                                      }}
+                            />
                         )}
                     </FormItem>
                 </Form>
