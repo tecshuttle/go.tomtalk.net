@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Icon, Form, Card, Input, Select, Popconfirm} from 'antd';
+import {Icon, Form, Card, Select, Popconfirm} from 'antd';
 import {connect} from 'react-redux'
 import {deleteMemoItem, inBoxMemoItem, updateMemoItem} from '../Action'
 import Textarea from 'react-textarea-autosize'
@@ -7,7 +7,6 @@ import Textarea from 'react-textarea-autosize'
 const {Meta} = Card;
 const FormItem = Form.Item;
 const Option = Select.Option;
-const {TextArea} = Input;
 const ReactMarkdown = require('react-markdown');
 
 export class CardM_ extends Component {
@@ -20,8 +19,8 @@ export class CardM_ extends Component {
         };
 
         this.onEdit = this.onEdit.bind(this);
-        this.onMouseOver = this.onMouseOver.bind(this);
-        this.onMouseOut = this.onMouseOut.bind(this);
+        this.onMouseEnter = this.onMouseEnter.bind(this);
+        this.onMouseLeave = this.onMouseLeave.bind(this);
     }
 
     componentDidUpdate() {
@@ -44,11 +43,11 @@ export class CardM_ extends Component {
     }
 
     onEdit() {
-        this.setState({isEdit: true});
+        this.setState({isEdit: true, isHover: true});
     }
 
     up() {
-        this.setState({isEdit: false});
+        this.setState({isEdit: false, isHover: false});
     }
 
     handleSubmit = (e) => {
@@ -63,7 +62,6 @@ export class CardM_ extends Component {
             this.up()
         });
     };
-
 
     photoCard(item) {
         const img = <img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"/>;
@@ -102,78 +100,73 @@ export class CardM_ extends Component {
         );
         const editBtn = <Icon type="edit" onClick={this.onEdit}
                               style={{fontSize: 22, cursor: 'pointer'}}/>;
-        const title = <span style={{color: color}}>
-            <Icon type='tag'/>
-            {item.type === null ? "" : ' ' + item.type + ' '} {item.question}
-            </span>;
+
+        const saveBtn = <Icon type="save" onClick={this.handleSubmit} style={{fontSize: 22, cursor: 'pointer'}}/>
+        let inboxBtn = <Icon type="inbox"
+                             onClick={() => this.onInBox(item.id)}
+                             style={{fontSize: 22, cursor: 'pointer'}}/>
+        const upBtn = <Icon type="up" onClick={() => this.up()} style={{fontSize: 22, cursor: 'pointer'}}/>
+
+
+        let boxShadow = '0 1px 4px rgba(1, 1, 1, .15)';
+
+
+        if (this.state.isHover) {
+            boxShadow = '0 1px 5px rgba(1, 1, 1, .3)';
+        }
 
         if (this.state.isEdit) {
-            return <div style={{...styles.style, color: color}}
-                        title={title}
-                        extra={<div>
-                            <Icon type="save" onClick={this.handleSubmit} style={{fontSize: 18, marginRight: 20}}/>
-                            <Icon type="up" onClick={() => this.up()} style={{fontSize: 18}}/>
-                        </div>}>
-                <Form onSubmit={this.handleSubmit}>
-                    <FormItem>
+            return <div style={{...styles.memoCard, boxShadow: boxShadow, color: color}}>
+                <ToolBarEdit save={saveBtn} up={upBtn} inbox={inboxBtn}/>
+                <Form onSubmit={this.handleSubmit} style={{margin: 0, padding: '0.6em 0.8em 0.5em 0.8em'}}>
+                    <FormItem style={{marginBottom: 0}}>
                         {getFieldDecorator('type_id', {
                             initialValue: item.type_id
                         })(
                             <Select style={{width: '100%'}} placeholder='请选择分类'>
                                 <Option value='0'>请选择分类</Option>
-                                {
-                                    this.props.memoCategoryList.items.map((item, idx) => (
-                                        <Option value={item.type_id}
-                                                key={'cat-' + idx}>{item.type} {item.count}</Option>
-                                    ))
-                                }
+                                {this.props.memoCategoryList.items.map((item, idx) => (
+                                    <Option value={item.type_id} key={'cat-' + idx}>{item.type} {item.count}</Option>
+                                ))}
                             </Select>
                         )}
                     </FormItem>
-                    <FormItem>
+                    <div style={{marginBottom: 0}}>
                         {getFieldDecorator('question', {
                             initialValue: item.question
                         })(
-                            <TextArea placeholder="工作内容"
-                                      autosize={true}/>
+                            <Textarea placeholder="标题"
+                                      style={styles.memoTextarea}
+                                      onHeightChange={(height, instance) => {
+                                          this.props.isotopeInstance.arrange();
+                                      }}/>
                         )}
-                    </FormItem>
-                    <FormItem>
+                    </div>
+                    <div style={{marginBottom: 0}}>
                         {getFieldDecorator('answer', {
                             initialValue: item.answer
                         })(
-                            <Textarea placeholder="工作内容"
-                                      style={{
-                                          width: '100%',
-                                          border: '1px solid #d9d9d9',
-                                          borderRadius: '4px',
-                                          overflow: 'auto',
-                                          resize: 'vertical',
-                                          padding: '4px 11px',
-                                          overflowY: 'hidden',
-                                          lineHeight: 1.5,
-                                      }}
+                            <Textarea placeholder="内容"
+                                      style={styles.memoTextarea}
                                       onHeightChange={(height, instance) => {
-                                          console.log(instance.rowCount);
                                           this.props.isotopeInstance.arrange();
                                       }}
                             />
                         )}
-                    </FormItem>
+                    </div>
                 </Form>
             </div>;
         } else {
-            let boxShadow = '0 1px 4px rgba(1, 1, 1, .15)';
-            let inboxBtn = <Icon type="inbox" onClick={() => this.onInBox(item.id)}
-                                 style={{fontSize: 22, cursor: 'pointer'}}/>
+            /* 也许可以放在标题下，指示分类及添加日期，编辑次数。
+            const title = <span style={{color: color}}>
+            <Icon type='tag'/>
+                {item.type === null ? "" : ' ' + item.type + ' '} {item.question}
+            </span>;*/
 
-            if (this.state.isHover) {
-                boxShadow = '0 1px 5px rgba(1, 1, 1, .3)';
-            }
-
-            return <div style={{...styles.memoCard, color: color, boxShadow: boxShadow}}
-                        onMouseEnter={this.onMouseOver}
-                        onMouseLeave={this.onMouseOut}>
+            return <div style={{...styles.memoCard, color: color, boxShadow: boxShadow, cursor: 'pointer'}}
+                        onMouseEnter={this.onMouseEnter}
+                        onMouseLeave={this.onMouseLeave}
+                        onClick={this.onEdit}>
                 <MemoContent memo={item}/>
                 <ToolBar state={this.state} memo={item} edit={editBtn} del={delBtn} inbox={inboxBtn}/>
             </div>;
@@ -190,12 +183,12 @@ export class CardM_ extends Component {
         </Card>;
     }
 
-    onMouseOver = (e) => {
+    onMouseEnter = (e) => {
         //e.preventDefault();
         this.setState({isHover: true});
     }
 
-    onMouseOut = (e) => {
+    onMouseLeave = (e) => {
         //e.preventDefault();
         this.setState({isHover: false});
     }
@@ -228,8 +221,19 @@ function MemoContent(props) {
 
     const color = (props.memo.color === null ? '#000000' : '#' + props.memo.color);
 
-    return <div style={{padding: '1em'}}>
-        <div style={{fontWeight: 'bold', fontSize: '1.2em', pointerEevents: 'none'}}>{props.memo.question}</div>
+    let question = <div style={{
+        fontWeight: 'bold',
+        fontSize: '1.2em',
+        paddingBottom: '0.5em',
+        pointerEevents: 'none'
+    }}>{props.memo.question}</div>;
+
+    if (props.memo.question === '') {
+        question = null;
+    }
+
+    return <div style={{padding: '1em 1em 0 1em'}}>
+        {question}
         <ReactMarkdown style={{color: color}} source={props.memo.answer}/>
     </div>
 }
@@ -254,26 +258,50 @@ function ToolBar(props) {
     //如果内容为空则直接显示工具条。
     if (isMemoEmpty(props.memo)) {
         return toolbar
-    } else if (props.state.isHover) {
-        return toolbar
     } else {
         return null
     }
 }
 
+function ToolBarEdit(props) {
+    return <div style={{
+        //position: 'absolute',
+        //bottom: 0,
+        backgroundColor: '#ffffff',
+        width: '100%',
+        borderBottom: '1px solid #e8e8e8',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: '0.5em 1em',
+    }}>
+        {props.up}
+        {props.inbox}
+        {props.save}
+    </div>;
+}
+
 const styles = {
     memoCard: {
-        width: 300,
+        width: '21em',
         marginRight: 10,
         marginBottom: 10,
         backgroundColor: '#ffffff',
         borderWidth: 1,
         padding: 0,
-        //boxShadow: '0 1px 4px rgba(1, 1, 1, .15)',
-        //todo: hover box-shadow: 0 1px 5px rgba(1, 1, 1, .3)
+    },
+    memoTextarea: {
+        width: '100%',
+        border: '1px solid #d9d9d9',
+        borderRadius: '4px',
+        overflow: 'auto',
+        resize: 'none',
+        //padding: '4px 11px',
+        overflowY: 'hidden',
+        lineHeight: 1.5,
     },
     style: {
-        width: 300,
+        width: '21em',
         marginRight: 10,
         marginBottom: 10
     },
