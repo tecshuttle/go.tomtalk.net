@@ -30,8 +30,9 @@ function shouldFetchPosts(state, memoFilter) {
 function fetchMemoList(category, keyword) {
     return dispatch => {
         dispatch({type: 'SET_MEMO_FILTER_CATEGORY', category});
-        return fetch('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1')
-            .then(response => response.json())
+        return fetch('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1', {
+            credentials: "same-origin"
+        }).then(response => response.json())
             .then(json => {
                 if (json.data.length > 300) {
                     notification.open({message: '列表结果有>300条，请精简查询条件！'});

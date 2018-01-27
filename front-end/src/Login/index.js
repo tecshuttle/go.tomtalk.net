@@ -16,6 +16,7 @@ class LoginForm extends Component {
                 formData.append('password', values.password);
 
                 fetch('/api/user/login-submit', {
+                    credentials: "same-origin",
                     method: 'POST',
                     body: formData
                 }).then((response) => response.json()).then((json) => {
