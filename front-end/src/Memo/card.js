@@ -16,9 +16,12 @@ export class CardM_ extends Component {
 
         this.state = {
             isEdit: false,
+            isHover: false,
         };
 
         this.onEdit = this.onEdit.bind(this);
+        this.onMouseOver = this.onMouseOver.bind(this);
+        this.onMouseOut = this.onMouseOut.bind(this);
     }
 
     componentDidUpdate() {
@@ -61,15 +64,6 @@ export class CardM_ extends Component {
         });
     };
 
-    emptyCard(item) {
-        return <Card style={styles.style} bodyStyle={styles.bodyStyle}>
-            <Icon type="tag-o" onClick={() => this.setModule('memo')} style={styles.emptyCardIcon}/>
-            <Icon type="file-text" onClick={() => this.setModule('blog')} style={styles.emptyCardIcon}/>
-            <Icon type="camera-o" onClick={() => this.setModule('photo')} style={styles.emptyCardIcon}/>
-            <Icon type="delete" onClick={() => this.onDelete(item.id)}
-                  style={{...styles.emptyCardIcon, color: 'red', float: 'right'}}/>
-        </Card>;
-    }
 
     photoCard(item) {
         const img = <img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"/>;
@@ -102,23 +96,24 @@ export class CardM_ extends Component {
         const {getFieldDecorator} = this.props.form;
         const color = (item.color === null ? '#000000' : '#' + item.color);
         const delBtn = (item.question === '' && item.answer === '' ?
-                <Icon type="delete" style={{fontSize: 18, marginRight: 20}} onClick={() => this.onDelete(item.id)}/>
+                <Icon type="delete" style={{fontSize: 22, cursor: 'pointer'}}
+                      onClick={() => this.onDelete(item.id)}/>
                 : ''
         );
-        //const editBtn = <Icon type="edit" onClick={() => this.props.onEdit(item.id)} style={{marginLeft: 10}}/>;
-        const editBtn = <Icon type="edit" onClick={this.onEdit} style={{fontSize: 18, marginLeft: 20}}/>;
+        const editBtn = <Icon type="edit" onClick={this.onEdit}
+                              style={{fontSize: 22, cursor: 'pointer'}}/>;
         const title = <span style={{color: color}}>
             <Icon type='tag'/>
             {item.type === null ? "" : ' ' + item.type + ' '} {item.question}
             </span>;
 
         if (this.state.isEdit) {
-            return <Card style={{...styles.style, color: color}}
-                         title={title}
-                         extra={<div>
-                             <Icon type="save" onClick={this.handleSubmit} style={{fontSize: 18, marginRight: 20}}/>
-                             <Icon type="up" onClick={() => this.up()} style={{fontSize: 18}}/>
-                         </div>}>
+            return <div style={{...styles.style, color: color}}
+                        title={title}
+                        extra={<div>
+                            <Icon type="save" onClick={this.handleSubmit} style={{fontSize: 18, marginRight: 20}}/>
+                            <Icon type="up" onClick={() => this.up()} style={{fontSize: 18}}/>
+                        </div>}>
                 <Form onSubmit={this.handleSubmit}>
                     <FormItem>
                         {getFieldDecorator('type_id', {
@@ -166,18 +161,43 @@ export class CardM_ extends Component {
                         )}
                     </FormItem>
                 </Form>
-            </Card>;
+            </div>;
         } else {
-            return <Card style={{...styles.style, color: color}}
-                         title={title}
-                         extra={<div>
-                             {delBtn}
-                             <Icon type="inbox" onClick={() => this.onInBox(item.id)} style={{fontSize: 18}}/>
-                             {editBtn}
-                         </div>}>
-                <ReactMarkdown style={{color: color}} source={item.answer}/>
-            </Card>;
+            let boxShadow = '0 1px 4px rgba(1, 1, 1, .15)';
+            let inboxBtn = <Icon type="inbox" onClick={() => this.onInBox(item.id)}
+                                 style={{fontSize: 22, cursor: 'pointer'}}/>
+
+            if (this.state.isHover) {
+                boxShadow = '0 1px 5px rgba(1, 1, 1, .3)';
+            }
+
+            return <div style={{...styles.memoCard, color: color, boxShadow: boxShadow}}
+                        onMouseEnter={this.onMouseOver}
+                        onMouseLeave={this.onMouseOut}>
+                <MemoContent memo={item}/>
+                <ToolBar state={this.state} memo={item} edit={editBtn} del={delBtn} inbox={inboxBtn}/>
+            </div>;
         }
+    }
+
+    emptyCard(item) {
+        return <Card style={styles.style} bodyStyle={styles.bodyStyle}>
+            <Icon type="tag-o" onClick={() => this.setModule('memo')} style={styles.emptyCardIcon}/>
+            <Icon type="file-text" onClick={() => this.setModule('blog')} style={styles.emptyCardIcon}/>
+            <Icon type="camera-o" onClick={() => this.setModule('photo')} style={styles.emptyCardIcon}/>
+            <Icon type="delete" onClick={() => this.onDelete(item.id)}
+                  style={{...styles.emptyCardIcon, color: 'red', float: 'right'}}/>
+        </Card>;
+    }
+
+    onMouseOver = (e) => {
+        //e.preventDefault();
+        this.setState({isHover: true});
+    }
+
+    onMouseOut = (e) => {
+        //e.preventDefault();
+        this.setState({isHover: false});
     }
 
     createCard(item) {
@@ -197,7 +217,61 @@ export class CardM_ extends Component {
     }
 }
 
+function isMemoEmpty(memo) {
+    return (memo.question === '' && memo.answer === '')
+}
+
+function MemoContent(props) {
+    if (isMemoEmpty(props.memo)) {
+        return <p>empty memo</p>
+    }
+
+    const color = (props.memo.color === null ? '#000000' : '#' + props.memo.color);
+
+    return <div style={{padding: '1em'}}>
+        <div style={{fontWeight: 'bold', fontSize: '1.2em', pointerEevents: 'none'}}>{props.memo.question}</div>
+        <ReactMarkdown style={{color: color}} source={props.memo.answer}/>
+    </div>
+}
+
+function ToolBar(props) {
+    const toolbar = <div style={{
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: '#ffffff',
+        width: '100%',
+        borderTop: '1px solid #e8e8e8',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: '0.5em 1em',
+    }}>
+        {props.inbox}
+        {props.del}
+        {props.edit}
+    </div>;
+
+    //如果内容为空则直接显示工具条。
+    if (isMemoEmpty(props.memo)) {
+        return toolbar
+    } else if (props.state.isHover) {
+        return toolbar
+    } else {
+        return null
+    }
+}
+
 const styles = {
+    memoCard: {
+        width: 300,
+        marginRight: 10,
+        marginBottom: 10,
+        backgroundColor: '#ffffff',
+        borderWidth: 1,
+        padding: 0,
+        //boxShadow: '0 1px 4px rgba(1, 1, 1, .15)',
+        //todo: hover box-shadow: 0 1px 5px rgba(1, 1, 1, .3)
+    },
     style: {
         width: 300,
         marginRight: 10,
