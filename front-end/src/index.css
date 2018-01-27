@@ -21,3 +21,19 @@ body {
 .anticon-close-circle:active {
     color: #666;
 }
+
+/* memo编辑时，不要高亮 */
+textarea.memo:focus {
+    outline: 0;
+}
+
+/* memo编辑时，分类选择不显示边框 */
+div.memo div.ant-select-selection {
+    border-width: 0;
+}
+
+/* memo显示时，正文变细些 */
+div.memo p {
+    font-weight: 300;
+    text-align: justify;
+}

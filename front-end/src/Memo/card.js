@@ -123,7 +123,7 @@ export class CardM_ extends Component {
                         {getFieldDecorator('type_id', {
                             initialValue: item.type_id
                         })(
-                            <Select style={{width: '100%'}} placeholder='请选择分类'>
+                            <Select style={{width: '100%'}} placeholder='请选择分类' className='memo'>
                                 <Option value='0'>请选择分类</Option>
                                 {this.props.memoCategoryList.items.map((item, idx) => (
                                     <Option value={item.type_id} key={'cat-' + idx}>{item.type} {item.count}</Option>
@@ -136,7 +136,8 @@ export class CardM_ extends Component {
                             initialValue: item.question
                         })(
                             <Textarea placeholder="标题"
-                                      style={styles.memoTextarea}
+                                      className='memo'
+                                      style={{...styles.memoTextarea, fontSize: '1.2em', fontWeight: 'bold'}}
                                       onHeightChange={(height, instance) => {
                                           this.props.isotopeInstance.arrange();
                                       }}/>
@@ -147,6 +148,7 @@ export class CardM_ extends Component {
                             initialValue: item.answer
                         })(
                             <Textarea placeholder="内容"
+                                      className='memo'
                                       style={styles.memoTextarea}
                                       onHeightChange={(height, instance) => {
                                           this.props.isotopeInstance.arrange();
@@ -186,12 +188,12 @@ export class CardM_ extends Component {
     onMouseEnter = (e) => {
         //e.preventDefault();
         this.setState({isHover: true});
-    }
+    };
 
     onMouseLeave = (e) => {
         //e.preventDefault();
         this.setState({isHover: false});
-    }
+    };
 
     createCard(item) {
         switch (item.module) {
@@ -232,9 +234,9 @@ function MemoContent(props) {
         question = null;
     }
 
-    return <div style={{padding: '1em 1em 0 1em'}}>
+    return <div style={{padding: '1.2em 1.2em 0 1.2em'}}>
         {question}
-        <ReactMarkdown style={{color: color}} source={props.memo.answer}/>
+        <ReactMarkdown style={{color: color}} className='memo' source={props.memo.answer}/>
     </div>
 }
 
@@ -284,26 +286,26 @@ function ToolBarEdit(props) {
 const styles = {
     memoCard: {
         width: '21em',
-        marginRight: 10,
-        marginBottom: 10,
+        marginRight: '1em',
+        marginBottom: '1em',
         backgroundColor: '#ffffff',
         borderWidth: 1,
         padding: 0,
     },
     memoTextarea: {
         width: '100%',
-        border: '1px solid #d9d9d9',
+        border: 0,
         borderRadius: '4px',
         overflow: 'auto',
         resize: 'none',
-        //padding: '4px 11px',
         overflowY: 'hidden',
         lineHeight: 1.5,
+        fontWeight: 300,
     },
     style: {
         width: '21em',
-        marginRight: 10,
-        marginBottom: 10
+        marginRight: '1em',
+        marginBottom: '1em'
     },
     bodyStyle: {
         color: '#333333',
