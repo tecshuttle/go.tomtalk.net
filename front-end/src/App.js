@@ -10,13 +10,20 @@ import Home from './Home'
 import Todo from './Todo'
 import Login from './Login'
 
-let store = createStore(
-    Reducer,
-    compose(
-        applyMiddleware(thunkMiddleware),// 允许我们 dispatch() 函数
-        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    )
-);
+let store = createStore(Reducer, getCompose());
+
+function getCompose() {
+    if (process.env.NODE_ENV === 'development') {
+        return compose(
+            applyMiddleware(thunkMiddleware), // 允许我们 dispatch() 函数
+            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+        )
+    } else {
+        return compose(
+            applyMiddleware(thunkMiddleware) // 允许我们 dispatch() 函数
+        )
+    }
+}
 
 const App = () => (
     <Provider store={store}>
