@@ -24,4 +24,14 @@ location /api {
 }
 ```
 
+## 开发环境
+
+### mac
+
+启动react：
+
+```bash
+# safari不支持redux devtool，所以在mac上不加载浏览器扩展。
+REACT_APP_OS=DARWIN npm start
+```
 END

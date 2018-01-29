@@ -12,8 +12,9 @@ import Login from './Login'
 
 let store = createStore(Reducer, getCompose());
 
+//开发环境和widnows开发平台下，才加载redux开发工具扩展。
 function getCompose() {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_OS === undefined) {
         return compose(
             applyMiddleware(thunkMiddleware), // 允许我们 dispatch() 函数
             window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
