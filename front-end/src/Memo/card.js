@@ -8,6 +8,7 @@ const {Meta} = Card;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const ReactMarkdown = require('react-markdown');
+const CodeBlock = require('./code-block')
 
 export class CardM_ extends Component {
     constructor(props) {
@@ -236,7 +237,10 @@ function MemoContent(props) {
 
     return <div style={{padding: '1.2em 1.2em 0 1.2em'}}>
         {question}
-        <ReactMarkdown style={{color: color}} className='memo' source={props.memo.answer}/>
+        <ReactMarkdown style={{color: color}}
+                       renderers={{code: CodeBlock}}
+                       className='memo'
+                       source={props.memo.answer}/>
     </div>
 }
 
