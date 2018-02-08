@@ -5,6 +5,7 @@ import {fetchMemoItem, setMemoItem} from '../Action'
 
 const FormItem = Form.Item;
 const ReactMarkdown = require('react-markdown');
+const CodeBlock = require('./code-block')
 
 export class MemoForm extends Component {
     componentWillMount() {
@@ -34,7 +35,9 @@ export class MemoForm extends Component {
                 </Form>
 
                 <h1>{blog.question}</h1>
-                <ReactMarkdown source={blog.answer}/>
+                <ReactMarkdown
+                    renderers={{code: CodeBlock}}
+                    source={blog.answer}/>
             </div>
         )
     }

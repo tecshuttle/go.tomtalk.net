@@ -24,7 +24,6 @@ class CodeBlock extends React.PureComponent {
     }
 
     highlightCode() {
-        console.log('highlightCode', window.hljs);
         window.hljs.highlightBlock(this.codeEl)
     }
 

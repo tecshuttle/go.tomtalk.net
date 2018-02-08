@@ -37,3 +37,7 @@ div.memo p {
     font-weight: 300;
     text-align: justify;
 }
+
+.hljs {
+    background: transparent;
+}
