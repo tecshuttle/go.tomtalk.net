@@ -173,7 +173,7 @@ export function inBoxMemoItem(id) {
         var now = new Date().getTime();
         let formData = new FormData();
         formData.append('id', id);
-        formData.append('mtime', (now / 1000) - (3600 * 24 * 10) + '');
+        formData.append('mtime', parseInt(now / 1000, 10) - (3600 * 24 * 10) + '');
 
         fetch('/api/memo/save-item', {
             method: 'POST',

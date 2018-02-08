@@ -1,9 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types');
-const hljs = window.hljs;
-
-console.log(window.hljs);
-console.log(hljs);
+//const hljs = window.hljs;
 
 class CodeBlock extends React.PureComponent {
     constructor(props) {
