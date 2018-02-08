@@ -88,7 +88,7 @@ class MemoList_ extends Component {
     }
 
     blogShow(id) {
-        this.props.history.push(this.props.match.url + '/blog/' + id);
+        this.props.history.push('/blog/' + id);
     }
 
     render() {

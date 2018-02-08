@@ -7,6 +7,7 @@ import Reducer from './Reducer'
 import Memo from './Memo'
 import Category from './Category'
 import Home from './Home'
+import {BlogShow} from "./Memo/blogshow";
 import Todo from './Todo'
 import Login from './Login'
 
@@ -32,6 +33,7 @@ const App = () => (
             <div>
                 <Route exact path="/" component={Home}/>
                 <Route path="/memo" component={Memo}/>
+                <Route path='/blog/:id' component={BlogShow}/>
                 <Route path="/todo" component={Todo}/>
                 <Route path="/category" component={Category}/>
                 <Route path="/login" component={Login}/>

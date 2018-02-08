@@ -41,3 +41,33 @@ div.memo p {
 .hljs {
     background: transparent;
 }
+/*  博客 markdown  */
+pre {
+    padding: 0.5em;
+    overflow: auto;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: .25em;
+}
+
+blockquote {
+    color: #666;
+    margin: 0;
+    padding-left: 3em;
+    border-left: 0.5em #eee solid;
+}
+
+tr {
+    border-top: 1px solid #c6cbd1;
+    background: #fff;
+}
+
+th,
+td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+table tr:nth-child(2n) {
+    background: #f6f8fa;
+}

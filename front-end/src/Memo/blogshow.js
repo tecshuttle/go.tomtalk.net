@@ -5,7 +5,7 @@ import {fetchMemoItem, setMemoItem} from '../Action'
 
 const FormItem = Form.Item;
 const ReactMarkdown = require('react-markdown');
-const CodeBlock = require('./code-block')
+const CodeBlock = require('./code-block');
 
 export class MemoForm extends Component {
     componentWillMount() {
@@ -27,7 +27,7 @@ export class MemoForm extends Component {
         const blog = this.props.memoItem;
 
         return (
-            <div>
+            <div style={{margin: '2em'}}>
                 <Form className="login-form" style={{margin: 10}}>
                     <FormItem>
                         <Button onClick={this.onReturn.bind(this)}>返回</Button>
