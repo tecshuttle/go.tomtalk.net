@@ -82,3 +82,12 @@ div.tool-bar i.anticon:hover {
 div.module-tool-bar i.anticon:hover {
     font-weight: bold;
 }
+
+/* 卡片鼠标悬浮突出阴影显示 */
+div.memo-card {
+    box-shadow: 0 1px 4px rgba(1, 1, 1, .15);
+}
+
+div.memo-card:hover {
+    box-shadow: 0 1px 5px rgba(1, 1, 1, .3);
+}

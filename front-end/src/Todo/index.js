@@ -15,6 +15,10 @@ const weekReport = () => ( <div><h2>week Report</h2></div> );
 const exportData = () => ( <div><h2>export Data</h2></div> );
 
 export default class Todo extends Component {
+    componentWillMount() {
+        document.title = 'Todo'
+    }
+
     render() {
         return (
             <Layout>

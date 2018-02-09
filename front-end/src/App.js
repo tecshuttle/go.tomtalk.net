@@ -8,6 +8,7 @@ import Memo from './Memo'
 import Category from './Category'
 import Home from './Home'
 import {BlogShow} from "./Memo/blogshow";
+import {BlogEdit} from "./Memo/blogedit";
 import Todo from './Todo'
 import Login from './Login'
 
@@ -33,7 +34,8 @@ const App = () => (
             <div>
                 <Route exact path="/" component={Home}/>
                 <Route path="/memo" component={Memo}/>
-                <Route path='/blog/:id' component={BlogShow}/>
+                <Route exact path='/blog/:id' component={BlogShow}/>
+                <Route exact path='/blog/edit/:id' component={BlogEdit}/>
                 <Route path="/todo" component={Todo}/>
                 <Route path="/category" component={Category}/>
                 <Route path="/login" component={Login}/>

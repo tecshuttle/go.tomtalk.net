@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Form} from 'antd'
 import {connect} from 'react-redux'
-import {fetchMemoItem, setMemoItem} from '../Action'
+import {fetchMemoItem, setMemoItem, inBoxMemoItem} from '../Action'
 
 const FormItem = Form.Item;
 const ReactMarkdown = require('react-markdown');
@@ -24,7 +24,12 @@ export class MemoForm extends Component {
     }
 
     onEdit() {
-        this.props.history.push('/memo/edit/' + this.props.memoItem.id);
+        this.props.history.push('/blog/edit/' + this.props.memoItem.id);
+    }
+
+    onInBox() {
+        this.props.dispatch(inBoxMemoItem(this.props.memoItem.id));
+        this.props.history.push('/memo');
     }
 
     render() {
@@ -35,6 +40,7 @@ export class MemoForm extends Component {
                 <Form className="login-form" style={{margin: 10}}>
                     <FormItem>
                         <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                        <Button onClick={this.onInBox.bind(this)}>归档</Button>
                         <Button onClick={this.onEdit.bind(this)}>编辑</Button>
                     </FormItem>
                 </Form>

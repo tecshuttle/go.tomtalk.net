@@ -16,12 +16,13 @@ export class CardM_ extends Component {
 
         this.state = {
             isEdit: false,
-            isHover: false,
         };
 
         this.onEdit = this.onEdit.bind(this);
-        this.onMouseEnter = this.onMouseEnter.bind(this);
-        this.onMouseLeave = this.onMouseLeave.bind(this);
+    }
+
+    componentWillMount() {
+        document.title = 'Memo'
     }
 
     componentDidUpdate() {
@@ -87,9 +88,8 @@ export class CardM_ extends Component {
                              onClick={() => this.onInBox(item.id)}
                              style={{fontSize: 22, cursor: 'pointer'}}/>;
 
-        return <div style={{...styles.memoCard, color: color, boxShadow: boxShadow(this.state.isHover)}}
-                    onMouseEnter={this.onMouseEnter}
-                    onMouseLeave={this.onMouseLeave}>
+        return <div style={{...styles.memoCard, color: color}}
+                    className='memo-card'>
             <BlogContent memo={item} openClick={this.props.blogShow}/>
             <ToolBar state={this.state} memo={item} inbox={inboxBtn} edit={editBtn} del={delBtn}/>
         </div>;
@@ -113,7 +113,7 @@ export class CardM_ extends Component {
         const upBtn = <Icon type="up" onClick={() => this.up()} style={{fontSize: 22, cursor: 'pointer'}}/>;
 
         if (this.state.isEdit) {
-            return <div style={{...styles.memoCard, boxShadow: boxShadow(this.state.isHover), color: color}}>
+            return <div style={{...styles.memoCard, color: color}} className='memo-card'>
                 <ToolBarEdit save={saveBtn} up={upBtn} inbox={inboxBtn}/>
                 <Form onSubmit={this.handleSubmit} style={{margin: 0, padding: '0.6em 0.8em 0.5em 0.8em'}}>
                     <FormItem style={{marginBottom: 0}}>
@@ -162,9 +162,8 @@ export class CardM_ extends Component {
                 {item.type === null ? "" : ' ' + item.type + ' '} {item.question}
             </span>;*/
 
-            return <div style={{...styles.memoCard, color: color, boxShadow: boxShadow(this.state.isHover), cursor: 'pointer'}}
-                        onMouseEnter={this.onMouseEnter}
-                        onMouseLeave={this.onMouseLeave}
+            return <div style={{...styles.memoCard, color: color, cursor: 'pointer'}}
+                        className='memo-card'
                         onClick={this.onEdit}>
                 <MemoContent memo={item}/>
                 <ToolBar state={this.state} memo={item} edit={editBtn} del={delBtn} inbox={inboxBtn}/>
@@ -173,10 +172,8 @@ export class CardM_ extends Component {
     }
 
     emptyCard(item) {
-        return <div style={{...styles.memoCard, boxShadow: boxShadow(this.state.isHover)}}
-                    className=''
-                    onMouseEnter={this.onMouseEnter}
-                    onMouseLeave={this.onMouseLeave}>
+        return <div style={{...styles.memoCard}}
+                    className='memo-card'>
             <p>empty memo</p>
             <div className='module-tool-bar' style={{
                 position: 'absolute',
@@ -197,14 +194,6 @@ export class CardM_ extends Component {
         </div>;
     }
 
-    onMouseEnter = (e) => {
-        this.setState({isHover: true});
-    };
-
-    onMouseLeave = (e) => {
-        this.setState({isHover: false});
-    };
-
     createCard(item) {
         switch (item.module) {
             case  'photo':
@@ -224,11 +213,6 @@ export class CardM_ extends Component {
 
 function isMemoEmpty(memo) {
     return (memo.question === '' && memo.answer === '')
-}
-
-//鼠标悬浮的时候，加强一些阴影的不透明度，以突出显示。
-function boxShadow(isHover) {
-    return (isHover ? '0 1px 5px rgba(1, 1, 1, .3)' : '0 1px 4px rgba(1, 1, 1, .15)');
 }
 
 //显示memo标题和内容
