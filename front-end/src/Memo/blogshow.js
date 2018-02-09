@@ -23,6 +23,10 @@ export class MemoForm extends Component {
         this.props.history.goBack();
     }
 
+    onEdit() {
+        this.props.history.push('/memo/edit/' + this.props.memoItem.id);
+    }
+
     render() {
         const blog = this.props.memoItem;
 
@@ -31,6 +35,7 @@ export class MemoForm extends Component {
                 <Form className="login-form" style={{margin: 10}}>
                     <FormItem>
                         <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                        <Button onClick={this.onEdit.bind(this)}>编辑</Button>
                     </FormItem>
                 </Form>
 

@@ -41,6 +41,7 @@ div.memo p {
 .hljs {
     background: transparent;
 }
+
 /*  博客 markdown  */
 pre {
     padding: 0.5em;
@@ -70,4 +71,14 @@ td {
 
 table tr:nth-child(2n) {
     background: #f6f8fa;
+}
+
+/*  条目内容为空时的工具条，鼠标悬浮变色，突出显示。  */
+div.tool-bar i.anticon:hover {
+    color: #e2534f;
+}
+
+/*  条目内容为空时的工具条，鼠标悬浮变色，突出显示。  */
+div.module-tool-bar i.anticon:hover {
+    font-weight: bold;
 }
