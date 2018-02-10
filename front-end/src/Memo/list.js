@@ -6,6 +6,7 @@ import {CardM} from './card'
 import {CardNew} from './card-new'
 import {CardMemo} from './card-memo'
 import {CardBlog} from './card-blog'
+import {CardPhoto} from './card-photo'
 import Isotope from 'isotope-layout'
 
 const imagesLoaded = require('imagesloaded');
@@ -131,10 +132,10 @@ class MemoList_ extends Component {
                             return (<CardBlog item={item} idx={i} key={'memo-' + i}
                                               history={this.props.history}
                                               isotopeInstance={this.isotopeInstance}/>)
+                        } else if (item.module === 'photo') {
+                            return (<CardPhoto item={item} idx={i} key={'memo-' + i}/>)
                         } else {
-                            return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i}
-                                           isotopeInstance={this.isotopeInstance}
-                                           onEdit={this.onEdit}/>)
+                            return (<CardM item={item} idx={i} key={'memo-' + i}/>)
                         }
                     })}
                 </div>
