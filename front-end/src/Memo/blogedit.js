@@ -14,6 +14,7 @@ export class MemoForm extends Component {
         super(props);
         this.state = {
             needLoad: true,
+            blog: '',
         }
     }
 
@@ -35,6 +36,8 @@ export class MemoForm extends Component {
     }
 
     setFieldsValue() {
+        this.setState({blog: this.props.memoItem.answer});
+
         this.props.form.setFieldsValue({
             question: this.props.memoItem.question,
             answer: this.props.memoItem.answer,
@@ -46,7 +49,7 @@ export class MemoForm extends Component {
         this.props.history.goBack();
     }
 
-    handleSubmit = (e) => {
+    onSave = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -63,7 +66,7 @@ export class MemoForm extends Component {
         const {getFieldDecorator} = this.props.form;
 
         return (
-            <Form onSubmit={this.handleSubmit} className="login-form" style={{margin: 10}}>
+            <Form onSubmit={this.onSave} className="login-form" style={{margin: 10}}>
                 <FormItem>
                     {getFieldDecorator('type_id', {
                         initialValue: this.props.memoItem.type_id
@@ -84,13 +87,14 @@ export class MemoForm extends Component {
                 <div style={{display: 'flex', flexDirection: 'row'}}>
                     {getFieldDecorator('answer', {})(
                         <Textarea style={styles.memoTextarea}
+                                  onChange={e => this.setState({blog: e.target.value})}
                                   minRows={5}
                                   maxRows={18}/>
                     )}
                     <div style={{flex: 1}}>
                         <ReactMarkdown
                             renderers={{code: CodeBlock}}
-                            source={this.props.memoItem.answer}/>
+                            source={this.state.blog}/>
                     </div>
                 </div>
 
@@ -105,9 +109,7 @@ export class MemoForm extends Component {
 
 const styles = {
     memoTextarea: {
-        //width: '50%',
         flex: 1,
-        //border: 0,
         borderRadius: '4px',
         overflow: 'auto',
         resize: 'none',
