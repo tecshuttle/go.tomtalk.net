@@ -5,6 +5,7 @@ import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Actio
 import {CardM} from './card'
 import {CardNew} from './card-new'
 import {CardMemo} from './card-memo'
+import {CardBlog} from './card-blog'
 import Isotope from 'isotope-layout'
 
 const imagesLoaded = require('imagesloaded');
@@ -20,7 +21,6 @@ class MemoList_ extends Component {
         };
 
         this.onEdit = this.onEdit.bind(this);
-        this.blogShow = this.blogShow.bind(this);
     }
 
     componentWillMount() {
@@ -89,10 +89,6 @@ class MemoList_ extends Component {
         this.props.history.push(this.props.match.url + '/edit/' + id);
     }
 
-    blogShow(id) {
-        this.props.history.push('/blog/' + id);
-    }
-
     render() {
         const {keyword} = this.state;
         const suffix = keyword ? <Icon type="close-circle" key='keyword' onClick={this.emitEmpty}/> : null;
@@ -131,10 +127,14 @@ class MemoList_ extends Component {
                             return (<CardMemo item={item} idx={i} key={'memo-' + i}
                                               isotopeInstance={this.isotopeInstance}
                                               onEdit={this.onEdit}/>)
+                        } else if (item.module === 'blog') {
+                            return (<CardBlog item={item} idx={i} key={'memo-' + i}
+                                              history={this.props.history}
+                                              isotopeInstance={this.isotopeInstance}/>)
                         } else {
                             return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i}
                                            isotopeInstance={this.isotopeInstance}
-                                           onEdit={this.onEdit} blogShow={this.blogShow}/>)
+                                           onEdit={this.onEdit}/>)
                         }
                     })}
                 </div>

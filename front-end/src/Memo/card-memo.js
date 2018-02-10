@@ -213,6 +213,4 @@ function mapStateToProps(state) {
 
 const CardM__ = connect(mapStateToProps)(CardM_);
 
-const CardForm = Form.create()(CardM__);
-
-export const CardMemo = connect()(CardForm);
+export const CardMemo = Form.create()(CardM__);
