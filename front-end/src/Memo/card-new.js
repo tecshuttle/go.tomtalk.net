@@ -36,7 +36,7 @@ const styles = {
         marginBottom: '1em',
         marginRight: '1em',
         justifyContent: 'space-between',
-        padding: '0.5em 1em',
+        padding: '0.6em 1.2em',
         width: '21em',
     },
     icon: {

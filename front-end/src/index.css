@@ -75,7 +75,7 @@ table tr:nth-child(2n) {
 
 /*  条目内容为空时的工具条，鼠标悬浮变色，突出显示。  */
 div.tool-bar i.anticon:hover {
-    color: #e2534f;
+    font-weight: bold;
 }
 
 /*  条目内容为空时的工具条，鼠标悬浮变色，突出显示。  */

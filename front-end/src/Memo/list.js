@@ -4,6 +4,7 @@ import {Layout, Select, Button, Input, Icon, notification} from 'antd';
 import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
 import {CardM} from './card'
 import {CardNew} from './card-new'
+import {CardMemo} from './card-memo'
 import Isotope from 'isotope-layout'
 
 const imagesLoaded = require('imagesloaded');
@@ -126,6 +127,10 @@ class MemoList_ extends Component {
                     {this.props.memoList.items.map((item, i) => {
                         if (item.module === null) {
                             return (<CardNew item={item} idx={i} key={'memo-' + i}/>)
+                        } else if (item.module === 'memo') {
+                            return (<CardMemo item={item} idx={i} key={'memo-' + i}
+                                              isotopeInstance={this.isotopeInstance}
+                                              onEdit={this.onEdit}/>)
                         } else {
                             return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i}
                                            isotopeInstance={this.isotopeInstance}
