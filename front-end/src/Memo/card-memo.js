@@ -25,9 +25,9 @@ export class CardM_ extends Component {
         document.title = 'Memo'
     }
 
-    componentDidUpdate() {
-        if (this.props.isotopeInstance !== undefined) {
-            this.props.isotopeInstance.arrange();
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.parent.isotopeInstance !== undefined) {
+            this.props.parent.isotopeInstance.arrange();
         }
     }
 
@@ -88,7 +88,7 @@ export class CardM_ extends Component {
                                   className='memo'
                                   style={{...styles.memoTextarea, fontSize: '1.2em', fontWeight: 'bold'}}
                                   onHeightChange={(height, instance) => {
-                                      this.props.isotopeInstance.arrange();
+                                      this.props.parent.isotopeInstance.arrange();
                                   }}/>
                     )}
                 </div>
@@ -100,7 +100,7 @@ export class CardM_ extends Component {
                                   className='memo'
                                   style={styles.memoTextarea}
                                   onHeightChange={(height, instance) => {
-                                      this.props.isotopeInstance.arrange();
+                                      this.props.parent.isotopeInstance.arrange();
                                   }}
                         />
                     )}

@@ -19,12 +19,6 @@ export class CardBlog_ extends Component {
         document.title = 'Memo'
     }
 
-    componentDidUpdate() {
-        if (this.props.isotopeInstance !== undefined) {
-            this.props.isotopeInstance.arrange();
-        }
-    }
-
     onDelete() {
         this.props.dispatch(deleteMemoItem(this.props.item.id));
     }

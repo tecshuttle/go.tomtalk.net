@@ -20,8 +20,6 @@ class MemoList_ extends Component {
         this.state = {
             keyword: this.props.memoListFilter.keyword,
         };
-
-        this.onEdit = this.onEdit.bind(this);
     }
 
     componentWillMount() {
@@ -51,7 +49,6 @@ class MemoList_ extends Component {
     }
 
     onActiveClick() {
-        //this.setState({keyword: ''});
         this.props.dispatch(fetchMemoListIfNeeded({category: '', keyword: ''}));
     }
 
@@ -84,10 +81,6 @@ class MemoList_ extends Component {
 
     onNew() {
         this.props.dispatch(createMemoItem());
-    }
-
-    onEdit(id) {
-        this.props.history.push(this.props.match.url + '/edit/' + id);
     }
 
     render() {
@@ -125,13 +118,9 @@ class MemoList_ extends Component {
                         if (item.module === null) {
                             return (<CardNew item={item} idx={i} key={'memo-' + i}/>)
                         } else if (item.module === 'memo') {
-                            return (<CardMemo item={item} idx={i} key={'memo-' + i}
-                                              isotopeInstance={this.isotopeInstance}
-                                              onEdit={this.onEdit}/>)
+                            return (<CardMemo item={item} idx={i} key={'memo-' + i} parent={this}/>)
                         } else if (item.module === 'blog') {
-                            return (<CardBlog item={item} idx={i} key={'memo-' + i}
-                                              history={this.props.history}
-                                              isotopeInstance={this.isotopeInstance}/>)
+                            return (<CardBlog item={item} idx={i} key={'memo-' + i} history={this.props.history}/>)
                         } else if (item.module === 'photo') {
                             return (<CardPhoto item={item} idx={i} key={'memo-' + i}/>)
                         } else {
