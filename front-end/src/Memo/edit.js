@@ -7,6 +7,7 @@ import {fetchMemoItem, updateMemoItem, setMemoItem} from '../Action'
 const FormItem = Form.Item;
 const Option = Select.Option;
 
+//这个是废弃的是类，为了保险起见，过段时间清理。
 export class MemoForm extends Component {
     constructor(props) {
         super(props);

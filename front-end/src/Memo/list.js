@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {Layout, Select, Button, Input, Icon, notification} from 'antd';
 import {fetchMemoListIfNeeded, fetchMemoCategory, createMemoItem} from '../Action'
 import {CardM} from './card'
+import {CardNew} from './card-new'
 import Isotope from 'isotope-layout'
 
 const imagesLoaded = require('imagesloaded');
@@ -124,7 +125,7 @@ class MemoList_ extends Component {
                 <div style={{margin: 10}} id="memo-list">
                     {this.props.memoList.items.map((item, i) => {
                         if (item.module === null) {
-                            return (<CardM type="empty" item={item} idx={i} key={'memo-' + i}/>)
+                            return (<CardNew item={item} idx={i} key={'memo-' + i}/>)
                         } else {
                             return (<CardM type={item.module} item={item} idx={i} key={'memo-' + i}
                                            isotopeInstance={this.isotopeInstance}

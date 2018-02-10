@@ -84,10 +84,10 @@ div.module-tool-bar i.anticon:hover {
 }
 
 /* 卡片鼠标悬浮突出阴影显示 */
-div.memo-card {
+div.memo-card, div.module-tool-bar {
     box-shadow: 0 1px 4px rgba(1, 1, 1, .15);
 }
 
-div.memo-card:hover {
+div.memo-card:hover, div.module-tool-bar:hover {
     box-shadow: 0 1px 5px rgba(1, 1, 1, .3);
 }

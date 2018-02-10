@@ -13,11 +13,9 @@ const CodeBlock = require('./code-block');
 export class CardM_ extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             isEdit: false,
         };
-
         this.onEdit = this.onEdit.bind(this);
     }
 
@@ -52,7 +50,7 @@ export class CardM_ extends Component {
         this.setState({isEdit: false, isHover: false});
     }
 
-    handleSubmit = (e) => {
+    onSave = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -106,7 +104,7 @@ export class CardM_ extends Component {
         const editBtn = <Icon type="edit" onClick={this.onEdit}
                               style={{fontSize: 22, cursor: 'pointer'}}/>;
 
-        const saveBtn = <Icon type="save" onClick={this.handleSubmit} style={{fontSize: 22, cursor: 'pointer'}}/>;
+        const saveBtn = <Icon type="save" onClick={this.onSave} style={{fontSize: 22, cursor: 'pointer'}}/>;
         let inboxBtn = <Icon type="inbox"
                              onClick={() => this.onInBox(item.id)}
                              style={{fontSize: 22, cursor: 'pointer'}}/>;
@@ -115,7 +113,7 @@ export class CardM_ extends Component {
         if (this.state.isEdit) {
             return <div style={{...styles.memoCard, color: color}} className='memo-card'>
                 <ToolBarEdit save={saveBtn} up={upBtn} inbox={inboxBtn}/>
-                <Form onSubmit={this.handleSubmit} style={{margin: 0, padding: '0.6em 0.8em 0.5em 0.8em'}}>
+                <Form onSubmit={this.onSave} style={{margin: 0, padding: '0.6em 0.8em 0.5em 0.8em'}}>
                     <FormItem style={{marginBottom: 0}}>
                         {getFieldDecorator('type_id', {
                             initialValue: item.type_id
