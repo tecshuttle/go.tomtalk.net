@@ -9,7 +9,10 @@ const CodeBlock = require('./code-block');
 export class CardBlog_ extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isEdit: false,
+            isHide: false, //归纳或删除直接影响，不再删除memoList，避免render整个列表。
+        };
         this.onEdit = this.onEdit.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.blogShow = this.blogShow.bind(this);
@@ -20,7 +23,8 @@ export class CardBlog_ extends Component {
     }
 
     onDelete() {
-        this.props.dispatch(deleteMemoItem(this.props.item.id));
+        this.setState({isHide: true, shouldArrange: true});
+        this.props.dispatch(deleteMemoItem(this.props.parent, this.props.item.id));
     }
 
     blogShow() {
@@ -34,10 +38,14 @@ export class CardBlog_ extends Component {
     render() {
         const item = this.props.item;
 
-        return <div style={styles.memoCard} className='memo-card'>
-            {isMemoEmpty(item) ? <ToolBar onEdit={this.onEdit} onDelete={this.onDelete}/> :
-                <BlogContent memo={item} blogShow={this.blogShow}/>}
-        </div>;
+        if (this.state.isHide) {
+            return null;
+        } else {
+            return <div style={styles.memoCard} className='memo-card'>
+                {isMemoEmpty(item) ? <ToolBar onEdit={this.onEdit} onDelete={this.onDelete}/> :
+                    <BlogContent memo={item} blogShow={this.blogShow}/>}
+            </div>;
+        }
     }
 }
 

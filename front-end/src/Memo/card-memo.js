@@ -13,7 +13,10 @@ export class CardM_ extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            //item: props.item,
             isEdit: false,
+            isHide: false, //归纳或删除直接影响，不再删除memoList，避免render整个列表。
+            shouldArrange: false,
         };
         this.onEdit = this.onEdit.bind(this);
         this.onDelete = this.onDelete.bind(this);
@@ -25,32 +28,36 @@ export class CardM_ extends Component {
         document.title = 'Memo'
     }
 
+    // 编辑内容时，能根据文本框高度的变化而重排布局。
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.parent.isotopeInstance !== undefined) {
+        if (this.props.parent.isotopeInstance !== undefined && this.state.shouldArrange) {
             this.props.parent.isotopeInstance.arrange();
         }
     }
 
     onDelete() {
-        this.props.dispatch(deleteMemoItem(this.props.item.id));
+        this.setState({isHide: true, shouldArrange: true});
+        this.props.dispatch(deleteMemoItem(this.props.parent, this.props.item.id));
     }
 
     onInBox() {
+        this.setState({isHide: true, shouldArrange: true});
         this.props.dispatch(inBoxMemoItem(this.props.item.id));
     }
 
     onEdit() {
-        this.setState({isEdit: true});
+        this.setState({isEdit: true, shouldArrange: false});
     }
 
     onUp() {
-        this.setState({isEdit: false});
+        this.setState({isEdit: false, shouldArrange: true});
     }
 
     onSave = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                this.setState({item: {...this.props.item, ...values}});
                 this.props.dispatch(updateMemoItem({...this.props.item, ...values}));
             } else {
                 console.log(err);
@@ -118,7 +125,9 @@ export class CardM_ extends Component {
     }
 
     render() {
-        if (this.state.isEdit) {
+        if (this.state.isHide) {
+            return null;
+        } else if (this.state.isEdit) {
             return this.editView()
         } else {
             return this.showView()
@@ -151,7 +160,7 @@ function ToolBar(props) {
 }
 
 function ToolBarEdit(props) {
-    return <div style={styles.editToolBar}>
+    return <div className='tool-bar' style={styles.editToolBar}>
         <Icon type="up" onClick={props.onUp} style={styles.icon}/>
         <Icon type="inbox" onClick={props.onInBox} style={styles.icon}/>
         <Icon type="save" onClick={props.onSave} style={styles.icon}/>

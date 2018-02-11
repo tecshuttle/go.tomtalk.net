@@ -7,9 +7,9 @@ import {CardNew} from './card-new'
 import {CardMemo} from './card-memo'
 import {CardBlog} from './card-blog'
 import {CardPhoto} from './card-photo'
-import Isotope from 'isotope-layout'
+//import Isotope from 'isotope-layout'
 
-const imagesLoaded = require('imagesloaded');
+//const imagesLoaded = require('imagesloaded');
 const {Content} = Layout;
 const Option = Select.Option;
 const Search = Input.Search;
@@ -24,24 +24,8 @@ class MemoList_ extends Component {
 
     componentWillMount() {
         const {dispatch, memoListFilter} = this.props;
-        dispatch(fetchMemoListIfNeeded({category: memoListFilter.category, keyword: memoListFilter.keyword}));
+        dispatch(fetchMemoListIfNeeded(this, {category: memoListFilter.category, keyword: memoListFilter.keyword}));
         dispatch(fetchMemoCategory())
-    }
-
-    componentDidMount() {
-        if (this.isotopeInstance === undefined) {
-            this.isotopeInstance = new Isotope(this.getList(), {transitionDuration: 0})
-        }
-    }
-
-    componentDidUpdate() {
-        this.isotopeInstance.reloadItems();
-        this.isotopeInstance.arrange();
-
-        const me = this;
-        imagesLoaded(this.getList(), function () {
-            me.isotopeInstance.arrange();
-        });
     }
 
     getList() {
@@ -49,11 +33,11 @@ class MemoList_ extends Component {
     }
 
     onActiveClick() {
-        this.props.dispatch(fetchMemoListIfNeeded({category: '', keyword: ''}));
+        this.props.dispatch(fetchMemoListIfNeeded(this, {category: '', keyword: ''}));
     }
 
     onChangeCategory(category) {
-        this.props.dispatch(fetchMemoListIfNeeded({category: category, keyword: this.props.memoListFilter.keyword}));
+        this.props.dispatch(fetchMemoListIfNeeded(this, {category: category, keyword: this.props.memoListFilter.keyword}));
     }
 
     onSearch(keyword) {
@@ -65,13 +49,13 @@ class MemoList_ extends Component {
             });
         }
 
-        this.props.dispatch(fetchMemoListIfNeeded({category: this.props.memoListFilter.category, keyword: keyword}));
+        this.props.dispatch(fetchMemoListIfNeeded(this, {category: this.props.memoListFilter.category, keyword: keyword}));
     }
 
     //响应搜索框清空按钮事件
     emitEmpty = () => {
         this.setState({keyword: ''});
-        this.props.dispatch(fetchMemoListIfNeeded({category: this.props.memoListFilter.category, keyword: ''}));
+        this.props.dispatch(fetchMemoListIfNeeded(this, {category: this.props.memoListFilter.category, keyword: ''}));
         this.keywordInput.focus();
     };
 
@@ -80,7 +64,7 @@ class MemoList_ extends Component {
     };
 
     onNew() {
-        this.props.dispatch(createMemoItem());
+        this.props.dispatch(createMemoItem(this));
     }
 
     render() {
@@ -116,15 +100,15 @@ class MemoList_ extends Component {
                 <div style={{margin: 10}} id="memo-list">
                     {this.props.memoList.items.map((item, i) => {
                         if (item.module === null) {
-                            return (<CardNew item={item} idx={i} key={'memo-' + i}/>)
+                            return (<CardNew item={item} idx={i} key={'memo-' + i} parent={this}/>)
                         } else if (item.module === 'memo') {
                             return (<CardMemo item={item} idx={i} key={'memo-' + i} parent={this}/>)
                         } else if (item.module === 'blog') {
-                            return (<CardBlog item={item} idx={i} key={'memo-' + i} history={this.props.history}/>)
+                            return (<CardBlog item={item} idx={i} key={'memo-' + i} parent={this} history={this.props.history}/>)
                         } else if (item.module === 'photo') {
-                            return (<CardPhoto item={item} idx={i} key={'memo-' + i}/>)
+                            return (<CardPhoto item={item} idx={i} key={'memo-' + i} parent={this}/>)
                         } else {
-                            return (<CardM item={item} idx={i} key={'memo-' + i}/>)
+                            return (<CardM item={item} idx={i} key={'memo-' + i} parent={this}/>)
                         }
                     })}
                 </div>

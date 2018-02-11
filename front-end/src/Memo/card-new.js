@@ -4,6 +4,14 @@ import {connect} from 'react-redux'
 import {deleteMemoItem, updateMemoItem} from '../Action'
 
 class CardNew_ extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isEdit: false,
+            isHide: false, //归纳或删除直接影响，不再删除memoList，避免render整个列表。
+        };
+    }
+
     componentWillMount() {
         document.title = 'Memo'
     }
@@ -14,16 +22,21 @@ class CardNew_ extends Component {
     }
 
     onDelete() {
-        this.props.dispatch(deleteMemoItem(this.props.item.id));
+        this.setState({isHide: true, shouldArrange: true});
+        this.props.dispatch(deleteMemoItem(this.props.parent, this.props.item.id));
     }
 
     render() {
-        return <div className='module-tool-bar' style={styles.toolBar}>
-            <Icon type="tag-o" onClick={() => this.setModule('memo')} style={styles.icon}/>
-            <Icon type="file-text" onClick={() => this.setModule('blog')} style={styles.icon}/>
-            <Icon type="camera-o" onClick={() => this.setModule('photo')} style={styles.icon}/>
-            <Icon type="delete" onClick={() => this.onDelete()} style={{...styles.icon, color: '#e2534f'}}/>
-        </div>;
+        if (this.state.isHide) {
+            return null;
+        } else {
+            return <div className='module-tool-bar' style={styles.toolBar}>
+                <Icon type="tag-o" onClick={() => this.setModule('memo')} style={styles.icon}/>
+                <Icon type="file-text" onClick={() => this.setModule('blog')} style={styles.icon}/>
+                <Icon type="camera-o" onClick={() => this.setModule('photo')} style={styles.icon}/>
+                <Icon type="delete" onClick={() => this.onDelete()} style={{...styles.icon, color: '#e2534f'}}/>
+            </div>;
+        }
     }
 }
 

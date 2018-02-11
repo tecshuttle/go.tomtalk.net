@@ -1,12 +1,29 @@
 //import Async from 'react-promise'
 import {notification} from 'antd'
+import axios from 'axios'
+import Isotope from 'isotope-layout'
+
+const imagesLoaded = require('imagesloaded');
 
 /********************** Memo *********************/
-export function fetchMemoListIfNeeded(memoFilter) {
+export function fetchMemoListIfNeeded(parent, memoFilter) {
     return (dispatch, getState) => {
         if (shouldFetchPosts(getState(), memoFilter)) {
-            dispatch({type: 'SET_MEMO_LIST_FILTER', filter: memoFilter})
-            return dispatch(fetchMemoList(memoFilter.category, memoFilter.keyword))
+            dispatch({type: 'SET_MEMO_LIST_FILTER', filter: memoFilter});
+            return dispatch(fetchMemoList(memoFilter.category, memoFilter.keyword)).then(() => {
+
+                if (parent.isotopeInstance === undefined) {
+                    let nodes = parent.getList();
+                    parent.isotopeInstance = new Isotope(nodes, {transitionDuration: 0});
+
+                    imagesLoaded(nodes, function () {
+                        parent.isotopeInstance.arrange();
+                    });
+                } else {
+                    parent.isotopeInstance.reloadItems();
+                    parent.isotopeInstance.arrange();
+                }
+            });
         }
     }
 }
@@ -30,18 +47,18 @@ function shouldFetchPosts(state, memoFilter) {
 function fetchMemoList(category, keyword) {
     return dispatch => {
         dispatch({type: 'SET_MEMO_FILTER_CATEGORY', category});
-        return fetch('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1', {
+
+        return axios.get('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1', {
             credentials: "same-origin"
-        }).then(response => response.json())
-            .then(json => {
-                if (json.data.length > 300) {
-                    notification.open({message: '列表结果有>300条，请精简查询条件！'});
-                } else {
-                    dispatch(receiveMemoList(category, json))
-                }
-            }).catch(error => {
-                console.error('LOAD_LIST', error);
-            });
+        }).then(response => {
+            if (response.data.data.length > 300) {
+                notification.open({message: '列表结果有>300条，请精简查询条件！'});
+            } else {
+                dispatch(receiveMemoList(category, response.data));
+            }
+        }).catch(error => {
+            console.error('LOAD_LIST', error);
+        });
     }
 }
 
@@ -86,7 +103,7 @@ export function updateMemoItem(newItem) {
             if (node.id === newItem.id) {
                 oldItem = node;
             }
-            return true
+            return true;
         });
 
         if (oldItem.type_id === newItem.type_id) {
@@ -97,13 +114,12 @@ export function updateMemoItem(newItem) {
                     dispatch({type: 'UPDATE_MEMO', values: {...newItem, type: node.type, color: node.color}});
                 }
 
-                return true
+                return true;
             });
         }
 
         // 修改数据库
         let formData = new FormData();
-
         formData.append('id', newItem.id);
         formData.append('type_id', newItem.type_id);
         formData.append('question', newItem.question);
@@ -111,15 +127,16 @@ export function updateMemoItem(newItem) {
         formData.append('module', newItem.module);
         formData.append('sync_state', newItem.sync_state);
 
-        fetch('/api/memo/save-item', {
-            method: 'POST',
-            body: formData
-        }).then((response) => response.json()).then((responseData) => {
+        axios({
+            url: '/api/memo/save-item',
+            method: 'post',
+            data: formData
+        }).then((response) => {
             if (oldItem.type_id !== newItem.type_id) {
                 dispatch(fetchMemoCategoryAPI())
             }
-        }).catch(error => {
-            console.error(error);
+        }).catch(function (error) {
+            console.log(error);
         });
     }
 }
@@ -131,7 +148,7 @@ function handleErrors(response) {
     return response;
 }
 
-export function createMemoItem() {
+export function createMemoItem(parent) {
     return (dispatch, getState) => {
         let formData = new FormData();
         formData.append('type_id', 0);
@@ -144,7 +161,10 @@ export function createMemoItem() {
             body: formData
         }).then(handleErrors).then((response) => response.json()).then((responseData) => {
             if (responseData.ret) {
-                dispatch(fetchMemoList('', ''));
+                dispatch(fetchMemoList('', '')).then(() => {
+                    parent.isotopeInstance.reloadItems();
+                    parent.isotopeInstance.arrange();
+                });
             } else {
                 console.log(responseData);
             }
@@ -154,13 +174,15 @@ export function createMemoItem() {
     }
 }
 
-export function deleteMemoItem(id) {
+export function deleteMemoItem(parent, id) {
     return (dispatch, getState) => {
         fetch('/api/memo/' + id, {
             method: 'DELETE',
         }).then((response) => response.json()).then((responseData) => {
             if (responseData.success) {
                 dispatch({type: 'DELETE_MEMO_ITEM', id: id});
+                parent.isotopeInstance.reloadItems();
+                parent.isotopeInstance.arrange();
             }
         }).catch(error => {
             console.error(error);
@@ -180,7 +202,7 @@ export function inBoxMemoItem(id) {
             body: formData
         }).then((response) => response.json()).then((responseData) => {
             if (responseData.ret) {
-                dispatch({type: 'DELETE_MEMO_ITEM', id: id});
+                //nothing
             }
         }).catch(error => {
             console.error(error);
@@ -207,10 +229,9 @@ export function fetchMemoCategory() {
 
 function fetchMemoCategoryAPI() {
     return dispatch => {
-        return fetch('/api/memo/get-type-list')
-            .then(response => response.json())
-            .then(json => {
-                dispatch({type: 'RECEIVE_MEMO_CATEGORY', data: json.data})
+        return axios.get('/api/memo/get-type-list')
+            .then(response => {
+                dispatch({type: 'RECEIVE_MEMO_CATEGORY', data: response.data.data})
             }).catch(error => {
                 console.error(error);
             });

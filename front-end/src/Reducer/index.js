@@ -6,27 +6,30 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
         case 'REQUEST_MEMO':
             return {...state, isFetching: true};
         case 'RECEIVE_MEMO':
-            return {...state, items: action.data};
+            return {items: action.data};
         case 'ADD_MEMO':
             return {...state, items: [...state.items, state.items.length + 1]};
         case 'UPDATE_MEMO':
-            return {
-                ...state,
-                items: state.items.map(
-                    item => (item.id === action.values.id) ?
-                        {
-                            ...item,
-                            question: action.values.question,
-                            answer: action.values.answer,
-                            type_id: action.values.type_id,
-                            type: action.values.type,
-                            color: action.values.color,
-                        }
-                        : item
-                )
-            };
-        case 'DELETE_MEMO_ITEM':
             for (var i in state.items) {
+                if (state.items[i].id === action.values.id) {
+                    state.items[i] = {
+                        ...state.items[i],
+                        question: action.values.question,
+                        answer: action.values.answer,
+                        type_id: action.values.type_id,
+                        type: action.values.type,
+                        color: action.values.color,
+                    };
+                    break;
+                }
+            }
+            state.items[0].question = 'testing...';
+            state.items[1].question = 'testing...';
+            state.items[2].question = 'testing...';
+
+            return state;
+        case 'DELETE_MEMO_ITEM':
+            /*for (i in state.items) {
                 if (state.items[i].id === action.id) {
                     return {
                         ...state,
@@ -36,7 +39,7 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
                         ]
                     }
                 }
-            }
+            }*/
             return state;
         default:
             return state
