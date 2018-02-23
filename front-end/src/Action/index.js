@@ -1,4 +1,3 @@
-//import Async from 'react-promise'
 import {notification} from 'antd'
 import axios from 'axios'
 import Isotope from 'isotope-layout'
@@ -11,7 +10,6 @@ export function fetchMemoListIfNeeded(parent, memoFilter) {
         if (shouldFetchPosts(getState(), memoFilter)) {
             dispatch({type: 'SET_MEMO_LIST_FILTER', filter: memoFilter});
             return dispatch(fetchMemoList(memoFilter.category, memoFilter.keyword)).then(() => {
-
                 if (parent.isotopeInstance === undefined) {
                     let nodes = parent.getList();
                     parent.isotopeInstance = new Isotope(nodes, {transitionDuration: 0});
@@ -51,7 +49,9 @@ function fetchMemoList(category, keyword) {
         return axios.get('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1', {
             credentials: "same-origin"
         }).then(response => {
-            if (response.data.data.length > 300) {
+            if (response.data.data === null) {
+                notification.open({message: '查询结果为空！'});
+            } else if (response.data.data.length > 300) {
                 notification.open({message: '列表结果有>300条，请精简查询条件！'});
             } else {
                 dispatch(receiveMemoList(category, response.data));
