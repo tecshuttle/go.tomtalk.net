@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Button, Form, Input, Select} from 'antd'
+import {Layout, Button, Form, Input, Select} from 'antd'
 import {connect} from 'react-redux'
-import Textarea from 'react-textarea-autosize'
 import {fetchMemoItem, updateMemoItem, setMemoItem} from '../Action'
 
 const FormItem = Form.Item;
+const TextArea = Input.TextArea;
+const {Content} = Layout;
 const Option = Select.Option;
 const ReactMarkdown = require('react-markdown');
 const CodeBlock = require('./code-block');
@@ -39,7 +40,7 @@ export class MemoForm extends Component {
         this.setState({blog: this.props.memoItem.answer});
 
         this.props.form.setFieldsValue({
-            question: this.props.memoItem.question,
+            //question: this.props.memoItem.question,
             answer: this.props.memoItem.answer,
         });
     }
@@ -66,56 +67,76 @@ export class MemoForm extends Component {
         const {getFieldDecorator} = this.props.form;
 
         return (
-            <Form onSubmit={this.onSave} className="login-form" style={{margin: 10}}>
-                <FormItem>
-                    {getFieldDecorator('type_id', {
-                        initialValue: this.props.memoItem.type_id
-                    })(
-                        <Select style={{width: '100%'}} placeholder='请选择分类'>
-                            <Option value='0'>请选择分类</Option>
-                            {
-                                this.props.memoCategoryList.items.map((item, idx) => (
-                                    <Option value={item.type_id} key={'cat-' + idx}>{item.type}</Option>
-                                ))
-                            }
-                        </Select>
-                    )}
-                </FormItem>
+            <Layout>
+                <Content>
+                    <Form onSubmit={this.onSave} layout="inline">
+                        <div style={{margin: 10}}>
+                            <FormItem>
+                                {getFieldDecorator('type_id', {
+                                    initialValue: this.props.memoItem.type_id
+                                })(
+                                    <Select style={{width: 200}} placeholder='请选择分类'>
+                                        <Option value='0'>请选择分类</Option>
+                                        {
+                                            this.props.memoCategoryList.items.map((item, idx) => (
+                                                <Option value={item.type_id} key={'cat-' + idx}>{item.type}</Option>
+                                            ))
+                                        }
+                                    </Select>
+                                )}
+                            </FormItem>
 
-                <FormItem>{getFieldDecorator('question', {})(<Input placeholder="标题"/>)}</FormItem>
+                            <FormItem>
+                                <Button type="primary" htmlType="submit">保存</Button>
+                            </FormItem>
 
-                <div style={{display: 'flex', flexDirection: 'row'}}>
-                    {getFieldDecorator('answer', {})(
-                        <Textarea style={styles.memoTextarea}
-                                  onChange={e => this.setState({blog: e.target.value})}
-                                  minRows={5}
-                                  maxRows={18}/>
-                    )}
-                    <div style={{flex: 1}}>
-                        <ReactMarkdown
-                            renderers={{code: CodeBlock}}
-                            source={this.state.blog}/>
-                    </div>
-                </div>
+                            <FormItem>
+                                <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                            </FormItem>
+                        </div>
 
-                <FormItem>
-                    <Button type="primary" htmlType="submit" style={{marginRight: 50}}>保存</Button>
-                    <Button onClick={this.onReturn.bind(this)}>返回</Button>
-                </FormItem>
-            </Form>
+                        <div>
+                            {getFieldDecorator('answer', {})(
+                                <TextArea style={styles.memoTextarea} onChange={e => this.setState({blog: e.target.value})}/>
+                            )}
+                            <div style={styles.preview}>
+                                <ReactMarkdown
+                                    renderers={{code: CodeBlock}}
+                                    source={this.state.blog}/>
+                            </div>
+                        </div>
+
+
+                    </Form>
+                </Content>
+            </Layout>
         )
     }
 }
 
 const styles = {
     memoTextarea: {
-        flex: 1,
-        borderRadius: '4px',
-        overflow: 'auto',
         resize: 'none',
-        overflowY: 'hidden',
+        position: 'absolute',
+        borderWidth: 0,
+        bottom: 0,
+        top: 59,
+        width: '50%',
         lineHeight: 1.5,
-        fontWeight: 300,
+        borderRightWidth: 1,
+        borderRightColor: '#eeeeee',
+        padding: '1em',
+        borderRadius: 0,
+    },
+    preview: {
+        padding: '1em',
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        top: 59,
+        width: '50%',
+        overflow: 'auto',
+        lineHeight: 1.5,
     }
 };
 

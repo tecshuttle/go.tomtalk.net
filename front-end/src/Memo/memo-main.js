@@ -6,11 +6,12 @@ import {MemoList} from './memo-list'
 const {Content} = Layout;
 
 export class MemoMain extends Component {
+
     render() {
         return (
             <Content>
                 <MemoToolbar/>
-                <MemoList/>
+                <MemoList history={this.props.history}/>
             </Content>
         )
     }

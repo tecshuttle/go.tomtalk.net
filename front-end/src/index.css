@@ -91,3 +91,34 @@ div.memo-card, div.module-tool-bar {
 div.memo-card:hover, div.module-tool-bar:hover {
     box-shadow: 0 1px 5px rgba(1, 1, 1, .3);
 }
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px
+}
+
+::-webkit-scrollbar-track {
+    background: 0 0
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 5px
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #666
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #fff
+}
+
+body ::-webkit-scrollbar {
+    width: 8px
+}
+
+body ::-webkit-scrollbar-thumb {
+    background-color: #ddd
+}

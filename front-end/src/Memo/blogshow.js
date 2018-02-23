@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Button, Form} from 'antd'
+import {Layout, Button, Form} from 'antd'
 import {connect} from 'react-redux'
 import {fetchMemoItem, setMemoItem, inBoxMemoItem} from '../Action'
 
+const {Content} = Layout;
 const FormItem = Form.Item;
 const ReactMarkdown = require('react-markdown');
 const CodeBlock = require('./code-block');
@@ -36,20 +37,24 @@ export class MemoForm extends Component {
         const blog = this.props.memoItem;
 
         return (
-            <div style={{margin: '2em'}}>
-                <Form className="login-form" style={{margin: 10}}>
-                    <FormItem>
-                        <Button onClick={this.onReturn.bind(this)}>返回</Button>
-                        <Button onClick={this.onInBox.bind(this)}>归档</Button>
-                        <Button onClick={this.onEdit.bind(this)}>编辑</Button>
-                    </FormItem>
-                </Form>
+            <Layout style={{backgroundColor: '#ffffff'}}>
+                <div style={{marginLeft: '2em', marginRight: '2em', marginTop: '1em'}}>
+                    <Form className="login-form">
+                        <FormItem>
+                            <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                            <Button onClick={this.onInBox.bind(this)} style={{marginLeft: '1em', marginRight: '1em'}}>归档</Button>
+                            <Button onClick={this.onEdit.bind(this)}>编辑</Button>
+                        </FormItem>
+                    </Form>
+                </div>
 
-                <h1>{blog.question}</h1>
-                <ReactMarkdown
-                    renderers={{code: CodeBlock}}
-                    source={blog.answer}/>
-            </div>
+                <Content style={{marginLeft: '2em', marginRight: '2em', marginBottom: '1em'}}>
+                    <h1>{blog.question}</h1>
+                    <ReactMarkdown
+                        renderers={{code: CodeBlock}}
+                        source={blog.answer}/>
+                </Content>
+            </Layout>
         )
     }
 }
