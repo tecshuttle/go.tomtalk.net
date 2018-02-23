@@ -118,6 +118,7 @@ export class CardM_ extends Component {
 
     showView() {
         const item = this.props.item;
+        //console.log('memo', item);
 
         return <div style={styles.memoCard} className='memo-card' onClick={this.onEdit}>
             {isMemoEmpty(item) ? <ToolBar onEdit={this.onEdit} onDelete={this.onDelete}/> : <MemoContent memo={item}/>}

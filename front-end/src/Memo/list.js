@@ -7,7 +7,7 @@ import {CardNew} from './card-new'
 import {CardMemo} from './card-memo'
 import {CardBlog} from './card-blog'
 import {CardPhoto} from './card-photo'
-//import Isotope from 'isotope-layout'
+import Isotope from 'isotope-layout'
 
 //const imagesLoaded = require('imagesloaded');
 const {Content} = Layout;
@@ -26,6 +26,12 @@ class MemoList_ extends Component {
         const {dispatch, memoListFilter} = this.props;
         dispatch(fetchMemoListIfNeeded(this, {category: memoListFilter.category, keyword: memoListFilter.keyword}));
         dispatch(fetchMemoCategory())
+    }
+
+    componentDidMount() {
+        if (this.isotopeInstance === undefined) {
+            this.isotopeInstance = new Isotope(this.getList(), {transitionDuration: 0});
+        }
     }
 
     getList() {
