@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {Spin} from 'antd';
 import {fetchMemoListIfNeeded} from '../Action'
 import {CardM} from './card'
 import {CardNew} from './card-new'
@@ -24,11 +25,20 @@ class MemoList_ extends Component {
         return document.querySelector('#memo-list')
     }
 
-    arrange () {
+    arrange() {
         this.isotopeInstance = new Isotope(this.getList(), {transitionDuration: 0});
     }
 
     render() {
+        console.log('memo-list render');
+        if (this.props.memoList.isFetching) {
+            return (
+                <div style={{textAlign: 'center', padding: '3em'}}>
+                    <Spin size="large"></Spin>
+                </div>
+            )
+        }
+
         return (
             <div style={{margin: 10}} id="memo-list">
                 {this.props.memoList.items.map((item, i) => {

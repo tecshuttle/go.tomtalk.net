@@ -4,9 +4,9 @@ import {combineReducers} from 'redux'
 const memoList = (state = {isFetching: false, items: []}, action) => {
     switch (action.type) {
         case 'REQUEST_MEMO':
-            return {...state, isFetching: true};
+            return {items: [], isFetching: true};
         case 'RECEIVE_MEMO':
-            return {...state, items: action.data};
+            return {items: action.data, isFetching: false};
         case 'ADD_MEMO':
             return {...state, items: [...state.items, state.items.length + 1]};
         case 'UPDATE_MEMO':

@@ -11,11 +11,13 @@ export function fetchMemoListIfNeeded(parent, memoFilter) {
             dispatch({type: 'SET_MEMO_LIST_FILTER', filter: memoFilter});
             return dispatch(fetchMemoList(memoFilter.category, memoFilter.keyword)).then(() => {
                 let nodes = parent.getList();
-                parent.isotopeInstance = new Isotope(nodes, {transitionDuration: 0});
+                if (nodes !== null) {
+                    parent.isotopeInstance = new Isotope(nodes, {transitionDuration: 0});
 
-                imagesLoaded(nodes, function () {
-                    parent.isotopeInstance.arrange();
-                });
+                    imagesLoaded(nodes, function () {
+                        parent.isotopeInstance.arrange();
+                    });
+                }
             });
         }
     }
@@ -40,6 +42,7 @@ function shouldFetchPosts(state, memoFilter) {
 function fetchMemoList(category, keyword) {
     return dispatch => {
         dispatch({type: 'SET_MEMO_FILTER_CATEGORY', category});
+        dispatch({type: 'REQUEST_MEMO'});
 
         return axios.get('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1', {
             credentials: "same-origin"
