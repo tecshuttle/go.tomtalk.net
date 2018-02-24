@@ -54,7 +54,7 @@ export class MemoForm extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                this.props.dispatch(updateMemoItem({...this.props.memoItem, ...values}));
+                this.props.dispatch(updateMemoItem(this.props.parent, {...this.props.memoItem, ...values}));
             } else {
                 console.log(err);
             }

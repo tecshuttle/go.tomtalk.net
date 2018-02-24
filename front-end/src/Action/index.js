@@ -10,17 +10,12 @@ export function fetchMemoListIfNeeded(parent, memoFilter) {
         if (shouldFetchPosts(getState(), memoFilter)) {
             dispatch({type: 'SET_MEMO_LIST_FILTER', filter: memoFilter});
             return dispatch(fetchMemoList(memoFilter.category, memoFilter.keyword)).then(() => {
-                if (parent.isotopeInstance === undefined) {
-                    let nodes = parent.getList();
-                    parent.isotopeInstance = new Isotope(nodes, {transitionDuration: 0});
+                let nodes = parent.getList();
+                parent.isotopeInstance = new Isotope(nodes, {transitionDuration: 0});
 
-                    imagesLoaded(nodes, function () {
-                        parent.isotopeInstance.arrange();
-                    });
-                } else {
-                    parent.isotopeInstance.reloadItems();
+                imagesLoaded(nodes, function () {
                     parent.isotopeInstance.arrange();
-                }
+                });
             });
         }
     }
@@ -93,7 +88,7 @@ export function fetchMemoItem(id) {
     }
 }
 
-export function updateMemoItem(newItem) {
+export function updateMemoItem(parent, newItem) {
     return (dispatch, getState) => {
         const state = getState();
 
@@ -134,6 +129,11 @@ export function updateMemoItem(newItem) {
         }).then((response) => {
             if (oldItem.type_id !== newItem.type_id) {
                 dispatch(fetchMemoCategoryAPI())
+            }
+
+            if (parent !== undefined) {
+                parent.isotopeInstance.reloadItems();
+                parent.isotopeInstance.arrange();
             }
         }).catch(function (error) {
             console.log(error);

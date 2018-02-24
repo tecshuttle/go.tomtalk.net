@@ -24,6 +24,10 @@ class MemoList_ extends Component {
         return document.querySelector('#memo-list')
     }
 
+    arrange () {
+        this.isotopeInstance = new Isotope(this.getList(), {transitionDuration: 0});
+    }
+
     render() {
         return (
             <div style={{margin: 10}} id="memo-list">

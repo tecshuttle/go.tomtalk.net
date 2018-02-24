@@ -10,7 +10,6 @@ const memoList = (state = {isFetching: false, items: []}, action) => {
         case 'ADD_MEMO':
             return {...state, items: [...state.items, state.items.length + 1]};
         case 'UPDATE_MEMO':
-            console.log('UPDATE_MEMO');
             /*for (var i in state.items) {
                 if (state.items[i].id === action.values.id) {
                     state.items[i] = {

@@ -46,7 +46,8 @@ export class CardM_ extends Component {
     }
 
     onEdit() {
-        this.setState({isEdit: true, shouldArrange: false});
+        this.setState({isEdit: true, shouldArrange: true});
+        this.props.parent.arrange();
     }
 
     onUp() {
@@ -58,7 +59,7 @@ export class CardM_ extends Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 this.setState({item: {...this.props.item, ...values}});
-                this.props.dispatch(updateMemoItem({...this.props.item, ...values}));
+                this.props.dispatch(updateMemoItem(this.props.parent, {...this.props.item, ...values}));
             } else {
                 console.log(err);
             }
@@ -144,7 +145,7 @@ function MemoContent(props) {
     const item = props.memo;
     const color = (item.color === null ? '#000000' : '#' + item.color);
 
-    return <div style={{padding: '1.2em 1.2em 0 1.2em', color: color, cursor: 'pointer'}}>
+    return <div style={{whiteSpace: 'pre-line', padding: '1.2em 1.2em 0 1.2em', color: color, cursor: 'pointer'}}>
         {item.question === '' ? null : <div style={styles.question}>{item.question}</div>}
         <ReactMarkdown className='memo' renderers={{code: CodeBlock}} source={item.answer}/>
     </div>

@@ -17,8 +17,9 @@ class CardNew_ extends Component {
     }
 
     setModule(module) {
+        this.setState({shouldArrange: true});
         this.props.item.module = module;
-        this.props.dispatch(updateMemoItem(this.props.item));
+        this.props.dispatch(updateMemoItem(this.props.parent, this.props.item));
     }
 
     onDelete() {
