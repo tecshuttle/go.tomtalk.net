@@ -484,3 +484,25 @@ export function deleteJob(iDay, id) {
         });
     }
 }
+
+/********************** user ********************/
+export function checkLogin() {
+    return (dispatch, getState) => {
+        fetch('/api/user/check-login/', {
+            method: 'GET',
+            credentials: 'same-origin'
+        }).then((response) => response.json()).then((json) => {
+            if (json.success) {
+                dispatch({
+                    type: 'SET_USER', user: {
+                        uid: json.uid,
+                        name: json.name,
+                        email: json.email,
+                    }
+                });
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+}

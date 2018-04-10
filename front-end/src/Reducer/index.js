@@ -241,5 +241,18 @@ const todoList = (state = {isFetching: false, items: []}, action) => {
     }
 };
 
-const Reducer = combineReducers({memoListFilter, memoCategoryList, memoList, memoItem, categoryList, categoryItem, todoList});
+const emptyUser = {uid: 0, email: '', name: ''};
+const user = (state = emptyUser, action) => {
+    switch (action.type) {
+        case 'SET_USER':
+            console.log(action);
+            return {...action.user};
+        case 'CLEAR_USER':
+            return emptyUser;
+        default:
+            return state
+    }
+};
+
+const Reducer = combineReducers({memoListFilter, memoCategoryList, memoList, memoItem, categoryList, categoryItem, todoList, user});
 export default Reducer

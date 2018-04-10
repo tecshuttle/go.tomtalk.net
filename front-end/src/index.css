@@ -54,8 +54,39 @@ pre {
 blockquote {
     color: #666;
     margin: 0;
-    padding-left: 3em;
+    padding-left: 1em;
     border-left: 0.5em #eee solid;
+}
+
+#blog-markdown {
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+
+#blog-markdown p {
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 1em;
+    font-weight: 300;
+    text-align: justify;
+}
+
+#blog-markdown strong {
+    color: #00b050;
+    font-weight: 600;
+}
+
+#blog-markdown h1 {
+    font-weight: 600;
+}
+
+#blog-markdown h2 {
+    font-weight: 600;
+}
+
+img {
+    max-width: 100%;
 }
 
 tr {

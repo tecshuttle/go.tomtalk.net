@@ -88,3 +88,20 @@ func (c *UserController) LoginSubmit() {
 
 	c.ServeJSON()
 }
+
+func (c *UserController) CheckLogin() {
+	success := false
+
+	if c.GetSession("uid") != nil {
+		success = true
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"success": success,
+		"uid":     c.GetSession("uid"),
+		"name":    c.GetSession("user_name"),
+		"email":   c.GetSession("user_email"),
+	}
+
+	c.ServeJSON()
+}

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Layout, Button, Form} from 'antd'
 import {connect} from 'react-redux'
-import {fetchMemoItem, setMemoItem, inBoxMemoItem} from '../Action'
+import {fetchMemoItem, setMemoItem, inBoxMemoItem, checkLogin} from '../Action'
 
 const {Content} = Layout;
 const FormItem = Form.Item;
@@ -15,6 +15,8 @@ export class MemoForm extends Component {
         } else {
             this.props.dispatch(setMemoItem(this.props.match.params.id));
         }
+
+        this.props.dispatch(checkLogin());
     }
 
     componentDidUpdate(prevProps) {
@@ -35,20 +37,26 @@ export class MemoForm extends Component {
 
     render() {
         const blog = this.props.memoItem;
+        document.title = blog.question === '' ? blog.answer.split('\n')[0].substr(1) : blog.question;
+        const user = this.props.user;
 
         return (
             <Layout style={{backgroundColor: '#ffffff'}}>
-                <div style={{marginLeft: '2em', marginRight: '2em', marginTop: '1em'}}>
-                    <Form className="login-form">
-                        <FormItem>
-                            <Button onClick={this.onReturn.bind(this)}>返回</Button>
-                            <Button onClick={this.onInBox.bind(this)} style={{marginLeft: '1em', marginRight: '1em'}}>归档</Button>
-                            <Button onClick={this.onEdit.bind(this)}>编辑</Button>
-                        </FormItem>
-                    </Form>
-                </div>
+                {
+                    user.uid !== 0 ?
+                        <div style={{marginLeft: '1em', marginRight: '1em', marginTop: '1em'}}>
+                            <Form className="login-form">
+                                <FormItem style={{margin: 0}}>
+                                    <Button onClick={this.onReturn.bind(this)}>返回</Button>
+                                    <Button onClick={this.onInBox.bind(this)} style={{marginLeft: '1em', marginRight: '1em'}}>归档</Button>
+                                    <Button onClick={this.onEdit.bind(this)}>编辑</Button>
+                                </FormItem>
+                            </Form>
+                        </div>
+                        : null
+                }
 
-                <Content style={{marginLeft: '2em', marginRight: '2em', marginBottom: '1em'}}>
+                <Content id='blog-markdown'>
                     <h1>{blog.question}</h1>
                     <ReactMarkdown
                         renderers={{code: CodeBlock}}
@@ -63,7 +71,8 @@ function mapStateToProps(state, ownProps) {
     return {
         memoCategoryList: state.memoCategoryList,
         memoItem: state.memoItem,
-        memoList: state.memoList
+        memoList: state.memoList,
+        user: state.user,
     }
 }
 
