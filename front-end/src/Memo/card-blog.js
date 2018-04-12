@@ -64,7 +64,7 @@ function BlogContent(props) {
     return <div style={{padding: '1.2em 1.2em 0 1.2em', color: color, cursor: 'pointer'}}
                 onClick={() => props.blogShow(item.id)}>
         {item.question === '' ? null : <div style={styles.question}>{item.question}</div>}
-        <ReactMarkdown className='memo' renderers={{code: CodeBlock}} source={firstParagraph}/>
+        <ReactMarkdown className='card-blog' renderers={{code: CodeBlock}} source={firstParagraph}/>
     </div>
 }
 
