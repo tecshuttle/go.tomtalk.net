@@ -34,4 +34,16 @@ location /api {
 # safari不支持redux devtool，所以在mac上不加载浏览器扩展。
 REACT_APP_OS=DARWIN npm start
 ```
+
+### Windows
+```bash
+# 启动react
+export PORT=8080
+npm start
+
+# 启动go
+gin -a 8080 -p 3001
+
+# 访问 go.tomtalk.com本地开发域名
+```
 END

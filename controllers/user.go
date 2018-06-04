@@ -105,3 +105,15 @@ func (c *UserController) CheckLogin() {
 
 	c.ServeJSON()
 }
+
+func (c *UserController) Logout() {
+	//清除session
+	c.DelSession("uid")
+	c.DelSession("user_name")
+	c.DelSession("user_email")
+
+	//清除cookie
+
+	//跳转到登录页
+	c.Ctx.Redirect(302, "/login")
+}

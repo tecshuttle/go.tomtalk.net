@@ -10,6 +10,15 @@ import {CardPhoto} from './card-photo'
 import Isotope from 'isotope-layout'
 
 class MemoList_ extends Component {
+
+    constructor(props) {
+        super(props);
+
+        if (this.props.user.uid === 0) {
+            this.props.history.push('/login')
+        }
+    }
+
     componentWillMount() {
         const {dispatch} = this.props;
         dispatch(fetchMemoListIfNeeded(this, {category: '', keyword: ''}));
@@ -30,7 +39,6 @@ class MemoList_ extends Component {
     }
 
     render() {
-        console.log('memo-list render');
         if (this.props.memoList.isFetching) {
             return (
                 <div style={{textAlign: 'center', padding: '3em'}}>
@@ -62,6 +70,7 @@ class MemoList_ extends Component {
 const mapStateToProps = (state) => {
     return {
         memoList: state.memoList,
+        user: state.user,
     }
 };
 

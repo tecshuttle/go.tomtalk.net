@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {Layout, message, Form, Input, Button, Icon, Checkbox} from 'antd'
+import {setUser} from '../Action'
 
 const {Footer, Header, Content} = Layout;
 const FormItem = Form.Item;
 
 class LoginForm extends Component {
-
     loginSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -22,6 +23,7 @@ class LoginForm extends Component {
                 }).then((response) => response.json()).then((json) => {
                     if (json.success) {
                         console.log(json);
+                        this.props.dispatch(setUser(json));
                         this.props.history.push('/');
                     } else {
                         message.warning(json.msg);
@@ -92,8 +94,11 @@ class LoginForm extends Component {
     }
 }
 
-const Login = Form.create()(LoginForm);
-export default Login;
+function mapStateToProps(state, ownProps) {
+    return {
+        user: state.user,
+    }
+}
 
-
-
+LoginForm = connect(mapStateToProps)(LoginForm);
+export const Login = Form.create()(LoginForm);

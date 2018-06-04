@@ -12,7 +12,19 @@ type MemoController struct {
 }
 
 func (c *MemoController) GetList() {
-	uid := 1
+	//输出数据
+	if c.GetSession("uid") == nil {
+		c.Data["json"] = map[string]interface{}{
+			"success": false,
+			"code":    9,
+			"msg":     "user not login",
+		}
+
+		c.ServeJSON()
+		return
+	}
+
+	uid := fmt.Sprintf("%d", c.GetSession("uid"))
 	sql := ""
 	raw := orm.NewOrm()
 	var rows_orm []orm.Params
@@ -24,51 +36,64 @@ func (c *MemoController) GetList() {
 
 	if itemType == "" && keyword == "" {
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
-			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date <= '%s') OR (t.priority > 0 AND mtime > %d) OR q.type_id = 0) " +
+			"WHERE q.uid = %s AND ((t.priority = 0 AND next_play_date <= '%s') OR (t.priority > 0 AND mtime > %d) OR q.type_id = 0) " +
 			"ORDER BY t.priority ASC, id ASC"
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
 	} else if itemType == "archive" {
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
-			"WHERE q.uid = %d AND ((t.priority = 0 AND next_play_date > '%s') OR (t.priority > 0 AND mtime <= %d)) " +
+			"WHERE q.uid = %s AND ((t.priority = 0 AND next_play_date > '%s') OR (t.priority > 0 AND mtime <= %d)) " +
 			"ORDER BY t.priority ASC, id ASC"
 		sql = fmt.Sprintf(sql_, uid, today, now.Unix())
 	} else if keyword != "" {
 		//todo: 空值不能查询
 		sql_ := "SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) " +
-			"WHERE q.uid = %d AND (q.question LIKE '%%%s%%' OR q.answer LIKE '%%%s%%')"
+			"WHERE q.uid = %s AND (q.question LIKE '%%%s%%' OR q.answer LIKE '%%%s%%')"
 		sql = fmt.Sprintf(sql_, uid, keyword, keyword)
 	} else { // 分类查询
 		sql = fmt.Sprintf("SELECT t.name AS type, t.color, t.priority, q.* FROM questions AS q LEFT JOIN item_type AS t ON (q.type_id = t.id) "+
-			"WHERE q.uid = %d AND t.name = '%s' ", uid, itemType)
+			"WHERE q.uid = %s AND t.name = '%s' ", uid, itemType)
 	}
 
 	raw.Raw(sql).Values(&rows_orm)
 
 	//输出数据
 	c.Data["json"] = map[string]interface{}{
-		"data": rows_orm,
-		"sql":  sql,
+		"success": true,
+		"data":    rows_orm,
+		"sql":     sql,
 	}
 
 	c.ServeJSON()
 }
 
 func (c *MemoController) GetTypeList() {
-	uid := 1
+	if c.GetSession("uid") == nil {
+		c.Data["json"] = map[string]interface{}{
+			"success": false,
+			"code":    9,
+			"msg":     "user not login",
+		}
+
+		c.ServeJSON()
+
+		return
+	}
+
+	uid := fmt.Sprintf("%d", c.GetSession("uid"))
 	raw := orm.NewOrm()
 	var rows_orm []orm.Params
 
 	sql_ := "SELECT q.count, t.id as type_id, t.priority, t.name AS type, t.color " +
 		"FROM item_type AS t LEFT JOIN (" +
-		"SELECT type_id, count(id) AS count FROM questions WHERE uid = %d GROUP BY type_id ORDER BY type_id" +
+		"SELECT type_id, count(id) AS count FROM questions WHERE uid = %s GROUP BY type_id ORDER BY type_id" +
 		") AS q ON (q.type_id = t.id) " +
-		"WHERE t.uid = %d AND t.priority !=0 ORDER BY count DESC"
+		"WHERE t.uid = %s AND t.priority !=0 ORDER BY count DESC"
 	sql := fmt.Sprintf(sql_, uid, uid)
 	raw.Raw(sql).Values(&rows_orm)
 
 	c.Data["json"] = map[string]interface{}{
 		"data": rows_orm,
-		"sql":  sql,
+		//"sql":  sql,
 	}
 
 	c.ServeJSON()

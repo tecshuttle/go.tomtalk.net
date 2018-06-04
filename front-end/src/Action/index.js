@@ -44,15 +44,19 @@ function fetchMemoList(category, keyword) {
         dispatch({type: 'SET_MEMO_FILTER_CATEGORY', category});
         dispatch({type: 'REQUEST_MEMO'});
 
-        return axios.get('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword + '&uid=1', {
+        return axios.get('/api/memo/get-list?item_type=' + category + '&keyword=' + keyword, {
             credentials: "same-origin"
         }).then(response => {
-            if (response.data.data === null) {
-                notification.open({message: '查询结果为空！'});
-            } else if (response.data.data.length > 300) {
-                notification.open({message: '列表结果有>300条，请精简查询条件！'});
+            if (response.data.success) {
+                if (response.data.data === null) {
+                    notification.open({message: '查询结果为空！'});
+                } else if (response.data.data.length > 300) {
+                    notification.open({message: '列表结果有>300条，请精简查询条件！'});
+                } else {
+                    dispatch(receiveMemoList(category, response.data));
+                }
             } else {
-                dispatch(receiveMemoList(category, response.data));
+                //未登录
             }
         }).catch(error => {
             console.error('LOAD_LIST', error);
@@ -503,6 +507,18 @@ export function checkLogin() {
             }
         }).catch(error => {
             console.error(error);
+        });
+    }
+}
+
+export function setUser(json) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: 'SET_USER', user: {
+                uid: json.uid,
+                name: json.name,
+                email: json.email,
+            }
         });
     }
 }

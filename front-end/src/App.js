@@ -6,11 +6,11 @@ import thunkMiddleware from 'redux-thunk'
 import Reducer from './Reducer'
 import Memo from './Memo'
 import Category from './Category'
-import Home from './Home'
+import {Home} from './Home'
 import {BlogShow} from "./Memo/blogshow";
 import {BlogEdit} from "./Memo/blogedit";
 import Todo from './Todo'
-import Login from './Login'
+import {Login} from './Login'
 
 let store = createStore(Reducer, getCompose());
 
